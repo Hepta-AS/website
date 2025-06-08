@@ -5,21 +5,8 @@ import { cookies } from 'next/headers'
 export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
-export async function GET(req: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies })
-  const { data: { session } } = await supabase.auth.getSession()
-
-  if (!session) {
-    return new Response(
-      JSON.stringify({ error: 'Not authenticated' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } }
-    )
-  }
-
-  return new Response(
-    JSON.stringify({ user: session.user }),
-    { status: 200, headers: { 'Content-Type': 'application/json' } }
-  )
+export async function GET() {
+  return new Response('Hello from Next.js API route')
 }
 
 export async function POST(req: NextRequest) {

@@ -1,1 +1,1 @@
-{"version":1,"functions":{"/api/admin/stripe-customer":{},"/api/admin/users":{},"/api/auth/next-auth":{},"/api/auth/signup":{},"/api/secure-data":{},"/api/stripe/get-invoices":{}}}
+{"version":1,"functions":{"/api/auth/next-auth":{},"/api/admin/stripe-customer":{},"/api/auth/signup":{},"/api/secure-data":{},"/api/stripe/get-invoices":{},"/api/admin/users":{}}}

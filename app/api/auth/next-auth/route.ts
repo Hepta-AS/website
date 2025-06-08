@@ -1,35 +1,45 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
-  return new Response('Hello from Next.js API route')
-}
-
-export async function POST(req: NextRequest) {
+export async function GET(request: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies })
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) {
-    return new Response(
-      JSON.stringify({ error: 'Not authenticated' }),
-      { status: 401, headers: { 'Content-Type': 'application/json' } }
+    return NextResponse.json(
+      { error: 'Not authenticated' },
+      { status: 401 }
+    )
+  }
+
+  return NextResponse.json({ user: session.user })
+}
+
+export async function POST(request: NextRequest) {
+  const supabase = createRouteHandlerClient({ cookies })
+  const { data: { session } } = await supabase.auth.getSession()
+
+  if (!session) {
+    return NextResponse.json(
+      { error: 'Not authenticated' },
+      { status: 401 }
     )
   }
 
   try {
-    const body = await req.json()
-    return new Response(
-      JSON.stringify({ success: true, data: body, user: session.user }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    )
+    const body = await request.json()
+    return NextResponse.json({
+      success: true,
+      data: body,
+      user: session.user
+    })
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: `Failed to process request: ${error instanceof Error ? error.message : String(error)}` }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    return NextResponse.json(
+      { error: `Failed to process request: ${error instanceof Error ? error.message : String(error)}` },
+      { status: 500 }
     )
   }
 }

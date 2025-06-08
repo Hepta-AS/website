@@ -15,10 +15,7 @@ export async function POST(req: Request) {
   console.log("Method:", req.method);
 
   // Log all incoming headers
-  const headerEntries = [];
-  for (const pair of req.headers.entries()) {
-    headerEntries.push([pair[0], pair[1]]);
-  }
+  const headerEntries = Array.from(req.headers).map(([key, value]) => [key, value]);
   console.log("Incoming Headers:", JSON.stringify(Object.fromEntries(headerEntries), null, 2));
 
   const body = await req.text();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -13,7 +13,8 @@ NProgress.configure({
   showSpinner: false,
 });
 
-export const ProgressBar = () => {
+// Separate client component for search params
+function ProgressBarClient() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -30,7 +31,6 @@ export const ProgressBar = () => {
     };
   }, [pathname, searchParams]);
 
-  // Add custom styles to override NProgress styles
   return (
     <style jsx global>{`
       #nprogress {
@@ -57,4 +57,12 @@ export const ProgressBar = () => {
       }
     `}</style>
   );
-}; 
+}
+
+export function ProgressBar() {
+  return (
+    <Suspense fallback={null}>
+      <ProgressBarClient />
+    </Suspense>
+  );
+} 

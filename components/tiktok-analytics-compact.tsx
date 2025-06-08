@@ -37,10 +37,19 @@ export function TikTokAnalyticsCompact() {
     async function loadData() {
       try {
         setIsLoading(true)
-        const csvText = await fetchCSV(
+        const response = await fetch(
           "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Overview%202-iHLqMqDyGH8fFVVjgYL1UVnJIDAKyo.csv",
         )
-        const parsedData = parseCSV(csvText) as TikTokData[]
+        const csvText = await response.text()
+        const rawData = parseCSV(csvText)
+        const parsedData = rawData.map(row => ({
+          Date: row.Date || '',
+          "Video Views": row["Video Views"] || '0',
+          "Profile Views": row["Profile Views"] || '0',
+          Likes: row.Likes || '0',
+          Comments: row.Comments || '0',
+          Shares: row.Shares || '0'
+        })) as TikTokData[]
         setData(parsedData)
       } catch (err) {
         console.error("Failed to load TikTok data:", err)

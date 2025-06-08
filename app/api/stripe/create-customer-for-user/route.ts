@@ -49,15 +49,19 @@ export async function POST(req: Request) {
     }
 
     // Create a new Stripe customer
-    // Sørg for at createCustomer-funksjonen i lib/stripe.ts er robust
-    const customer = await createCustomer(userEmail!, name, { supabaseUUID: authUserId }); // Send med supabaseUUID som metadata
+    const customer = await createCustomer(userEmail!, name, { supabaseUUID: authUserId });
 
-    if (!customer || customer.error || !customer.id) { // Sjekk om customer-objektet er gyldig
-      console.error("Failed to create Stripe customer object or customer ID missing:", customer);
-      const stripeErrorMessage = customer?.message || "Stripe customer creation returned invalid data";
-      return NextResponse.json({ error: `Failed to create Stripe customer: ${stripeErrorMessage}` }, { status: 500 });
+    // Check if it's a mock customer with error
+    if ('error' in customer) {
+      console.error("Failed to create Stripe customer:", customer.message);
+      return NextResponse.json({ error: `Failed to create Stripe customer: ${customer.message}` }, { status: 500 });
     }
 
+    // At this point, customer is a valid Stripe.Customer
+    if (!customer.id) {
+      console.error("Stripe customer created but ID is missing:", customer);
+      return NextResponse.json({ error: "Stripe customer creation returned invalid data" }, { status: 500 });
+    }
 
     // Lagre/oppdater customer ID til brukerens profil
     // Bruk 'user_id' for å identifisere raden, og la 'id' (bigint) auto-inkrementere hvis det er en ny profil

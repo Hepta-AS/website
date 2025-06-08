@@ -32,8 +32,8 @@ export default function Innstillinger() {
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [message, setMessage] = useState(null)
+  const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
 
   // UI states
   const [profileLoading, setProfileLoading] = useState(false)
@@ -119,7 +119,7 @@ export default function Innstillinger() {
   }, [user, supabase])
 
   // Håndter endring av profilinformasjon
-  const handleProfileChange = (e) => {
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
     setProfileData(prev => ({
       ...prev,

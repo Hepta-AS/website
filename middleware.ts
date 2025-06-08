@@ -55,6 +55,13 @@ export async function middleware(req: NextRequest) {
     // Check if user has admin role by fetching from Supabase
     try {
       const supabase = createMiddlewareClient({ req, res })
+      if (!session) {
+        console.log("Redirecting to home - no session for admin route")
+        const redirectUrl = req.nextUrl.clone()
+        redirectUrl.pathname = "/"
+        return NextResponse.redirect(redirectUrl)
+      }
+
       const { data: profile, error } = await supabase.from("profiles").select("role").eq("id", session.user.id).single()
 
       if (error || !profile || profile.role !== "admin") {

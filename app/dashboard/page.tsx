@@ -19,6 +19,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
 
+interface StatCardProps {
+  title: string;
+  value: string;
+  change: string;
+  trend: 'up' | 'down';
+  icon: React.ReactNode;
+}
+
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("tiktok")
 
@@ -74,7 +82,15 @@ export default function Dashboard() {
         <div className="relative bg-white">
           <div className="absolute inset-0 bg-blue-50/30 z-0"></div>
           <div className="absolute inset-0 z-0">
-            <Image src="/herobg.jpg" alt="" fill priority quality={90} className="object-cover opacity-10" />
+            <Image 
+              src="/herobg.jpg" 
+              alt="" 
+              fill 
+              priority 
+              quality={90} 
+              className="object-cover opacity-10"
+              sizes="100vw"
+            />
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-gray-50 z-0"></div>
 
@@ -219,7 +235,7 @@ export default function Dashboard() {
   )
 }
 
-function StatCard({ title, value, change, trend, icon }) {
+function StatCard({ title, value, change, trend, icon }: StatCardProps) {
   return (
     <Card className="border-gray-200 bg-white shadow-sm overflow-hidden">
       <CardContent className="p-6 relative">

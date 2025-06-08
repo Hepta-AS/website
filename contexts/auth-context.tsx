@@ -35,8 +35,11 @@ const TEST_USER = {
   user_metadata: {
     full_name: "Test User",
   },
-  role: "admin", // Add this line
-}
+  app_metadata: {},
+  aud: "authenticated",
+  created_at: new Date().toISOString(),
+  role: "admin",
+} as User
 
 // Generate a random token for test sessions
 const generateTestToken = () => {
@@ -261,8 +264,8 @@ export const AuthProvider = ({
     }
   }
 
-  // Keep the original login function for completeness
-  const login = async (email: string, password: string) => {
+  // Update the login function to match the AuthContextType
+  const login = async (email: string, password: string): Promise<void> => {
     console.log("Attempting login with email:", email)
 
     try {
@@ -273,7 +276,7 @@ export const AuthProvider = ({
 
       if (error) {
         console.error("Login error:", error)
-        return { success: false, error: error.message }
+        throw error
       }
 
       console.log("Login successful:", data.session ? "Session exists" : "No session")
@@ -290,11 +293,9 @@ export const AuthProvider = ({
 
         console.log("Auth state updated after login")
       }
-
-      return { success: true }
     } catch (error: any) {
       console.error("Login process error:", error)
-      return { success: false, error: error.message || "An unexpected error occurred" }
+      throw error
     }
   }
 

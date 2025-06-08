@@ -40,9 +40,14 @@ async function getOrCreateStripeCustomerId(supabaseUserId: string, email?: strin
     throw new Error("Email is required to create a new Stripe customer if one doesn't exist.");
   }
 
+  if (!stripe) {
+    console.error("API Route: Stripe instance is not initialized.");
+    throw new Error("Stripe is not configured properly.");
+  }
+
   // Kall din createCustomer fra lib/stripe.ts
   // Sørg for at createCustomer i lib/stripe.ts returnerer et gyldig kundeobjekt eller håndterer feil
-  const newStripeCustomer = await stripe.customers.create({ // Bruker stripe.customers.create direkte her for enkelhet, eller din egen createCustomer
+  const newStripeCustomer = await stripe.customers.create({
     email,
     name,
     metadata: { supabaseUUID: supabaseUserId }
@@ -114,14 +119,20 @@ export async function POST(req: Request) {
     }
 
     console.log(`API Route: Calling lib/stripe createPaymentIntent with amount: ${amount}, currency: ${currency}, customerId: ${customerId}`);
-    const paymentIntentResponse = await libCreatePaymentIntent(amount, currency, customerId); // Kall til lib/stripe.ts
+    const paymentIntentResponse = await libCreatePaymentIntent(amount, currency, customerId);
 
     console.log("API Route: PaymentIntent object received from lib/stripe:", JSON.stringify(paymentIntentResponse, null, 2));
 
-    if (!paymentIntentResponse || paymentIntentResponse.error || !paymentIntentResponse.client_secret) {
-      const piErrorMessage = paymentIntentResponse?.message || 'PaymentIntent or client_secret missing from lib/stripe response';
-      console.error(`API Route: Error creating Payment Intent or client_secret missing. Message: ${piErrorMessage}`);
-      return NextResponse.json({ error: `Failed to create payment intent: ${piErrorMessage}` }, { status: 500 });
+    // Check if it's a mock response with error
+    if ('error' in paymentIntentResponse) {
+      console.error(`API Route: Error creating Payment Intent. Message: ${paymentIntentResponse.message}`);
+      return NextResponse.json({ error: `Failed to create payment intent: ${paymentIntentResponse.message}` }, { status: 500 });
+    }
+
+    // At this point, paymentIntentResponse is a valid Stripe.PaymentIntent
+    if (!paymentIntentResponse.client_secret) {
+      console.error('API Route: PaymentIntent created but client_secret is missing');
+      return NextResponse.json({ error: 'PaymentIntent client_secret missing from Stripe response' }, { status: 500 });
     }
 
     console.log("API Route: Successfully created Payment Intent. Returning client_secret to frontend:", paymentIntentResponse.client_secret.substring(0,20) + "...");

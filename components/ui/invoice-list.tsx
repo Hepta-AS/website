@@ -29,13 +29,13 @@ export function InvoiceList() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const router = useRouter()
-  const { sessionToken, isLoggedIn } = useAuth()
+  const { sessionToken, user } = useAuth()
 
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
         setIsLoading(true)
-        console.log("Fetching invoices with auth state:", { isLoggedIn, hasToken: !!sessionToken })
+        console.log("Fetching invoices with auth state:", { isLoggedIn: !!user, hasToken: !!sessionToken })
 
         // Always use mock data in development to avoid Stripe API issues
         const useMockData = process.env.NODE_ENV === "development"
@@ -140,7 +140,7 @@ export function InvoiceList() {
     }
 
     fetchInvoices()
-  }, [isLoggedIn, sessionToken])
+  }, [user, sessionToken])
 
   const handlePayInvoice = (invoiceId: string) => {
     router.push(`/faktura/betal?id=${invoiceId}`)

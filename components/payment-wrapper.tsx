@@ -23,7 +23,16 @@ export function PaymentWrapper({ amount, onSuccess, onError }: PaymentWrapperPro
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { sessionToken, isLoggedIn } = useAuth()
+  const { sessionToken, checkAuth } = useAuth()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const { isLoggedIn: loginStatus } = await checkAuth();
+      setIsLoggedIn(loginStatus);
+    };
+    checkLoginStatus();
+  }, [checkAuth]);
 
   useEffect(() => {
     // Create a payment intent as soon as the page loads

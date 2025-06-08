@@ -15,12 +15,17 @@ import { ContactCallToAction } from "@/components/ContactCallToAction";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 
 export default function Home() {
-  const { isLoggedIn } = useAuth();
+  const auth = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const previousPath = useRef(pathname);
+
+  // Check auth state on mount
+  useEffect(() => {
+    auth.checkAuth();
+  }, [auth]);
 
   // Auto-close contact modal on route change
   useEffect(() => {
@@ -132,6 +137,7 @@ export default function Home() {
             priority
             quality={100}
             className="object-cover opacity-30 z-0"
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-black/30 z-0" />
           <div
@@ -188,10 +194,10 @@ export default function Home() {
         <section ref={triggerSectionRef} className="py-16 sm:py-24 lg:py-32">
           <div className="container mx-auto px-4">
             <div className="mb-16 md:mb-24">
-              <TextAndImage {...section1Data} imageOnLeft={false} isTextBlack={shouldPageBeWhite} />
+              <TextAndImage {...section1Data} imageOnLeft={false} />
             </div>
             <div>
-              <TextAndImage {...section2Data} imageOnLeft={true} isTextBlack={shouldPageBeWhite} />
+              <TextAndImage {...section2Data} imageOnLeft={true} />
             </div>
           </div>
         </section>
@@ -201,9 +207,8 @@ export default function Home() {
           line1={contactAdventureData.line1}
           line2={contactAdventureData.line2}
           line3={contactAdventureData.line3}
-          line4={contactAdventureData.line4}
           buttonText={contactAdventureData.button}
-          onButtonClick={() => router.push("/contact")}
+          onButtonClick={handleStartClick}
         />
 
         <div className="mt-8 sm:mt-10 md:mt-12 text-center w-full max-w-md sm:max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl px-4">

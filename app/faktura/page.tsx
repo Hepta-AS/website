@@ -13,7 +13,7 @@ export default function Faktura() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState("Visa")
   const [isCreatingTestInvoice, setIsCreatingTestInvoice] = useState(false)
-  const { user, sessionToken, isLoggedIn } = useAuth()
+  const auth = useAuth()
   const isDevelopment = process.env.NODE_ENV === "development"
 
   const handleSavePaymentMethod = (method: string) => {
@@ -33,7 +33,8 @@ export default function Faktura() {
 
     try {
       setIsCreatingTestInvoice(true)
-      console.log("Creating test invoice with auth state:", { isLoggedIn, hasToken: !!sessionToken })
+      const { isLoggedIn } = await auth.checkAuth()
+      console.log("Creating test invoice with auth state:", { isLoggedIn, hasToken: !!auth.sessionToken })
 
       // For development, just simulate creating an invoice
       if (isDevelopment) {
@@ -50,7 +51,7 @@ export default function Faktura() {
       const customerResponse = await fetch("/api/stripe/create-customer", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${sessionToken || "test_session"}`,
+          Authorization: `Bearer ${auth.sessionToken || "test_session"}`,
         },
       })
 
@@ -62,7 +63,7 @@ export default function Faktura() {
       const response = await fetch("/api/stripe/create-test-invoice", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${sessionToken || "test_session"}`,
+          Authorization: `Bearer ${auth.sessionToken || "test_session"}`,
         },
       })
 

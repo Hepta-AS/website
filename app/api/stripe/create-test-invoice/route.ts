@@ -108,7 +108,7 @@ export async function POST(req: Request) {
           currency: invoice.currency,
           description: "Test Invoice - Development Only",
           status: invoice.status,
-          due_date: new Date(invoice.due_date * 1000).toISOString(),
+          due_date: invoice.due_date ? new Date(invoice.due_date * 1000).toISOString() : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Default to 30 days if not set
           created_at: new Date().toISOString(),
         })
 
@@ -160,7 +160,7 @@ export async function POST(req: Request) {
         currency: invoice.currency,
         description: "Test Invoice - Development Only",
         status: invoice.status,
-        due_date: new Date(invoice.due_date * 1000).toISOString(),
+        due_date: invoice.due_date ? new Date(invoice.due_date * 1000).toISOString() : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Default to 30 days if not set
         created_at: new Date().toISOString(),
       })
 
@@ -184,7 +184,7 @@ export async function POST(req: Request) {
         currency: invoice.currency,
         description: "Test Invoice - Development Only",
         status: invoice.status,
-        due_date: new Date(invoice.due_date * 1000).toISOString(),
+        due_date: invoice.due_date ? new Date(invoice.due_date * 1000).toISOString() : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Default to 30 days if not set
         created_at: new Date().toISOString(),
       })
 

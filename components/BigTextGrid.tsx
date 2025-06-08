@@ -3,6 +3,13 @@ import React from 'react';
 
 import Image from "next/image";
 
+interface BigTextGridProps {
+  line1Text: string;
+  line2Text: string;
+  line3Text: string;
+  line4Text: string;
+}
+
 // --- Placeholder Height (Increased) ---
 const placeholderHeight = "h-[120px] sm:h-[160px] md:h-[200px] lg:h-[280px] xl:h-[350px]";
 
@@ -22,7 +29,7 @@ const blueResponsiveFontSize = "text-[clamp(1rem,_0.5rem_+_2vw,_2.25rem)]";
 const blueTextStyle = `font-bold ${blueResponsiveFontSize} text-blue-500 leading-tight tracking-tight`;
 
 // Added 'export' to the const declaration
-export const BigTextGrid: React.FC = () => {
+export const BigTextGrid: React.FC<BigTextGridProps> = ({ line1Text, line2Text, line3Text, line4Text }) => {
     return (
         <div className="relative bg-black text-white min-h-screen flex flex-col justify-center items-center py-16 sm:py-24 px-2 overflow-hidden">
             {/* Decorative circles container */}
@@ -36,7 +43,7 @@ export const BigTextGrid: React.FC = () => {
                     {/* ----- ROW 1: "WE CRAFT DIGITAL" + Image Placeholder ----- */}
                     <div className="flex items-center justify-between space-x-3 sm:space-x-4 overflow-hidden">
                         <h1 className={`${mainTextStyle} flex-shrink min-w-0`}>
-                            WE CRAFT DIGITAL
+                            {line1Text}
                         </h1>
                         <div
                             className={`flex-grow flex-shrink-0 basis-[20%] sm:basis-[40%] md:basis-[45%] ${placeholderHeight} rounded-lg overflow-hidden relative`}
@@ -66,7 +73,7 @@ export const BigTextGrid: React.FC = () => {
                         </div>
 
                         <h1 className={`${mainTextStyle} text-right flex-shrink min-w-0`}>
-                            EXPERIENCES THAT
+                            {line2Text}
                         </h1>
                     </div>
 
@@ -74,7 +81,7 @@ export const BigTextGrid: React.FC = () => {
                     {/* ----- ROW 3: "TRULY RESONATE DEEPLY." + Image Placeholder ----- */}
                     <div className="flex items-center justify-between space-x-3 sm:space-x-4">
                         <h1 className={`${mainTextStyle} flex-shrink min-w-0`}>
-                            RESONATE DEEPLY.
+                            {line3Text}
                         </h1>
                         <div
                             className={`flex-grow flex-shrink-0 basis-[35%] sm:basis-[45%] md:basis-[45%] ${placeholderHeight} rounded-lg overflow-hidden relative bg-neutral-800/30`}
@@ -93,7 +100,7 @@ export const BigTextGrid: React.FC = () => {
                     {/* ----- ROW 4: "INNOVATION DRIVES OUR EVERY MOVE." (Full width) ----- */}
                     <div className="w-full pt-12 md:pt-2 mt-10">
                         <h1 className={`${lastLineTextStyle} text-left`}>
-
+                            {line4Text}
                         </h1>
                     </div>
                 </div>

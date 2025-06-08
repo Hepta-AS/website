@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       currency: currency,
       description: description,
       status: invoice.status,
-      due_date: new Date(invoice.due_date * 1000).toISOString(),
+      due_date: invoice.due_date ? new Date(invoice.due_date * 1000).toISOString() : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       created_at: new Date().toISOString(),
     })
 

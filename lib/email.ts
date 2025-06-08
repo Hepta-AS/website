@@ -22,6 +22,37 @@ export interface EmailOptions {
   attachments?: any[];
 }
 
+interface EmailTemplate {
+  subject: string;
+  html: string;
+  text?: string;
+}
+
+export const emailTemplates = {
+  welcome: (data: { name: string }): EmailTemplate => ({
+    subject: 'Welcome to Hepta!',
+    html: `
+      <h1>Welcome to Hepta, ${data.name}!</h1>
+      <p>We're excited to have you on board.</p>
+    `,
+  }),
+  resetPassword: (data: { resetLink: string }): EmailTemplate => ({
+    subject: 'Reset Your Password',
+    html: `
+      <h1>Reset Your Password</h1>
+      <p>Click the link below to reset your password:</p>
+      <a href="${data.resetLink}">Reset Password</a>
+    `,
+  }),
+  invoice: (data: { invoiceNumber: string, amount: string }): EmailTemplate => ({
+    subject: `Invoice #${data.invoiceNumber}`,
+    html: `
+      <h1>Invoice #${data.invoiceNumber}</h1>
+      <p>Amount due: ${data.amount}</p>
+    `,
+  }),
+};
+
 /**
  * Send an email using Nodemailer
  */

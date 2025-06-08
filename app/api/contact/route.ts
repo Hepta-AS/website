@@ -3,6 +3,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
+interface FormData extends MessageFields {
+  name: string;
+  email: string;
+}
+
+interface MessageFields {
+  message: string;
+  firstName?: string;
+  lastName?: string;
+  company?: string;
+  website?: string;
+  phone?: string;
+}
+
 export async function POST(request: NextRequest) {
   console.log('API: Contact endpoint hit');
 
@@ -351,31 +365,25 @@ export async function POST(request: NextRequest) {
 }
 
 // Helper function to format the message text with all fields
-function formatMessageWithAllFields({ message, firstName, lastName, company, website, phone }) {
+function formatMessageWithAllFields({ message, firstName, lastName, company, website, phone }: MessageFields) {
   let formattedMessage = `Melding: ${message}`;
 
   // Add extra information if available
-  if (firstName && lastName) {
-    formattedMessage += `\n\nFornavn: ${firstName}\nEtternavn: ${lastName}`;
-  }
-
-  if (company) {
-    formattedMessage += `\nSelskap: ${company}`;
-  }
-
-  if (website) {
-    formattedMessage += `\nNettside: ${website}`;
-  }
-
-  if (phone) {
-    formattedMessage += `\nTelefon: ${phone}`;
-  }
+  if (firstName) formattedMessage += `\nFornavn: ${firstName}`;
+  if (lastName) formattedMessage += `\nEtternavn: ${lastName}`;
+  if (company) formattedMessage += `\nSelskap: ${company}`;
+  if (website) formattedMessage += `\nNettside: ${website}`;
+  if (phone) formattedMessage += `\nTelefon: ${phone}`;
 
   return formattedMessage;
 }
 
 // Helper function to send email
-async function sendEmail(transporter, formData, fromEmail) {
+async function sendEmail(
+  transporter: nodemailer.Transporter,
+  formData: FormData,
+  fromEmail: string
+) {
   const {
     name,
     email,

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import {
@@ -103,7 +103,7 @@ function CheckoutForm({
   )
 }
 
-export default function BetalFaktura() {
+function BetalFakturaClient() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const invoiceId = searchParams.get("id")
@@ -199,18 +199,18 @@ export default function BetalFaktura() {
         <Link href="/faktura" className="text-gray-500 hover:text-gray-800">
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Faktura #{invoice.number}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Faktura #{invoice?.number}</h1>
       </div>
 
       <Card className="border-gray-200 bg-white shadow-sm">
         <CardHeader>
           <CardTitle className="text-xl font-semibold text-gray-900">
-            {invoice.description}
+            {invoice?.description}
           </CardTitle>
           <CardDescription className="text-gray-500">
             Total:{" "}
             <span className="font-medium text-gray-800">
-              {invoice.amount_due.toFixed(2)} {invoice.currency}
+              {invoice?.amount_due?.toFixed(2)} {invoice?.currency}
             </span>
           </CardDescription>
         </CardHeader>
@@ -233,7 +233,7 @@ export default function BetalFaktura() {
               }}
             >
               <CheckoutForm
-                amount={invoice.amount_due}
+                amount={invoice?.amount_due}
                 onSuccess={() => {
                   setPaymentSuccess(true)
                   setTimeout(() => router.push("/faktura/betalt"), 2000)
@@ -249,5 +249,15 @@ export default function BetalFaktura() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function BetalFaktura() {
+  return (
+    <Suspense fallback={<div className="max-w-3xl mx-auto mt-8">
+      <Skeleton className="h-[400px] w-full rounded-lg" />
+    </div>}>
+      <BetalFakturaClient />
+    </Suspense>
   )
 }

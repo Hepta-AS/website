@@ -48,8 +48,8 @@ export const TextAndImage: React.FC<TextAndImageProps> = ({
         <Image
             src={imageSrc}
             alt={altText}
-            layout="fill"
-            className={imageClassName}
+            fill
+            className={`${imageClassName} w-full h-full`}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
       </div>

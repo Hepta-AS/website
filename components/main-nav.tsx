@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,11 +10,20 @@ import { LoginModal } from "@/components/login-modal";
 import { Menu, X } from "lucide-react";
 
 export function MainNav() {
-  const { isLoggedIn, logout } = useAuth();
+  const { logout, checkAuth } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const { isLoggedIn: loginStatus } = await checkAuth();
+      setIsLoggedIn(loginStatus);
+    };
+    checkLoginStatus();
+  }, [checkAuth]);
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
@@ -59,8 +68,8 @@ export function MainNav() {
       <Image
         src="/A_white_hepta.png"
         alt="Hepta Logo"
-        layout="fill"
-        objectFit="contain"
+        fill
+        className="object-contain"
         priority
       />
     </div>

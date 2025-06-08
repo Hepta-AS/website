@@ -2,6 +2,7 @@
 import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { MainNav } from "@/components/main-nav";
@@ -26,7 +27,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <div className="flex flex-col min-h-screen overflow-x-hidden w-full relative">
                             <MainNav />
                             <main className="flex-grow overflow-x-hidden w-full relative">
-                                {children}
+                                <Suspense fallback={<div>Loading...</div>}>
+                                    {children}
+                                </Suspense>
                             </main>
                             <Footer />
                         </div>

@@ -3,6 +3,8 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
 import { stripe } from "@/lib/stripe"
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url)
@@ -10,6 +12,10 @@ export async function GET(req: Request) {
 
     if (!userId) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 })
+    }
+
+    if (!stripe) {
+      return NextResponse.json({ error: "Stripe is not configured" }, { status: 500 })
     }
 
     const supabase = createRouteHandlerClient({ cookies })

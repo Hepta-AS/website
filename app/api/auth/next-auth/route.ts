@@ -1,47 +1,48 @@
-import type { NextRequest } from 'next/server'
-import { NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 
-interface AuthResponse {
-  user?: any
-  error?: string
-  success?: boolean
-  data?: any
-}
-
+export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
-export async function GET(request: NextRequest): Promise<NextResponse<AuthResponse>> {
+export async function GET(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies })
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    return new Response(
+      JSON.stringify({ error: 'Not authenticated' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
+    )
   }
 
-  return NextResponse.json({ user: session.user })
+  return new Response(
+    JSON.stringify({ user: session.user }),
+    { status: 200, headers: { 'Content-Type': 'application/json' } }
+  )
 }
 
-export async function POST(request: NextRequest): Promise<NextResponse<AuthResponse>> {
+export async function POST(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies })
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    return new Response(
+      JSON.stringify({ error: 'Not authenticated' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
+    )
   }
 
   try {
-    const body = await request.json()
-    return NextResponse.json({ 
-      success: true, 
-      data: body,
-      user: session.user 
-    })
+    const body = await req.json()
+    return new Response(
+      JSON.stringify({ success: true, data: body, user: session.user }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    )
   } catch (error) {
-    return NextResponse.json(
-      { error: `Failed to process request: ${error instanceof Error ? error.message : String(error)}` },
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ error: `Failed to process request: ${error instanceof Error ? error.message : String(error)}` }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     )
   }
 }

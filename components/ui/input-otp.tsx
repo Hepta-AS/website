@@ -1,25 +1,40 @@
 "use client"
 
 import * as React from "react"
-import { OTPInput, OTPInputContext } from "input-otp"
-import { Dot } from "lucide-react"
+import OtpInput from "react18-input-otp"
 
 import { cn } from "@/lib/utils"
 
-const InputOTP = React.forwardRef<
-  React.ElementRef<typeof OTPInput>,
-  React.ComponentPropsWithoutRef<typeof OTPInput>
->(({ className, containerClassName, ...props }, ref) => (
-  <OTPInput
-    ref={ref}
-    containerClassName={cn(
-      "flex items-center gap-2 has-[:disabled]:opacity-50",
-      containerClassName
-    )}
-    className={cn("disabled:cursor-not-allowed", className)}
-    {...props}
-  />
-))
+interface InputOTPProps {
+  value: string
+  length?: number
+  onChange: (value: string) => void
+  className?: string
+  disabled?: boolean
+  isInputNum?: boolean
+  autoFocus?: boolean
+}
+
+const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
+  ({ className, value, length = 6, onChange, disabled, isInputNum = true, autoFocus = false, ...props }, ref) => (
+    <div ref={ref} className={cn("flex items-center gap-2", className)} {...props}>
+      <OtpInput
+        value={value}
+        onChange={onChange}
+        numInputs={length}
+        isDisabled={disabled}
+        isInputNum={isInputNum}
+        shouldAutoFocus={autoFocus}
+        containerStyle="flex gap-2"
+        inputStyle={cn(
+          "w-10 h-10 border border-input rounded-md text-center text-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+          disabled && "opacity-50 cursor-not-allowed"
+        )}
+        separator={<span className="text-muted-foreground">-</span>}
+      />
+    </div>
+  )
+)
 InputOTP.displayName = "InputOTP"
 
 const InputOTPGroup = React.forwardRef<
@@ -31,12 +46,13 @@ const InputOTPGroup = React.forwardRef<
 InputOTPGroup.displayName = "InputOTPGroup"
 
 const InputOTPSlot = React.forwardRef<
-  React.ElementRef<"div">,
-  React.ComponentPropsWithoutRef<"div"> & { index: number }
->(({ index, className, ...props }, ref) => {
-  const inputOTPContext = React.useContext(OTPInputContext)
-  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index]
-
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<"div"> & {
+    char: string | null
+    hasFakeCaret: boolean
+    isActive: boolean
+  }
+>(({ className, char, hasFakeCaret, isActive, ...props }, ref) => {
   return (
     <div
       ref={ref}
@@ -63,7 +79,7 @@ const InputOTPSeparator = React.forwardRef<
   React.ComponentPropsWithoutRef<"div">
 >(({ ...props }, ref) => (
   <div ref={ref} role="separator" {...props}>
-    <Dot />
+    <span className="text-muted-foreground">-</span>
   </div>
 ))
 InputOTPSeparator.displayName = "InputOTPSeparator"

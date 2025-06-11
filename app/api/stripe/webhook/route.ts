@@ -1,14 +1,16 @@
 // api/stripe/webhook/route.ts
 import { NextResponse } from "next/server";
 // REMOVED: import { headers } from "next/headers"; // We will get headers directly from req.headers
-import { stripe } from "@/lib/stripe"; // Your Stripe lib initialization
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/lib/supabase";
 import { cookies } from "next/headers"; // Keep for Supabase
-import type Stripe from 'stripe'; // Import Stripe types
+import Stripe from "stripe";
+import type StripeEvent from 'stripe'; // Import Stripe types
 
 // const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET; // We will get this inside the function
 
 console.log("🪝 /api/stripe/webhook/route.ts file TOP LEVEL LOG"); // Check if file is loaded
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: Request) {
   console.log("🪝 POST /api/stripe/webhook ROUTE HANDLER INVOKED");
@@ -27,7 +29,7 @@ export async function POST(req: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   console.log("🤫 Webhook Secret used from env:", webhookSecret); // Check if it's loaded correctly
 
-  let event: Stripe.Event;
+  let event: StripeEvent.Event;
 
   // 1. Validate prerequisites for signature verification
   if (!signature) {
@@ -66,7 +68,7 @@ export async function POST(req: Request) {
 
   // 3. Log the received event type (already done above after successful verification)
 
-  const supabase = createRouteHandlerClient({ cookies }); // Assuming cookies() works here as intended
+  const supabase = createClient();
 
   // 4. Handle the event
   console.log(`🔄 Processing event type: ${event.type}`);

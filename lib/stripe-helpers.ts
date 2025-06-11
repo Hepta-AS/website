@@ -1,12 +1,14 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
-import { createCustomer } from "@/lib/stripe"
+import { createClient } from "./supabase"
+import Stripe from "stripe"
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 /**
  * Gets or creates a Stripe customer ID for a user
  */
 export async function getOrCreateCustomerId(userId: string, email?: string, name?: string) {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = createClient()
 
   // Try to get the existing customer ID
   const { data: profile, error: profileError } = await supabase
@@ -51,7 +53,7 @@ export async function getOrCreateCustomerId(userId: string, email?: string, name
  * Gets the user's email from Supabase
  */
 export async function getUserEmail(userId: string) {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = createClient()
 
   const { data: user, error } = await supabase.auth.admin.getUserById(userId)
 
@@ -61,5 +63,22 @@ export async function getUserEmail(userId: string) {
   }
 
   return user?.user?.email
+}
+
+/**
+ * Creates a new Stripe customer
+ */
+export async function createCustomer(email: string, name?: string, metadata?: Record<string, string>): Promise<Stripe.Customer> {
+  try {
+    const customer = await stripe.customers.create({
+      email,
+      name,
+      metadata,
+    })
+    return customer
+  } catch (error) {
+    console.error("Error creating Stripe customer:", error)
+    throw error
+  }
 }
 

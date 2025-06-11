@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server"
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
+import { createClient } from "@/lib/supabase"
+import Stripe from "stripe"
 import { createInvoice } from "@/lib/stripe"
 import { getOrCreateCustomerId } from "@/lib/stripe-helpers"
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export async function POST(req: Request) {
   try {
@@ -12,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Description and amount are required" }, { status: 400 })
     }
 
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = createClient()
 
     // Get the current user
     const {

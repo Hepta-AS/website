@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server"
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase"
 import { cookies } from "next/headers"
-import { stripe } from "@/lib/stripe"
+import Stripe from "stripe"
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export const dynamic = 'force-dynamic'
 
@@ -18,7 +20,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Stripe is not configured" }, { status: 500 })
     }
 
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = createClient()
 
     // Get the current user
     const {
@@ -62,5 +64,11 @@ export async function GET(req: Request) {
       { status: 500 },
     )
   }
+}
+
+export async function POST(request: Request) {
+  const supabase = createClient()
+
+  // ... existing code ...
 }
 

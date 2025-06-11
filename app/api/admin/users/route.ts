@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server"
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase"
 import { cookies } from "next/headers"
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = createClient()
 
     // Get the current user
     const {

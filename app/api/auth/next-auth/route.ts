@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase'
 import { cookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = createClient()
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) {
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = createClient()
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) {

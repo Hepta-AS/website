@@ -1,17 +1,19 @@
 import { NextResponse } from "next/server"
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
+import { createClient } from "@/lib/supabase"
+import Stripe from "stripe"
 import { payInvoice } from "@/lib/stripe"
 
-export async function POST(req: Request) {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
+export async function POST(request: Request) {
   try {
-    const { invoiceId } = await req.json()
+    const { invoiceId } = await request.json()
+    const supabase = createClient()
 
     if (!invoiceId) {
       return NextResponse.json({ error: "Invoice ID is required" }, { status: 400 })
     }
-
-    const supabase = createRouteHandlerClient({ cookies })
 
     // Get the current user
     const {

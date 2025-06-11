@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server"
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase"
 import { cookies } from "next/headers"
 import { createTestInvoice } from "@/lib/stripe"
+import Stripe from "stripe"
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export async function POST(req: Request) {
   // Only allow this in development
@@ -10,7 +13,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = createClient()
 
     // Get the authorization header for test sessions
     const authHeader = req.headers.get("authorization")

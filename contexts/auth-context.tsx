@@ -3,9 +3,9 @@
 import type React from "react"
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createBrowserClient } from "@supabase/ssr"
 import { useRouter } from "next/navigation"
-import type { User, Session } from "@supabase/auth-helpers-nextjs"
+import type { User } from "@supabase/supabase-js"
 import { getLocalStorage, setLocalStorage, removeLocalStorage } from "@/lib/utils"
 
 export type AuthContextType = {
@@ -61,12 +61,15 @@ export const AuthProvider = ({
   serverSession = null,
 }: {
   children: React.ReactNode;
-  serverSession?: Session | null;
+  serverSession?: any | null;
 }) => {
   const [user, setUser] = useState<User | null>(null)
   const [sessionToken, setSessionToken] = useState<string | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
-  const [supabase] = useState(() => createClientComponentClient())
+  const [supabase] = useState(() => createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  ))
   const router = useRouter()
 
   // Use a ref to track if initial auth check has been performed

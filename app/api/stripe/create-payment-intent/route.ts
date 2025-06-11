@@ -1,12 +1,14 @@
 // app/api/stripe/create-payment-intent/route.ts
 import { NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/lib/supabase";
 import { cookies } from "next/headers";
 import { createPaymentIntent as libCreatePaymentIntent } from "@/lib/stripe"; // Omdøpt import for klarhet
 // Anta at getOrCreateCustomerId er definert et sted, f.eks. i lib/stripe-helpers.ts
 // Hvis ikke, må du implementere denne eller fjerne den og sende customerId fra klienten om nødvendig.
 // For dette eksempelet antar vi at du vil opprette/hente kunde her.
-import { stripe } from "@/lib/stripe"; // For å lage/hente kunde direkte her
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 // Hjelpefunksjon for å hente eller opprette Stripe kunde-ID
 // Du kan flytte denne til lib/stripe-helpers.ts eller beholde den her hvis den kun brukes her.
@@ -14,7 +16,7 @@ async function getOrCreateStripeCustomerId(supabaseUserId: string, email?: strin
   console.log("--- DEBUG API Route: getOrCreateStripeCustomerId ---");
   console.log(`Fetching/Creating Stripe customer for Supabase User ID: ${supabaseUserId}, Email: ${email}`);
 
-  const supabase = createRouteHandlerClient({ cookies });
+  const supabase = createClient();
 
   // 1. Sjekk om profilen har en stripe_customer_id
   const { data: profile, error: profileError } = await supabase
@@ -87,7 +89,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Amount is required and must be a positive number" }, { status: 400 });
     }
 
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     console.log("API Route: Supabase client created.");
 
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();

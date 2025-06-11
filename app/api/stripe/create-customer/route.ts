@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server"
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
+import { createClient } from "@/lib/supabase"
+import Stripe from "stripe"
 import { createCustomer } from "@/lib/stripe"
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export async function POST(req: Request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = createClient()
 
     // Check for test session in headers
     const authHeader = req.headers.get("authorization")

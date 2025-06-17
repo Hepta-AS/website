@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className={`${inter.className} h-full bg-background text-foreground overflow-x-hidden`}>
                 <ProgressBar />
                 <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-                    <AuthProvider serverSession={null}>
+                    <AuthProvider>
                         <div className="flex flex-col min-h-screen overflow-x-hidden w-full relative">
                             <MainNav />
                             <main className="flex-grow overflow-x-hidden w-full relative">

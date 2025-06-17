@@ -58,7 +58,6 @@ const getCookie = (name: string): string | null => {
 
 export const AuthProvider = ({
   children,
-  serverSession = null,
 }: {
   children: React.ReactNode;
   serverSession?: any | null;

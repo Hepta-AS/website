@@ -29,9 +29,7 @@ export default function AdminUsersPage() {
   const [isCreatingCustomer, setIsCreatingCustomer] = useState<string | null>(null)
   const [manualCustomerId, setManualCustomerId] = useState<string>("")
   const [isAssigningCustomer, setIsAssigningCustomer] = useState<string | null>(null)
-  const [isAdminPage = userRole === "admin" || process.env.NODE_ENV === "development", setIsAdminPage] = useState(
-    userRole === "admin" || process.env.NODE_ENV === "development",
-  )
+  const isAdminPage = userRole === "admin" || process.env.NODE_ENV === "development"
 
   useEffect(() => {
     // Redirect if not admin

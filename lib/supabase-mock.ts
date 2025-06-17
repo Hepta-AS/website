@@ -15,7 +15,7 @@ export const createMockSupabaseClient = () => {
         error: null,
       }),
     },
-    from: (table: string) => ({
+    from: (_table: string) => ({
       select: () => ({
         eq: () => ({
           single: async () => ({

@@ -42,6 +42,7 @@
     "@supabase/ssr": "0.0.10",
     "@supabase/supabase-js": "2.39.0",
     "@types/nprogress": "0.2.3",
+    "@vercel/analytics": "^1.5.0",
     "chart.js": "4.4.1",
     "class-variance-authority": "0.7.0",
     "clsx": "2.0.0",

@@ -9,6 +9,7 @@ import { MainNav } from "@/components/main-nav";
 import { AuthProvider } from "@/contexts/auth-context";
 import { Footer } from "@/components/footer";
 import { ProgressBar } from "@/components/progress-bar";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ["latin"] });
 

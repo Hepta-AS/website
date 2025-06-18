@@ -54,7 +54,7 @@ export function ContactForm() {
     { id: "website", formField: "website", label: "Hva er nettsidelinken deres?", placeholder: "https://eksempel.no", type: "url", isRequired: false, description: "Inkluder http:// eller https://" },
     { id: "name", formField: ["firstName", "lastName"], label: "Hva heter du?", placeholder: ["Ditt fornavn...", "Ditt etternavn..."], isRequired: true, description: "Både fornavn og etternavn" },
     { id: "contact", formField: ["email", "phone"], label: "Hvordan kommer vi i kontakt med deg?", placeholder: ["din@epost.no", "Ditt telefonnummer..."], type: "email", isRequired: true, description: "E-post er påkrevd, telefon er valgfritt" },
-    { id: "message", formField: "message", label: "Hvordan skaffer dere nye kunder?", placeholder: "Beskriv deres metoder...", multiline: true, isRequired: true, description: "Har dere en pålitelig salgskanal i dag? Fortell oss her." }
+    { id: "message", formField: "message", label: "Hva gjelder henvendelsen din?", placeholder: "Utdyp her...", multiline: true, isRequired: true, description: "Vi vil høre fra deg!" }
   ];
 
   useEffect(() => {

@@ -10,6 +10,7 @@ import { AuthProvider } from "@/contexts/auth-context";
 import { Footer } from "@/components/footer";
 import { ProgressBar } from "@/components/progress-bar";
 import { Analytics } from "@vercel/analytics/next"
+import { CookieConsent } from "@/components/cookie-consent";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <ProgressBar />
                 <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
                     <AuthProvider>
-                        <div className="flex flex-col min-h-screen overflow-x-hidden w-full relative">
+                        <div className="flex flex-col min-h-screen">
                             <MainNav />
                             <main className="flex-grow overflow-x-hidden w-full relative">
                                 <Suspense fallback={<div>Loading...</div>}>
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         </div>
                     </AuthProvider>
                 </ThemeProvider>
+                <CookieConsent />
             </body>
         </html>
     );

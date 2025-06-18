@@ -9,7 +9,7 @@ import { MainNav } from "@/components/main-nav";
 import { AuthProvider } from "@/contexts/auth-context";
 import { Footer } from "@/components/footer";
 import { ProgressBar } from "@/components/progress-bar";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react";
 import { CookieConsent } from "@/components/cookie-consent";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -38,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     </AuthProvider>
                 </ThemeProvider>
                 <CookieConsent />
+                <Analytics />
             </body>
         </html>
     );

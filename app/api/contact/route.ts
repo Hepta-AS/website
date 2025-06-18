@@ -7,7 +7,8 @@ import { ConfirmationEmail } from '@/components/emails/ConfirmationEmail';
 
 // Initialize the Resend client with the API key from environment variables
 const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.EMAIL_FROM || 'onboarding@resend.dev'; // Default for safety, should be set in .env
+// Use EMAIL_USER for the 'from' address as it's a valid email. EMAIL_FROM is used as the 'from name'.
+const fromEmail = process.env.EMAIL_USER || 'onboarding@resend.dev';
 const toEmail = process.env.EMAIL_TO || 'delivered@resend.dev'; // Default for safety, should be set in .env
 
 export async function POST(request: NextRequest) {

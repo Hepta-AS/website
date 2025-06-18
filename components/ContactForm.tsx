@@ -35,7 +35,7 @@ interface Step {
 
 export function ContactForm() {
   const [formData, setFormData] = useState<FormData>({
-    name: "", email: "", message: "Vi bruker referanser, sosiale medier og direktemarkedsføring for å nå nye kunder.",
+    name: "", email: "", message: "",
     firstName: "", lastName: "", company: "", website: "", phone: "", noWebsite: false
   });
   const [activeStep, setActiveStep] = useState(0);

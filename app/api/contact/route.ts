@@ -85,6 +85,7 @@ export async function POST(request: NextRequest) {
     const emailHost = process.env.EMAIL_HOST || 'smtp-relay2.webhuset.no';
     const emailPort = parseInt(process.env.EMAIL_PORT || '587', 10);
     const emailSecure = process.env.EMAIL_SECURE === 'true' || emailPort === 465;
+    const emailFrom = process.env.EMAIL_FROM || 'Hepta';
 
     // Log configuration (without the password)
     console.log('API: Email configuration after processing:', {
@@ -92,7 +93,8 @@ export async function POST(request: NextRequest) {
       port: emailPort,
       secure: emailSecure,
       user: emailUser,
-      hasPassword: !!emailPassword
+      hasPassword: !!emailPassword,
+      from: emailFrom
     });
 
     // ENHANCED: Log mode decision
@@ -161,7 +163,7 @@ export async function POST(request: NextRequest) {
 
         // ENHANCED: Log mail options
         const mailOptions = {
-          from: `Hepta <${emailUser}>`,
+          from: `"${emailFrom}" <${emailUser}>`,
           to: emailUser,
           subject: `Kontaktskjema: ${name}`,
           text: `Navn: ${name}\nE-post: ${email}\nTelefon: ${phone || 'Ikke oppgitt'}\n${formattedMessage}`
@@ -232,7 +234,8 @@ export async function POST(request: NextRequest) {
             website,
             phone
           },
-          emailUser
+          emailUser,
+          emailFrom
       );
     } catch (verifyError) {
       console.error('API: SMTP verification or sending failed:', verifyError);
@@ -252,7 +255,8 @@ export async function POST(request: NextRequest) {
               website,
               phone
             },
-            emailUser
+            emailUser,
+            emailFrom
         );
       } catch (sendError) {
         console.error('API: Alternative approach also failed:', sendError);
@@ -281,7 +285,8 @@ export async function POST(request: NextRequest) {
                   website,
                   phone
                 },
-                emailUser
+                emailUser,
+                emailFrom
             );
           } catch (noAuthError) {
             console.error('API: Even no-auth approach failed:', noAuthError);
@@ -317,7 +322,7 @@ export async function POST(request: NextRequest) {
 
           // Send with test account
           const info = await testTransporter.sendMail({
-            from: `Hepta <${emailUser}>`,
+            from: `"${emailFrom}" <${emailUser}>`,
             to: emailUser,
             subject: `Kontaktskjema: ${name}`,
             text: `Navn: ${name}\nE-post: ${email}\nTelefon: ${phone || 'Ikke oppgitt'}\n${formattedMessage}`,
@@ -382,7 +387,8 @@ function formatMessageWithAllFields({ message, firstName, lastName, company, web
 async function sendEmail(
   transporter: nodemailer.Transporter,
   formData: FormData,
-  fromEmail: string
+  fromEmail: string,
+  fromName: string
 ) {
   const {
     name,
@@ -400,8 +406,8 @@ async function sendEmail(
 
     // Log the full mail configuration
     const mailOptions = {
-      from: `Hepta <${fromEmail}>`,
-      to: fromEmail,
+      from: `"${fromName}" <${fromEmail}>`,
+      to: process.env.EMAIL_TO || fromEmail, // Use EMAIL_TO from env, fallback to fromEmail
       replyTo: email,
       subject: `Kontaktskjema: ${name}`
     };
@@ -462,7 +468,7 @@ async function sendEmail(
       console.log('API: Sending auto-reply to', email);
 
       await transporter.sendMail({
-        from: `Hepta <${fromEmail}>`,
+        from: `"${fromName}" <${fromEmail}>`,
         to: email, // Sending to the visitor's email
         subject: 'Takk for din henvendelse til Hepta',
         text: `

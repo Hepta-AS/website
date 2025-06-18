@@ -9,7 +9,7 @@ import { ConfirmationEmail } from '@/components/emails/ConfirmationEmail';
 const resend = new Resend(process.env.RESEND_API_KEY);
 // Use EMAIL_USER for the 'from' address as it's a valid email. EMAIL_FROM is used as the 'from name'.
 const fromEmail = process.env.EMAIL_USER || 'onboarding@resend.dev';
-const toEmail = process.env.EMAIL_TO || 'delivered@resend.dev'; // Default for safety, should be set in .env
+const notificationRecipientEmail = process.env.EMAIL_USER || 'delivered@resend.dev'; // Your notification email address
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     // Send notification email to yourself
     const { data: notificationData, error: notificationError } = await resend.emails.send({
       from: `Hepta Kontaktskjema <${fromEmail}>`,
-      to: toEmail,
+      to: notificationRecipientEmail,
       subject: `Ny henvendelse fra: ${name}`,
       replyTo: email,
       react: NotificationEmail({ name, email, phone, company, website, message, firstName, lastName })

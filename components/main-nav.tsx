@@ -52,30 +52,19 @@ export function MainNav() {
 
   return (
     <>
-      <div className="fixed top-0 left-0 w-full z-50 bg-neutral-950 border-b px-4 md:px-6 py-2 shadow-sm flex items-center justify-between">
+      <div className="fixed top-0 left-0 w-full z-50 bg-neutral-950/80 backdrop-blur-sm border-b border-neutral-800 px-4 md:px-6 py-2 shadow-sm flex items-center justify-between">
         {/* Logo */}
-<div className="flex items-center px-3 py-2 md:px-4 rounded-r-lg h-full shadow-md">
-  <button
-    onClick={() => {
-      setIsLoginModalOpen(false);
-      setIsMobileMenuOpen(false);
-      window.location.href = "/"; // ✅ Full reload
-    }}
-    className="flex items-center mr-3 group"
-    aria-label="Hepta Hjem"
-  >
-    <div className="relative h-5 w-auto aspect-[4/1]">
-      <Image
-        src="/A_white_hepta.png"
-        alt="Hepta Logo"
-        fill
-        className="object-contain"
-        priority
-      />
-    </div>
-  </button>
-</div>
-
+        <Link href="/" className="flex items-center" aria-label="Hepta Hjem">
+          <div className="relative h-5 w-auto aspect-[4/1]">
+            <Image
+              src="/A_white_hepta.png"
+              alt="Hepta Logo"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+        </Link>
 
         {/* Desktop Links */}
         <nav className="hidden md:flex items-center gap-4 ml-4">
@@ -118,46 +107,50 @@ export function MainNav() {
             variant="ghost"
             size="icon"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-white"
+            className="text-white hover:bg-neutral-800"
           >
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </Button>
         </div>
       </div>
 
       {/* Mobile Menu Panel */}
       {isMobileMenuOpen && (
-        <div className="fixed top-14 left-0 w-full bg-neutral-950 border-t border-neutral-800 px-6 py-4 z-40 md:hidden shadow-lg animate-fade-in space-y-4">
-          <div className="flex flex-col gap-3">
+        <div 
+          className="fixed inset-0 top-16 bg-neutral-950 z-40 md:hidden flex flex-col items-center justify-center animate-fade-in"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          <nav className="flex flex-col items-center gap-8 text-center">
             {isLoggedIn ? (
               <>
-                <Link href="/" className={getLinkClass("/")} onClick={() => setIsMobileMenuOpen(false)}>Hjem</Link>
-                <Link href="/dashboard" className={getLinkClass("/dashboard")} onClick={() => setIsMobileMenuOpen(false)}>Dashboard</Link>
+                <Link href="/" className={`${getLinkClass("/")} text-2xl`}>Hjem</Link>
+                <Link href="/dashboard" className={`${getLinkClass("/dashboard")} text-2xl`}>Dashboard</Link>
               </>
             ) : (
               <>
-                <Link href="/" className={getLinkClass("/")} onClick={() => setIsMobileMenuOpen(false)}>Hjem</Link>
-                <Link href="/tjenester" className={getLinkClass("/tjenester")} onClick={() => setIsMobileMenuOpen(false)}>Tjenester</Link>
-                <Link href="/om-oss" className={getLinkClass("/om-oss")} onClick={() => setIsMobileMenuOpen(false)}>Om oss</Link>
+                <Link href="/" className={`${getLinkClass("/")} text-2xl`}>Hjem</Link>
+                <Link href="/tjenester" className={`${getLinkClass("/tjenester")} text-2xl`}>Tjenester</Link>
+                <Link href="/om-oss" className={`${getLinkClass("/om-oss")} text-2xl`}>Om oss</Link>
               </>
             )}
-          </div>
-
-          <div className="flex flex-col gap-3 pt-2">
-            <button
-              onClick={() => {
-                // If using context or lifting state, make sure modals are closed
-                window.location.href = "/"; // reliable fallback for resetting
-              }}
-              className="flex items-center mr-3 group"
-              aria-label="Hepta Hjem"
-            >
-              <div className="relative h-5 w-auto aspect-[4/1]">
-                <Image src="/A_white_hepta.png" alt="Hepta Logo" layout="fill" objectFit="contain" priority />
-              </div>
-            </button>
-
-          </div>
+            <div className="mt-8 flex flex-col gap-4 w-full px-8">
+              <Button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-full text-base w-full"
+                onClick={handleContactClick}
+              >
+                Kontakt
+              </Button>
+              <Button
+                className={`${isLoggedIn
+                    ? "bg-neutral-700 hover:bg-neutral-600 text-white"
+                    : "bg-white hover:bg-gray-200 text-blue-700"
+                  } font-medium px-6 py-3 rounded-full text-base w-full`}
+                onClick={isLoggedIn ? handleLogoutClick : handleLoginClick}
+              >
+                {isLoggedIn ? "Logg ut" : "Logg inn"}
+              </Button>
+            </div>
+          </nav>
         </div>
       )}
 

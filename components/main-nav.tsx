@@ -117,25 +117,25 @@ export function MainNav() {
       {/* Mobile Menu Panel */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 top-16 bg-neutral-950 z-40 md:hidden flex flex-col items-center justify-center animate-fade-in"
+          className="fixed inset-0 top-14 bg-neutral-950 z-40 md:hidden flex flex-col items-center justify-center animate-fade-in"
           onClick={() => setIsMobileMenuOpen(false)}
         >
           <nav className="flex flex-col items-center gap-8 text-center">
             {isLoggedIn ? (
               <>
-                <Link href="/" className={`${getLinkClass("/")} text-2xl`}>Hjem</Link>
-                <Link href="/dashboard" className={`${getLinkClass("/dashboard")} text-2xl`}>Dashboard</Link>
+                <Link href="/" className={`${getLinkClass("/")} text-3xl`}>Hjem</Link>
+                <Link href="/dashboard" className={`${getLinkClass("/dashboard")} text-3xl`}>Dashboard</Link>
               </>
             ) : (
               <>
-                <Link href="/" className={`${getLinkClass("/")} text-2xl`}>Hjem</Link>
-                <Link href="/tjenester" className={`${getLinkClass("/tjenester")} text-2xl`}>Tjenester</Link>
-                <Link href="/om-oss" className={`${getLinkClass("/om-oss")} text-2xl`}>Om oss</Link>
+                <Link href="/" className={`${getLinkClass("/")} text-3xl`}>Hjem</Link>
+                <Link href="/tjenester" className={`${getLinkClass("/tjenester")} text-3xl`}>Tjenester</Link>
+                <Link href="/om-oss" className={`${getLinkClass("/om-oss")} text-3xl`}>Om oss</Link>
               </>
             )}
-            <div className="mt-8 flex flex-col gap-4 w-full px-8">
+            <div className="mt-8 flex flex-col gap-4 w-full px-8 max-w-xs">
               <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-full text-base w-full"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-md text-base w-full"
                 onClick={handleContactClick}
               >
                 Kontakt
@@ -144,7 +144,7 @@ export function MainNav() {
                 className={`${isLoggedIn
                     ? "bg-neutral-700 hover:bg-neutral-600 text-white"
                     : "bg-white hover:bg-gray-200 text-blue-700"
-                  } font-medium px-6 py-3 rounded-full text-base w-full`}
+                  } font-medium px-6 py-3 rounded-md text-base w-full`}
                 onClick={isLoggedIn ? handleLogoutClick : handleLoginClick}
               >
                 {isLoggedIn ? "Logg ut" : "Logg inn"}

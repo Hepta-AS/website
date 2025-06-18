@@ -59,18 +59,13 @@ export const TextAndImage: React.FC<TextAndImageProps> = ({
   );
 
   return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
-        {imageOnLeft ? (
-            <>
-              {imageContent}
-              {textContent}
-            </>
-        ) : (
-            <>
-              {textContent}
-              {imageContent}
-            </>
-        )}
+      <div className="flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-16 items-center">
+        <div className={`w-full md:w-1/2 ${imageOnLeft ? 'md:order-2' : 'md:order-1'}`}>
+          {textContent}
+        </div>
+        <div className={`w-full md:w-1/2 ${imageOnLeft ? 'md:order-1' : 'md:order-2'}`}>
+          {imageContent}
+        </div>
       </div>
   );
 };

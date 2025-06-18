@@ -2,14 +2,16 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { NotificationEmail } from '@/components/emails/NotificationEmail';
+import { ConfirmationEmail } from '@/components/emails/ConfirmationEmail';
 
 // Initialize the Resend client with the API key from environment variables
 const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.EMAIL_FROM || 'hey@hepta.biz';
-const toEmail = process.env.EMAIL_TO || 'hey@hepta.biz';
+const fromEmail = process.env.EMAIL_FROM || 'onboarding@resend.dev'; // Default for safety, should be set in .env
+const toEmail = process.env.EMAIL_TO || 'delivered@resend.dev'; // Default for safety, should be set in .env
 
 export async function POST(request: NextRequest) {
-  console.log('API: Contact endpoint hit with Resend');
+  console.log('API: Contact endpoint hit with Resend (React Templates)');
 
   try {
     const body = await request.json();
@@ -35,31 +37,6 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // --- Prepare Email Content ---
-    const emailHtml = `
-      <div>
-        <h2>Ny henvendelse fra ${name}</h2>
-        <p><b>Fornavn:</b> ${firstName || 'Ikke oppgitt'}</p>
-        <p><b>Etternavn:</b> ${lastName || 'Ikke oppgitt'}</p>
-        <p><b>E-post:</b> ${email}</p>
-        <p><b>Telefon:</b> ${phone || 'Ikke oppgitt'}</p>
-        <p><b>Selskap:</b> ${company || 'Ikke oppgitt'}</p>
-        <p><b>Nettside:</b> ${website || 'Ikke oppgitt'}</p>
-        <hr />
-        <h3>Melding:</h3>
-        <p>${message.replace(/\n/g, '<br>')}</p>
-      </div>
-    `;
-
-    const confirmationHtml = `
-      <div>
-        <h1>Takk for din henvendelse, ${firstName || name}!</h1>
-        <p>Vi har mottatt meldingen din og vil ta kontakt med deg så snart som mulig.</p>
-        <p>Med vennlig hilsen,</p>
-        <p><b>Hepta-teamet</b></p>
-      </div>
-    `;
-
     // --- Send Emails via Resend ---
     console.log(`API: Sending notification email to ${toEmail}`);
 
@@ -68,8 +45,17 @@ export async function POST(request: NextRequest) {
       from: `Hepta Kontaktskjema <${fromEmail}>`,
       to: toEmail,
       subject: `Ny henvendelse fra: ${name}`,
-      html: emailHtml,
       replyTo: email,
+      react: NotificationEmail({
+        name,
+        email,
+        phone,
+        company,
+        website,
+        message,
+        firstName,
+        lastName,
+      })
     });
     console.log('API: Notification email sent:', notificationEmail);
 
@@ -80,7 +66,7 @@ export async function POST(request: NextRequest) {
       from: `Hepta <${fromEmail}>`,
       to: email,
       subject: 'Vi har mottatt din henvendelse',
-      html: confirmationHtml,
+      react: ConfirmationEmail({ name: firstName || name })
     });
     console.log('API: Confirmation email sent:', confirmationEmail);
 
@@ -93,7 +79,6 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('API: Error processing request:', error);
-    // In case of an error, check if it's a Resend specific error
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
     return NextResponse.json({
       error: 'Failed to send email.',

@@ -1,4 +1,3 @@
-// components/ContactForm.tsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -121,13 +120,9 @@ export function ContactForm() {
     } else if (currentStepData.id === "website" && !formData.noWebsite && formData.website && !isValidUrl(formData.website)) {
       stepError = "Vennligst skriv inn en gyldig nettside-URL (inkluder http:// eller https://).";
       fieldToFocus = inputRefs.current[activeStep];
-    } else if (currentStepData.isRequired && !Array.isArray(currentStepData.formField)) {
-      const field = currentStepData.formField;
-      const value = formData[field];
-      if (typeof value === 'string' && !value.trim()) {
-        stepError = `"${currentStepData.label}" er et påkrevd felt.`;
-        fieldToFocus = inputRefs.current[activeStep];
-      }
+    } else if (currentStepData.isRequired && !Array.isArray(currentStepData.formField) && !formData[currentStepData.formField as keyof FormData].trim()) {
+      stepError = `"${currentStepData.label}" er et påkrevd felt.`;
+      fieldToFocus = inputRefs.current[activeStep];
     }
 
     setError(stepError);
@@ -317,7 +312,7 @@ export function ContactForm() {
                                           id={step.id}
                                           name={Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData}
                                           type={step.type || "text"}
-                                          value={formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] as string}
+                                          value={formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData]}
                                           onChange={handleChange}
                                           placeholder={step.placeholder as string}
                                           required={step.isRequired}
@@ -326,7 +321,7 @@ export function ContactForm() {
                                           disabled={formData.noWebsite}
                                       />
                                       <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-700">
-                                        <div className="h-full bg-white transition-all duration-300" style={{ width: (formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] as string) ? `${Math.min(100, (formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] as string).length * 5)}%` : '0%' }} />
+                                        <div className="h-full bg-white transition-all duration-300" style={{ width: formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] ? `${Math.min(100, formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData].length * 5)}%` : '0%' }} />
                                       </div>
                                     </div>
 
@@ -350,9 +345,9 @@ export function ContactForm() {
                                     </div>
                                   </div>
                               ) : step.multiline ? (
-                                  <div className="relative"><textarea ref={el => inputRefs.current[index] = el} id={step.id} name={Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData} value={formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] as string} onChange={handleChange} placeholder={step.placeholder as string} rows={3} required={step.isRequired} onKeyDown={handleKeyDown} className="w-full bg-transparent border-0 border-b-2 border-gray-700 focus:ring-0 focus:border-white text-base sm:text-lg pb-1 placeholder-gray-500 min-h-[80px] sm:min-h-[100px] resize-y" /><div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-700"><div className="h-full bg-white transition-all duration-300" style={{ width: (formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] as string) ? `${Math.min(100, (formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] as string).length / 1.5)}%` : '0%' }} /></div></div>
+                                  <div className="relative"><textarea ref={el => inputRefs.current[index] = el} id={step.id} name={Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData} value={formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData]} onChange={handleChange} placeholder={step.placeholder as string} rows={3} required={step.isRequired} onKeyDown={handleKeyDown} className="w-full bg-transparent border-0 border-b-2 border-gray-700 focus:ring-0 focus:border-white text-base sm:text-lg pb-1 placeholder-gray-500 min-h-[80px] sm:min-h-[100px] resize-y" /><div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-700"><div className="h-full bg-white transition-all duration-300" style={{ width: formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] ? `${Math.min(100, formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData].length / 1.5)}%` : '0%' }} /></div></div>
                               ) : (
-                                  <div className="relative"><input ref={el => inputRefs.current[index] = el} id={step.id} name={Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData} type={step.type || "text"} value={formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] as string} onChange={handleChange} placeholder={step.placeholder as string} required={step.isRequired} onKeyDown={handleKeyDown} className="w-full bg-transparent border-0 border-b-2 border-gray-700 focus:ring-0 focus:border-white h-10 sm:h-12 text-base sm:text-lg pb-1 placeholder-gray-500" /><div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-700"><div className="h-full bg-white transition-all duration-300" style={{ width: (formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] as string) ? `${Math.min(100, (formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] as string).length * 5)}%` : '0%' }} /></div></div>
+                                  <div className="relative"><input ref={el => inputRefs.current[index] = el} id={step.id} name={Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData} type={step.type || "text"} value={formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData]} onChange={handleChange} placeholder={step.placeholder as string} required={step.isRequired} onKeyDown={handleKeyDown} className="w-full bg-transparent border-0 border-b-2 border-gray-700 focus:ring-0 focus:border-white h-10 sm:h-12 text-base sm:text-lg pb-1 placeholder-gray-500" /><div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-700"><div className="h-full bg-white transition-all duration-300" style={{ width: formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData] ? `${Math.min(100, formData[Array.isArray(step.formField) ? step.formField[0] : step.formField as keyof FormData].length * 5)}%` : '0%' }} /></div></div>
                               )}
 
                               {error && (
@@ -406,4 +401,4 @@ export function ContactForm() {
   );
 }
 
-export default ContactForm;
+export default ContactForm; 

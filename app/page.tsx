@@ -194,10 +194,10 @@ export default function Home() {
         <section ref={triggerSectionRef} className="py-16 sm:py-24 lg:py-32">
           <div className="container mx-auto px-4">
             <div className="mb-16 md:mb-24">
-              <TextAndImage {...section1Data} imageOnLeft={false} />
+              <TextAndImage {...section1Data} imageOnLeft={false} useDarkText={shouldPageBeWhite} />
             </div>
             <div>
-              <TextAndImage {...section2Data} imageOnLeft={true} />
+              <TextAndImage {...section2Data} imageOnLeft={true} useDarkText={shouldPageBeWhite} />
             </div>
           </div>
         </section>

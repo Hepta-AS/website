@@ -111,7 +111,7 @@ export async function middleware(request: NextRequest) {
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", session.user.id)
+        .eq("user_id", session.user.id)
         .single()
 
       if (error || !profile || profile.role !== "admin") {

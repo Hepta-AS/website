@@ -4,13 +4,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { MainNav } from "@/components/main-nav";
-import { AuthProvider } from "@/contexts/auth-context";
 import { Footer } from "@/components/footer";
 import { ProgressBar } from "@/components/progress-bar";
 import { Analytics } from "@vercel/analytics/react";
 import { CookieConsent } from "@/components/cookie-consent";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,19 +23,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="no" suppressHydrationWarning className="h-full overflow-x-hidden">
             <body className={`${inter.className} h-full bg-background text-foreground overflow-x-hidden`}>
                 <ProgressBar />
-                <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-                    <AuthProvider>
-                        <div className="flex flex-col min-h-screen">
-                            <MainNav />
-                            <main className="flex-grow overflow-x-hidden w-full relative">
-                                <Suspense fallback={<div>Loading...</div>}>
-                                    {children}
-                                </Suspense>
-                            </main>
-                            <Footer />
-                        </div>
-                    </AuthProvider>
-                </ThemeProvider>
+                <Providers>
+                    <div className="flex flex-col min-h-screen">
+                        <MainNav />
+                        <main className="flex-grow overflow-x-hidden w-full relative">
+                            <Suspense fallback={<div>Loading...</div>}>
+                                {children}
+                            </Suspense>
+                        </main>
+                        <Footer />
+                    </div>
+                </Providers>
                 <CookieConsent />
                 <Analytics />
             </body>

@@ -146,10 +146,8 @@ export default function Home() {
           />
           <div className="container mx-auto px-4 relative z-10 flex-grow flex flex-col items-center justify-end sm:justify-center py-10 sm:py-16 max-w-[100vw]">
             <div className="mx-auto max-w-[800px] text-center">
-              <h1 className="animate-fade-in bg-gradient-to-br from-white to-gray-400 bg-clip-text text-5xl font-extrabold leading-tight tracking-tight text-transparent sm:text-6xl md:text-7xl">
-                Transform your
-                <br />
-                digital presence
+              <h1 className="animate-fade-in text-white text-5xl font-serif leading-tight tracking-tight sm:text-6xl md:text-7xl">
+                Vi løser samfunnsutfordringer
               </h1>
             </div>
           </div>

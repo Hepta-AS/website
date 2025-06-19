@@ -111,75 +111,70 @@ export const AuthProvider = ({
   const checkAuth = useCallback(async () => {
     console.log("Checking auth state...")
 
-    // First check for a session cookie
-    const sessionCookie = getCookie("session")
-    if (sessionCookie === "authenticated") {
-      console.log("Found authenticated session cookie")
-    }
-
-    // First check for a test session
+    // First check for a test session from localStorage
     const testSession = getLocalStorage("testSession")
-    if (testSession) {
+    if (testSession && typeof testSession === "object" && testSession !== null && "user" in testSession) {
       try {
-        console.log("Found test session:", testSession)
-        setUser(testSession.user as User)
-        setSessionToken(testSession.token)
-        setUserRole(testSession.user.role || "customer") // Set role from test session
-
-        // Set a cookie to indicate we have a test session
+        console.log("Found valid test session:", testSession)
+        const testUser = testSession.user as User
+        setUser(testUser)
+        setSessionToken(testSession.token as string)
+        // @ts-ignore
+        setUserRole(testUser.role || "customer") // Set role from test session
         document.cookie = "hasTestSession=true; path=/"
-
-        return { isLoggedIn: true, user: testSession.user as User }
+        return { isLoggedIn: true, user: testUser }
       } catch (error) {
         console.error("Error parsing test session:", error)
         removeLocalStorage("testSession")
       }
     }
 
-    // If no test session, check Supabase
+    // If no test session, check Supabase for a real session
     const {
       data: { session },
+      error: sessionError,
     } = await supabase.auth.getSession()
 
-    console.log("Auth session:", session ? "Exists" : "None")
+    if (sessionError) {
+      console.error("Error getting session:", sessionError)
+      return { isLoggedIn: false, user: null }
+    }
 
     if (session) {
-      console.log("Setting logged in state to true")
+      console.log("Setting logged in state to true for user:", session.user.id)
       setUser(session.user)
       setSessionToken(session.access_token)
-
-      // Set session cookie
       document.cookie = `session=authenticated; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict; Secure`
 
-      // Fetch user role from profiles table
-      try {
-        const { data: profile, error } = await supabase
-          .from("profiles")
-          .select("role, stripe_customer_id")
-          .eq("user_id", session.user.id)
-          .single()
+      // Fetch user profile from Supabase
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role, stripe_customer_id")
+        .eq("user_id", session.user.id)
+        .single()
 
-        if (!error && profile) {
-          setUserRole(profile.role || "customer")
-          setStripeCustomerId(profile.stripe_customer_id)
-          if (!profile?.stripe_customer_id) {
-            const newCustomerId = await ensureStripeCustomer(session.user)
-            if (newCustomerId) {
-              setStripeCustomerId(newCustomerId)
-            }
-          }
-        } else {
-          setUserRole("customer") // Default role
-          setStripeCustomerId(null)
+      if (profileError && profileError.code !== "PGRST116") {
+        console.error("Error fetching user profile:", profileError)
+        // Don't block login if profile fetch fails, but log the error
+        setUserRole("customer") // Default role
+        setStripeCustomerId(null)
+      } else if (profile) {
+        console.log("Profile found:", profile)
+        setUserRole(profile.role || "customer")
+        setStripeCustomerId(profile.stripe_customer_id)
+
+        // If stripe_customer_id is missing, create it
+        if (!profile.stripe_customer_id) {
+          console.log("Stripe customer ID missing, creating one...")
           const newCustomerId = await ensureStripeCustomer(session.user)
           if (newCustomerId) {
             setStripeCustomerId(newCustomerId)
           }
         }
-      } catch (error) {
-        console.error("Error fetching user role:", error)
+      } else {
+        // Profile not found, this might be a new user
+        console.log("No profile found for user, treating as new user.")
         setUserRole("customer") // Default role
-        setStripeCustomerId(null)
         const newCustomerId = await ensureStripeCustomer(session.user)
         if (newCustomerId) {
           setStripeCustomerId(newCustomerId)
@@ -191,8 +186,6 @@ export const AuthProvider = ({
       setSessionToken(null)
       setUserRole(null)
       setStripeCustomerId(null)
-
-      // Clear session cookie
       document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure"
     }
 

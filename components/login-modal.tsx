@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
+import { useRouter } from "next/navigation"
 
 interface LoginModalProps {
   isOpen: boolean
@@ -25,6 +26,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { login } = useAuth()
+  const router = useRouter()
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -38,7 +40,8 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     try {
       await login(email, password)
       onClose()
-      window.location.href = "/dashboard"
+      router.push("/dashboard")
+      router.refresh()
     } catch (err: any) {
       console.error("Login failed:", err)
       setError(err.message || "An unknown error occurred.")

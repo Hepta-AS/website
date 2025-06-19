@@ -122,8 +122,7 @@ export default function Home() {
       <div className="space-y-32 overflow-x-hidden">
         {/* HERO SECTION */}
         <section
-          className="relative flex flex-col overflow-hidden"
-          style={{ minHeight: `calc(100vh - ${mainNavHeight})` }}
+          className="relative flex flex-col overflow-hidden h-[70vh] md:h-[60vh]"
         >
           <div
             className={`absolute inset-0 z-0 ${
@@ -136,10 +135,10 @@ export default function Home() {
             fill
             priority
             quality={100}
-            className="object-cover opacity-30 z-0"
+            className="object-cover opacity-50 z-0"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-black/30 z-0" />
+          <div className="absolute inset-0 bg-black/20 z-0" />
           <div
             className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent ${
               shouldPageBeWhite ? "to-white dark:to-gray-100" : "to-gray-900 dark:to-black"
@@ -152,20 +151,6 @@ export default function Home() {
                 <br />
                 digital presence
               </h1>
-              <div className="mt-12 flex justify-center gap-4">
-                <Button
-                  className={`animate-fade-in h-14 px-8 text-lg [animation-delay:400ms] ${
-                    shouldPageBeWhite
-                      ? "bg-slate-800 hover:bg-slate-700 text-white"
-                      : "bg-white hover:bg-gray-200 text-slate-900"
-                  }`}
-                  size="lg"
-                  onClick={handleServiceNavigation}
-                >
-                  se tjenester
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </div>
             </div>
           </div>
         </section>

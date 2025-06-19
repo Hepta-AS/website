@@ -41,16 +41,13 @@ export async function GET() { // Funksjonen er allerede async, så vi kan bruke 
     const stateCookie = `tiktok_auth_state=${state}; Path=/; HttpOnly; SameSite=Lax; Max-Age=300; Secure=${process.env.NODE_ENV === 'production'};`;
     const verifierCookie = `tiktok_code_verifier=${code_verifier}; Path=/; HttpOnly; SameSite=Lax; Max-Age=300; Secure=${process.env.NODE_ENV === 'production'};`;
 
-    const scopes = [
-        // ... dine scopes ...
-        "user.info.basic", "biz.creator.info", "biz.creator.insights", "video.list",
-        "tcm.order.update", "user.info.username", "user.info.stats", "user.info.profile",
-        "user.account.type", "user.insights", "video.insights", "comment.list",
-        "comment.list.manage", "video.publish", "video.upload", "biz.spark.auth"
-    ].join(',');
+    // Following the troubleshooting advice, we are simplifying the scopes to the most basic one.
+    // This is the most likely cause of sandbox mode failure.
+    // Ensure 'user.info.basic' is enabled for your app in the TikTok Developer Portal.
+    const scopes = "user.info.basic";
 
     const authorizationUrl = new URL('https://www.tiktok.com/v2/auth/authorize');
-    authorizationUrl.searchParams.append('client_key', clientKey); // clientKey bør være definert her
+    authorizationUrl.searchParams.append('client_key', clientKey);
     authorizationUrl.searchParams.append('scope', scopes);
     authorizationUrl.searchParams.append('response_type', 'code');
     authorizationUrl.searchParams.append('redirect_uri', redirectUri);

@@ -12,6 +12,7 @@ export type AuthContextType = {
   user: User | null
   sessionToken: string | null
   userRole: string | null
+  stripeCustomerId: string | null
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<{ isLoggedIn: boolean; user: User | null }>
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   sessionToken: null,
   userRole: null,
+  stripeCustomerId: null,
   login: async () => {},
   logout: async () => {},
   checkAuth: async () => ({ isLoggedIn: false, user: null }),
@@ -65,6 +67,7 @@ export const AuthProvider = ({
   const [user, setUser] = useState<User | null>(null)
   const [sessionToken, setSessionToken] = useState<string | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
+  const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null)
   const [supabase] = useState(() => createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -126,11 +129,6 @@ export const AuthProvider = ({
         // Set a cookie to indicate we have a test session
         document.cookie = "hasTestSession=true; path=/"
 
-        // Ensure the test user has a Stripe customer ID
-        if (process.env.NODE_ENV === "development") {
-          ensureStripeCustomer(testSession.user as User)
-        }
-
         return { isLoggedIn: true, user: testSession.user as User }
       } catch (error) {
         console.error("Error parsing test session:", error)
@@ -157,27 +155,42 @@ export const AuthProvider = ({
       try {
         const { data: profile, error } = await supabase
           .from("profiles")
-          .select("role")
+          .select("role, stripe_customer_id")
           .eq("id", session.user.id)
           .single()
 
         if (!error && profile) {
           setUserRole(profile.role || "customer")
+          setStripeCustomerId(profile.stripe_customer_id)
+          if (!profile?.stripe_customer_id) {
+            const newCustomerId = await ensureStripeCustomer(session.user)
+            if (newCustomerId) {
+              setStripeCustomerId(newCustomerId)
+            }
+          }
         } else {
           setUserRole("customer") // Default role
+          setStripeCustomerId(null)
+          const newCustomerId = await ensureStripeCustomer(session.user)
+          if (newCustomerId) {
+            setStripeCustomerId(newCustomerId)
+          }
         }
       } catch (error) {
         console.error("Error fetching user role:", error)
         setUserRole("customer") // Default role
+        setStripeCustomerId(null)
+        const newCustomerId = await ensureStripeCustomer(session.user)
+        if (newCustomerId) {
+          setStripeCustomerId(newCustomerId)
+        }
       }
-
-      // Ensure the user has a Stripe customer ID
-      ensureStripeCustomer(session.user)
     } else {
       console.log("Setting logged in state to false")
       setUser(null)
       setSessionToken(null)
       setUserRole(null)
+      setStripeCustomerId(null)
 
       // Clear session cookie
       document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure"
@@ -210,12 +223,44 @@ export const AuthProvider = ({
 
         // Set session cookie
         document.cookie = `session=authenticated; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict; Secure`
+
+        try {
+          const { data: profile, error } = await supabase
+            .from("profiles")
+            .select("role, stripe_customer_id")
+            .eq("id", session.user.id)
+            .single()
+
+          if (!error && profile) {
+            setUserRole(profile.role || "customer")
+            setStripeCustomerId(profile.stripe_customer_id)
+          } else {
+            setUserRole("customer")
+            setStripeCustomerId(null)
+          }
+          if (!profile?.stripe_customer_id) {
+            const newCustomerId = await ensureStripeCustomer(session.user)
+            if (newCustomerId) {
+              setStripeCustomerId(newCustomerId)
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error)
+          setUserRole("customer")
+          setStripeCustomerId(null)
+          const newCustomerId = await ensureStripeCustomer(session.user)
+          if (newCustomerId) {
+            setStripeCustomerId(newCustomerId)
+          }
+        }
       } else {
         // Don't log out if we have a test session
         if (!getLocalStorage("testSession")) {
           console.log("Auth state change: User logged out")
           setUser(null)
           setSessionToken(null)
+          setUserRole(null)
+          setStripeCustomerId(null)
           removeLocalStorage("sessionToken")
 
           // Clear session cookie
@@ -319,6 +364,7 @@ export const AuthProvider = ({
     setUser(null)
     setSessionToken(null)
     setUserRole(null)
+    setStripeCustomerId(null)
 
     // Redirect to home
     router.push("/")
@@ -330,6 +376,7 @@ export const AuthProvider = ({
         user,
         sessionToken,
         userRole,
+        stripeCustomerId,
         login,
         logout,
         checkAuth,

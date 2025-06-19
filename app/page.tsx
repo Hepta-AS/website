@@ -122,7 +122,7 @@ export default function Home() {
       <div className="space-y-32 overflow-x-hidden">
         {/* HERO SECTION */}
         <section
-          className="relative flex flex-col overflow-hidden h-[70vh] md:h-[60vh]"
+          className="relative flex flex-col overflow-hidden h-screen"
         >
           <div
             className={`absolute inset-0 z-0 ${
@@ -135,21 +135,19 @@ export default function Home() {
             fill
             priority
             quality={100}
-            className="object-cover opacity-50 z-0"
+            className="object-cover opacity-70 z-0"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-black/20 z-0" />
+          <div className="absolute inset-0 bg-black/60 z-0" />
           <div
             className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent ${
               shouldPageBeWhite ? "to-white dark:to-gray-100" : "to-gray-900 dark:to-black"
             } z-0`}
           />
-          <div className="container mx-auto px-4 relative z-10 flex-grow flex flex-col items-center justify-end sm:justify-center py-10 sm:py-16 max-w-[100vw]">
-            <div className="mx-auto max-w-[800px] text-center">
-              <h1 className="animate-fade-in text-white text-5xl font-serif leading-tight tracking-tight sm:text-6xl md:text-7xl">
-                Vi løser samfunnsutfordringer
-              </h1>
-            </div>
+          <div className="absolute left-0 w-full top-[60%] md:top-1/2 -translate-y-1/4 md:-translate-y-1/2 z-10 px-6 sm:px-12">
+            <h1 className="font-serif text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-tight tracking-tight drop-shadow-lg text-left select-none opacity-0 animate-fade-in">
+              Vi hjelper deg med å ta det neste steget
+            </h1>
           </div>
         </section>
 

@@ -213,47 +213,9 @@ export const AuthProvider = ({
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", { event, session })
-      if (session) {
-        console.log("Auth state change: User logged in")
-        setUser(session.user)
-        setSessionToken(session.access_token)
-
-        // Store session token in localStorage for easy access
-        setLocalStorage("sessionToken", session.access_token)
-
-        // Set session cookie
-        document.cookie = `session=authenticated; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict; Secure`
-
-        try {
-          const { data: profile, error } = await supabase
-            .from("profiles")
-            .select("role, stripe_customer_id")
-            .eq("id", session.user.id)
-            .single()
-
-          if (!error && profile) {
-            setUserRole(profile.role || "customer")
-            setStripeCustomerId(profile.stripe_customer_id)
-          } else {
-            setUserRole("customer")
-            setStripeCustomerId(null)
-          }
-          if (!profile?.stripe_customer_id) {
-            const newCustomerId = await ensureStripeCustomer(session.user)
-            if (newCustomerId) {
-              setStripeCustomerId(newCustomerId)
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching user profile:", error)
-          setUserRole("customer")
-          setStripeCustomerId(null)
-          const newCustomerId = await ensureStripeCustomer(session.user)
-          if (newCustomerId) {
-            setStripeCustomerId(newCustomerId)
-          }
-        }
-      } else {
+      if (event === "SIGNED_IN") {
+        await checkAuth()
+      } else if (event === "SIGNED_OUT") {
         // Don't log out if we have a test session
         if (!getLocalStorage("testSession")) {
           console.log("Auth state change: User logged out")

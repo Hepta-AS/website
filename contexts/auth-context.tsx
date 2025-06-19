@@ -290,18 +290,7 @@ export const AuthProvider = ({
 
       console.log("Login successful:", data.session ? "Session exists" : "No session")
 
-      if (data.session) {
-        setUser(data.session.user)
-        setSessionToken(data.session.access_token)
-
-        // Store session token in localStorage for easy access
-        setLocalStorage("sessionToken", data.session.access_token)
-
-        // Set session cookie
-        document.cookie = `session=authenticated; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict; Secure`
-
-        console.log("Auth state updated after login")
-      }
+      // The onAuthStateChange listener will handle the session update.
     } catch (error: any) {
       console.error("Login process error:", error)
       throw error

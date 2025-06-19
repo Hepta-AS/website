@@ -34,18 +34,22 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
   )
 
   const handleLogin = async () => {
+    console.log("[LOGIN MODAL DEBUG] handleLogin called.")
     setLoading(true)
     setError(null)
 
     try {
+      console.log("[LOGIN MODAL DEBUG] Calling auth.login().")
       await login(email, password)
+      console.log("[LOGIN MODAL DEBUG] auth.login() successful.")
       onClose()
       router.push("/dashboard")
       router.refresh()
     } catch (err: any) {
-      console.error("Login failed:", err)
+      console.error("[LOGIN MODAL DEBUG] Login failed with error object:", err)
       setError(err.message || "An unknown error occurred.")
     } finally {
+      console.log("[LOGIN MODAL DEBUG] handleLogin finished.")
       setLoading(false)
     }
   }

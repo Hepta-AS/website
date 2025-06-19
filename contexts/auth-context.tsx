@@ -78,13 +78,14 @@ export const AuthProvider = ({
   const initialAuthCheckDone = useRef(false)
 
   const ensureStripeCustomer = useCallback(async (user: User) => {
-    console.log("[AUTH DEBUG] ensureStripeCustomer called for user:", user.id)
+    console.log("[AuthContext] ensureStripeCustomer: Called for user:", user.id);
     if (!user || !user.email) {
-      console.log("[AUTH DEBUG] ensureStripeCustomer: no user or email, returning.")
-      return null
+      console.log("[AuthContext] ensureStripeCustomer: No user or email, returning.");
+      return null;
     }
 
     try {
+      console.log("[AuthContext] ensureStripeCustomer: Fetching /api/stripe/create-customer-for-user...");
       const response = await fetch("/api/stripe/create-customer-for-user", {
         method: "POST",
         headers: {
@@ -98,154 +99,139 @@ export const AuthProvider = ({
       })
 
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error("[AUTH DEBUG] Failed to create Stripe customer:", errorText)
-        return null
+        const errorText = await response.text();
+        console.error(`[AuthContext] ensureStripeCustomer: Failed to create Stripe customer. Status: ${response.status}`, errorText);
+        return null;
       }
 
-      const { customerId } = await response.json()
-      console.log("[AUTH DEBUG] ensureStripeCustomer success, customerId:", customerId)
-      return customerId
+      const { customerId } = await response.json();
+      console.log("[AuthContext] ensureStripeCustomer: Successfully created Stripe customer:", customerId);
+      return customerId;
     } catch (error) {
-      console.error("[AUTH DEBUG] Error in ensureStripeCustomer:", error)
-      return null
+      console.error("[AuthContext] ensureStripeCustomer: An unexpected error occurred:", error);
+      return null;
     }
   }, [])
 
   // Update the checkAuth function to fetch and set the user's role
   const checkAuth = useCallback(async () => {
-    console.log("[AUTH DEBUG] checkAuth: Starting...")
+    console.log("[AuthContext] checkAuth: Starting authentication check...");
 
-    // First check for a test session from localStorage
-    const testSession = getLocalStorage("testSession")
+    const testSession = getLocalStorage("testSession");
     if (testSession && typeof testSession === "object" && testSession !== null && "user" in testSession) {
       try {
-        console.log("[AUTH DEBUG] checkAuth: Found valid test session:", testSession)
-        const testUser = testSession.user as User
-        setUser(testUser)
-        setSessionToken(testSession.token as string)
+        console.log("[AuthContext] checkAuth: Found valid test session in localStorage.");
+        const testUser = testSession.user as User;
+        setUser(testUser);
+        setSessionToken(testSession.token as string);
         // @ts-ignore
-        setUserRole(testUser.role || "customer") // Set role from test session
-        document.cookie = "hasTestSession=true; path=/"
-        console.log("[AUTH DEBUG] checkAuth: Test session state set.")
-        return { isLoggedIn: true, user: testUser }
+        setUserRole(testUser.role || "customer");
+        console.log("[AuthContext] checkAuth: Test session state has been set.");
+        return { isLoggedIn: true, user: testUser };
       } catch (error) {
-        console.error("[AUTH DEBUG] checkAuth: Error parsing test session:", error)
-        removeLocalStorage("testSession")
+        console.error("[AuthContext] checkAuth: Error processing test session:", error);
+        removeLocalStorage("testSession");
       }
     }
 
-    // If no test session, check Supabase for a real session
-    console.log("[AUTH DEBUG] checkAuth: No test session, checking Supabase...")
+    console.log("[AuthContext] checkAuth: No test session found, checking Supabase for a session.");
     const {
       data: { session },
       error: sessionError,
-    } = await supabase.auth.getSession()
+    } = await supabase.auth.getSession();
 
     if (sessionError) {
-      console.error("[AUTH DEBUG] checkAuth: Error getting session:", sessionError)
-      return { isLoggedIn: false, user: null }
+      console.error("[AuthContext] checkAuth: Error getting session from Supabase:", sessionError);
+      return { isLoggedIn: false, user: null };
     }
 
     if (session) {
-      console.log("[AUTH DEBUG] checkAuth: Supabase session found for user:", session.user.id)
-      setUser(session.user)
-      setSessionToken(session.access_token)
-      document.cookie = `session=authenticated; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Strict; Secure`
+      console.log("[AuthContext] checkAuth: Supabase session found for user:", session.user.id);
+      setUser(session.user);
+      setSessionToken(session.access_token);
 
-      // Fetch user profile from Supabase
-      console.log("[AUTH DEBUG] checkAuth: Fetching profile for user:", session.user.id)
+      console.log("[AuthContext] checkAuth: Fetching profile from Supabase for user:", session.user.id);
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("role, stripe_customer_id")
         .eq("user_id", session.user.id)
-        .single()
+        .single();
 
       if (profileError && profileError.code !== "PGRST116") {
-        console.error("[AUTH DEBUG] checkAuth: Error fetching user profile:", profileError)
-        // Don't block login if profile fetch fails, but log the error
-        setUserRole("customer") // Default role
-        setStripeCustomerId(null)
+        console.error("[AuthContext] checkAuth: Error fetching user profile:", profileError);
+        setUserRole("customer"); 
+        setStripeCustomerId(null);
       } else if (profile) {
-        console.log("[AUTH DEBUG] checkAuth: Profile found:", profile)
-        setUserRole(profile.role || "customer")
-        setStripeCustomerId(profile.stripe_customer_id)
+        console.log("[AuthContext] checkAuth: Profile found. Role:", profile.role, "Stripe ID:", profile.stripe_customer_id);
+        setUserRole(profile.role || "customer");
+        setStripeCustomerId(profile.stripe_customer_id);
 
-        // If stripe_customer_id is missing, create it
         if (!profile.stripe_customer_id) {
-          console.log("[AUTH DEBUG] checkAuth: Stripe customer ID missing, creating one...")
-          const newCustomerId = await ensureStripeCustomer(session.user)
+          console.log("[AuthContext] checkAuth: Stripe customer ID is missing, creating one...");
+          const newCustomerId = await ensureStripeCustomer(session.user);
           if (newCustomerId) {
-            setStripeCustomerId(newCustomerId)
+            setStripeCustomerId(newCustomerId);
           }
         }
       } else {
-        // Profile not found, this might be a new user
-        console.log("[AUTH DEBUG] checkAuth: No profile found for user, treating as new user.")
-        setUserRole("customer") // Default role
-        const newCustomerId = await ensureStripeCustomer(session.user)
+        console.log("[AuthContext] checkAuth: No profile found for new user, creating Stripe customer...");
+        setUserRole("customer");
+        const newCustomerId = await ensureStripeCustomer(session.user);
         if (newCustomerId) {
-          setStripeCustomerId(newCustomerId)
+          setStripeCustomerId(newCustomerId);
         }
       }
+      console.log("[AuthContext] checkAuth: User is logged in.");
     } else {
-      console.log("[AUTH DEBUG] checkAuth: No Supabase session found.")
-      setUser(null)
-      setSessionToken(null)
-      setUserRole(null)
-      setStripeCustomerId(null)
-      document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure"
+      console.log("[AuthContext] checkAuth: No Supabase session found. User is logged out.");
+      setUser(null);
+      setSessionToken(null);
+      setUserRole(null);
+      setStripeCustomerId(null);
     }
 
-    console.log("[AUTH DEBUG] checkAuth: Finished.")
-    return { isLoggedIn: !!session, user: session?.user || null }
+    console.log("[AuthContext] checkAuth: Finished.");
+    return { isLoggedIn: !!session, user: session?.user || null };
   }, [supabase.auth, ensureStripeCustomer])
 
-  // Only run the initial auth check once when the component mounts
   useEffect(() => {
+    console.log("[AuthContext] useEffect: Initializing AuthProvider.");
     if (!initialAuthCheckDone.current) {
-      console.log("[AUTH DEBUG] useEffect: Performing initial auth check.")
-      checkAuth()
-      initialAuthCheckDone.current = true
+      console.log("[AuthContext] useEffect: Performing initial auth check on mount.");
+      checkAuth();
+      initialAuthCheckDone.current = true;
     }
   }, [checkAuth])
 
-  // Set up auth state change listener
   useEffect(() => {
-    console.log("[AUTH DEBUG] useEffect: Setting up onAuthStateChange listener.")
+    console.log("[AuthContext] useEffect: Subscribing to onAuthStateChange listener.");
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(`[AUTH DEBUG] onAuthStateChange: Event received: ${event}`, { session })
+      console.log(`[AuthContext] onAuthStateChange: Event received: ${event}`, { session });
       if (event === "SIGNED_IN") {
-        console.log("[AUTH DEBUG] onAuthStateChange: SIGNED_IN event, calling checkAuth().")
-        await checkAuth()
+        console.log("[AuthContext] onAuthStateChange: SIGNED_IN event, re-validating auth state.");
+        await checkAuth();
       } else if (event === "SIGNED_OUT") {
-        // Don't log out if we have a test session
         if (!getLocalStorage("testSession")) {
-          console.log("[AUTH DEBUG] onAuthStateChange: SIGNED_OUT event.")
-          setUser(null)
-          setSessionToken(null)
-          setUserRole(null)
-          setStripeCustomerId(null)
-          removeLocalStorage("sessionToken")
-
-          // Clear session cookie
-          document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure"
+          console.log("[AuthContext] onAuthStateChange: SIGNED_OUT event, clearing user state.");
+          setUser(null);
+          setSessionToken(null);
+          setUserRole(null);
+          setStripeCustomerId(null);
+          removeLocalStorage("sessionToken");
         }
       }
-    })
+    });
 
     return () => {
-      console.log("[AUTH DEBUG] useEffect: Unsubscribing from onAuthStateChange listener.")
-      subscription.unsubscribe()
-    }
+      console.log("[AuthContext] useEffect: Unsubscribing from onAuthStateChange listener.");
+      subscription.unsubscribe();
+    };
   }, [supabase.auth, checkAuth])
 
-  // Update the createTestSession function to include role
   const createTestSession = async () => {
-    console.log("Creating test session")
-
+    console.log("[AuthContext] createTestSession: Creating test session...");
     const token = generateTestToken()
     const testSession = {
       user: {
@@ -271,7 +257,7 @@ export const AuthProvider = ({
     setSessionToken(token)
     setUserRole("admin") // Set role for test session
 
-    console.log("Test session created:", testSession)
+    console.log("[AuthContext] createTestSession: Test session created successfully.");
 
     // Ensure the test user has a Stripe customer ID
     if (process.env.NODE_ENV === "development") {
@@ -279,29 +265,26 @@ export const AuthProvider = ({
     }
   }
 
-  // Update the login function to match the AuthContextType
   const login = async (email: string, password: string): Promise<void> => {
-    console.log("[AUTH DEBUG] login: Attempting login for", email)
+    console.log("[AuthContext] login: Attempting login for", email);
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
-    })
+    });
 
     if (error) {
-      console.error("[AUTH DEBUG] login: Supabase login error:", error)
-      throw error
+      console.error("[AuthContext] login: Supabase sign-in failed:", error);
+      throw error;
     }
 
-    console.log("[AUTH DEBUG] login: Supabase login successful, calling checkAuth()")
-    // Manually trigger a re-check of auth state after successful login
-    await checkAuth()
-  }
+    console.log("[AuthContext] login: Supabase sign-in successful. Triggering auth check.");
+    await checkAuth();
+  };
 
   const logout = async () => {
-    console.log("[AUTH DEBUG] logout: Logging out.")
-    // Clear test session if it exists
-    removeLocalStorage("testSession")
-    removeLocalStorage("sessionToken")
+    console.log("[AuthContext] logout: Initiating user logout.");
+    removeLocalStorage("testSession");
+    removeLocalStorage("sessionToken");
 
     // Clear the test session cookie
     document.cookie = "hasTestSession=false; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure"
@@ -310,17 +293,16 @@ export const AuthProvider = ({
     document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure"
 
     // Also clear Supabase session
-    await supabase.auth.signOut()
+    await supabase.auth.signOut();
 
-    // Reset auth state
-    setUser(null)
-    setSessionToken(null)
-    setUserRole(null)
-    setStripeCustomerId(null)
+    setUser(null);
+    setSessionToken(null);
+    setUserRole(null);
+    setStripeCustomerId(null);
 
-    // Redirect to home
-    router.push("/")
-  }
+    console.log("[AuthContext] logout: User has been logged out and state is cleared.");
+    router.push("/");
+  };
 
   return (
     <AuthContext.Provider

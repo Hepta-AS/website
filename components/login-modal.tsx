@@ -1,7 +1,7 @@
 "use client"
 
+import type React from "react"
 import { useState } from "react"
-import { createBrowserClient } from "@supabase/ssr"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -28,28 +28,24 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const { login } = useAuth()
   const router = useRouter()
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-
-  const handleLogin = async () => {
-    console.log("[LOGIN MODAL DEBUG] handleLogin called.")
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    console.log("[LoginModal] Login form submitted for email:", email)
     setLoading(true)
     setError(null)
 
     try {
-      console.log("[LOGIN MODAL DEBUG] Calling auth.login().")
+      console.log("[LoginModal] Calling login function from auth context...")
       await login(email, password)
-      console.log("[LOGIN MODAL DEBUG] auth.login() successful.")
+      console.log("[LoginModal] Login successful. Redirecting to /dashboard...")
       onClose()
       router.push("/dashboard")
       router.refresh()
     } catch (err: any) {
-      console.error("[LOGIN MODAL DEBUG] Login failed with error object:", err)
-      setError(err.message || "An unknown error occurred.")
+      console.error("[LoginModal] Login failed. Error:", err)
+      setError(err.message || "An unknown error occurred during login.")
     } finally {
-      console.log("[LOGIN MODAL DEBUG] handleLogin finished.")
+      console.log("[LoginModal] handleLogin function finished.")
       setLoading(false)
     }
   }
@@ -62,7 +58,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
           <DialogDescription>Logg inn med e-post og passord</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 pt-4">
+        <form onSubmit={handleLogin} className="space-y-4 pt-4">
           <Input
             type="email"
             placeholder="E-post"
@@ -78,13 +74,11 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
             required
           />
 
-          {error && (
-            <p className="text-sm text-red-500">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-500">{error}</p>}
 
           <Button
+            type="submit"
             className="w-full"
-            onClick={handleLogin}
             disabled={loading || !email || !password}
           >
             {loading ? (
@@ -96,7 +90,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
               "Logg inn"
             )}
           </Button>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   )

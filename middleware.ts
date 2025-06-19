@@ -4,6 +4,9 @@ import type { NextRequest } from "next/server"
 import { isPublicRoute } from "@/lib/navigation"
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  console.log(`[Middleware] Received request for: ${pathname}`)
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -19,124 +22,70 @@ export async function middleware(request: NextRequest) {
           return request.cookies.get(name)?.value
         },
         set(name: string, value: string, options: any) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
+          request.cookies.set({ name, value, ...options })
+          response = NextResponse.next({ request: { headers: request.headers } })
+          response.cookies.set({ name, value, ...options })
         },
         remove(name: string, options: any) {
-          request.cookies.delete({
-            name,
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.delete({
-            name,
-            ...options,
-          })
+          request.cookies.delete({ name, ...options })
+          response = NextResponse.next({ request: { headers: request.headers } })
+          response.cookies.delete({ name, ...options })
         },
       },
     }
   )
 
+  console.log("[Middleware] Checking for Supabase session...")
   const { data: { session } } = await supabase.auth.getSession()
-
-  // List of protected routes that require authentication
+  
+  const isPublic = isPublicRoute(pathname)
   const protectedRoutes = ["/dashboard", "/faktura", "/innstillinger"]
-  // Note: /om-oss is intentionally not protected as it's accessible in both logged-in and logged-out states
-
-  // List of admin routes that require admin role
   const adminRoutes = ["/admin", "/admin/users"]
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
+  const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route))
 
-  // Check if the current route is protected
-  const isProtectedRoute = protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
-  const isAdminRoute = adminRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
-  const isPublic = isPublicRoute(request.nextUrl.pathname)
-
-  // Check for test session in cookies
-  const hasTestSession = request.cookies.get("hasTestSession")?.value === "true"
-
-  // Check for session cookie
-  const hasSessionCookie = request.cookies.get("session")?.value === "authenticated"
-
-  console.log("Middleware check:", {
-    path: request.nextUrl.pathname,
+  console.log("[Middleware] Route analysis:", {
+    path: pathname,
+    isPublic,
     isProtectedRoute,
     isAdminRoute,
-    isPublic,
     hasSession: !!session,
-    hasTestSession,
-    hasSessionCookie,
   })
 
-  // Handle admin routes
   if (isAdminRoute) {
-    // In development with test session, allow access
-    if (process.env.NODE_ENV === "development" && (hasTestSession || hasSessionCookie)) {
-      return response
+    console.log(`[Middleware] Path ${pathname} is an admin route. Checking permissions...`)
+    if (!session) {
+      console.log("[Middleware] No session found. Redirecting unauthenticated user to '/' from admin route.")
+      return NextResponse.redirect(new URL("/", request.url))
     }
 
-    // Check if user is authenticated
-    if (!session && !hasSessionCookie) {
-      console.log("Redirecting to home - no valid session for admin route")
-      const redirectUrl = request.nextUrl.clone()
-      redirectUrl.pathname = "/"
-      return NextResponse.redirect(redirectUrl)
+    console.log("[Middleware] Session found. Checking user role from 'profiles' table for user:", session.user.id)
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("user_id", session.user.id)
+      .single()
+
+    if (error) {
+      console.error("[Middleware] Error fetching profile for admin check:", error)
+      console.log("[Middleware] Redirecting to '/dashboard' due to profile fetch error.")
+      return NextResponse.redirect(new URL("/dashboard", request.url))
+    }
+    
+    if (profile?.role !== "admin") {
+      console.log(`[Middleware] User is not an admin (role: ${profile?.role}). Redirecting to '/dashboard'.`)
+      return NextResponse.redirect(new URL("/dashboard", request.url))
     }
 
-    // Check if user has admin role by fetching from Supabase
-    try {
-      if (!session) {
-        console.log("Redirecting to home - no session for admin route")
-        const redirectUrl = request.nextUrl.clone()
-        redirectUrl.pathname = "/"
-        return NextResponse.redirect(redirectUrl)
-      }
-
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .single()
-
-      if (error || !profile || profile.role !== "admin") {
-        console.log("Redirecting to dashboard - user is not an admin")
-        const redirectUrl = request.nextUrl.clone()
-        redirectUrl.pathname = "/dashboard"
-        return NextResponse.redirect(redirectUrl)
-      }
-    } catch (error) {
-      console.error("Error checking admin role:", error)
-      const redirectUrl = request.nextUrl.clone()
-      redirectUrl.pathname = "/dashboard"
-      return NextResponse.redirect(redirectUrl)
-    }
+    console.log("[Middleware] User is an admin. Allowing access to admin route.")
   }
 
-  // Handle protected routes
-  if (isProtectedRoute && !isPublic && !session && !hasTestSession && !hasSessionCookie) {
-    console.log("Redirecting to home - no valid session for protected route")
-    // Redirect to login if accessing protected route without auth
-    const redirectUrl = request.nextUrl.clone()
-    redirectUrl.pathname = "/"
-    return NextResponse.redirect(redirectUrl)
+  if (isProtectedRoute && !session) {
+    console.log(`[Middleware] Path ${pathname} is protected and user is not authenticated. Redirecting to '/'.`)
+    return NextResponse.redirect(new URL("/", request.url))
   }
 
+  console.log(`[Middleware] Allowing access to: ${pathname}`)
   return response
 }
 

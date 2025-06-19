@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     const { error: updateError } = await supabase
       .from("profiles")
       .update({ stripe_customer_id: customer.id })
-      .eq("id", userId);
+      .eq("user_id", userId);
 
     if (updateError) {
       console.error("Error updating profile with Stripe customer ID:", updateError);

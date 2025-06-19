@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
 
 interface LoginModalProps {
   isOpen: boolean
@@ -23,6 +24,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { login } = useAuth()
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,21 +36,12 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) {
-        console.error("Login error:", error.message)
-        setError("Feil e-post eller passord.")
-      } else {
-        onClose()
-        window.location.href = "/dashboard"
-      }
-    } catch (err) {
-      console.error("Unexpected error:", err)
-      setError("Noe gikk galt. Prøv igjen.")
+      await login(email, password)
+      onClose()
+      window.location.href = "/dashboard"
+    } catch (err: any) {
+      console.error("Login failed:", err)
+      setError(err.message || "An unknown error occurred.")
     } finally {
       setLoading(false)
     }

@@ -156,7 +156,7 @@ export const AuthProvider = ({
         const { data: profile, error } = await supabase
           .from("profiles")
           .select("role, stripe_customer_id")
-          .eq("id", session.user.id)
+          .eq("user_id", session.user.id)
           .single()
 
         if (!error && profile) {

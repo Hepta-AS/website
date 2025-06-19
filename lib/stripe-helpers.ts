@@ -14,7 +14,7 @@ export async function getOrCreateCustomerId(userId: string, email?: string, name
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("stripe_customer_id")
-    .eq("id", userId)
+    .eq("user_id", userId)
     .single()
 
   if (profileError && profileError.code !== "PGRST116") {
@@ -32,11 +32,14 @@ export async function getOrCreateCustomerId(userId: string, email?: string, name
     const customer = await createCustomer(email, name)
 
     // Save the customer ID to the user's profile
-    const { error: updateError } = await supabase.from("profiles").upsert({
-      id: userId,
-      stripe_customer_id: customer.id,
-      updated_at: new Date().toISOString(),
-    })
+    const { error: updateError } = await supabase.from("profiles").upsert(
+      {
+        user_id: userId,
+        stripe_customer_id: customer.id,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id" },
+    )
 
     if (updateError) {
       console.error("Error saving customer ID to profile:", updateError)

@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("stripe_customer_id")
-      .eq("id", user?.id || "test-user-id")
+      .eq("user_id", user?.id || "test-user-id")
       .single()
 
     if (profileError && profileError.code !== "PGRST116") {
@@ -68,11 +68,14 @@ export async function POST(req: Request) {
     console.log(`Created new customer with ID: ${customer.id}`)
 
     // Save the Stripe customer ID to the user's profile
-    const { error: updateError } = await supabase.from("profiles").upsert({
-      id: user?.id || "test-user-id",
-      stripe_customer_id: customer.id,
-      updated_at: new Date().toISOString(),
-    })
+    const { error: updateError } = await supabase.from("profiles").upsert(
+      {
+        user_id: user?.id || "test-user-id",
+        stripe_customer_id: customer.id,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id" },
+    )
 
     if (updateError) {
       console.error("Error saving customer ID to profile:", updateError)

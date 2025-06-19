@@ -67,7 +67,7 @@ export async function POST(req: Request) {
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("stripe_customer_id")
-      .eq("id", userId)
+      .eq("user_id", userId)
       .single()
 
     if (profileError) {

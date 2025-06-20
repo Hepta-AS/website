@@ -41,26 +41,26 @@ export default function Home() {
 
   const services = [
     {
-      title: "Ai og automasjon",
-      content: "Trenger din bedrift raskere prossesser? Utforsk mulighetene AI kan ha i din bedrift.",
+      title: "AI og automasjon",
+      content: "Effektiviser forretningsprosessene dine med skreddersydde AI-løsninger og automatiserte arbeidsflyter som sparer tid og øker lønnsomheten.",
       slug: "AI",
       image: "/group11.png",
     },
     {
       title: "Videoproduksjon",
-      content: "Vi kan bistå med redigering, eller videoproduksjon ved behov",
+      content: "Fra konsept til ferdig film - vi produserer engasjerende videoinnhold som styrker ditt merke og når din målgruppe effektivt.",
       slug: "Videoproduksjon",
       image: "/IMG_9003.JPG",
     },
     {
       title: "Digital markedsføring",
-      content: "Behov for markedsføring? Vi bruker data for å treffe riktig målgruppe",
+      content: "Databaserte markedsføringsstrategier som treffer riktig målgruppe, øker synlighet og genererer målbare resultater for din bedrift.",
       slug: "Digitalmarkedsforing",
       image: "/ai.jpg",
     },
     {
       title: "Utvikling",
-      content: "Behov for tekniske løsninger? Vi har bred erfaring i utvikling av alt fra Web løsninger, infrastruktur og mikrokontrollere",
+      content: "Skalerbare tekniske løsninger fra webapplikasjoner til avansert infrastruktur - vi bygger fremtidens digitale plattformer.",
       slug: "Utvikling",
       image: "/consulting.jpg",
     },
@@ -75,32 +75,32 @@ export default function Home() {
 
   const section1Data = {
     imageSrc: "/samarbeid.jpg",
-    altText: "Strategisk samarbeid",
-    title: "Strategisk Partnerskap",
+    altText: "Strategisk samarbeid mellom Hepta og klient",
+    title: "Din strategiske teknologipartner",
     paragraphs: [
-      "Vi går dypere enn bare utførelse. Vi blir din strategiske partner, dedikert til å forstå din kjernevirksomhet og dine mål.",
-      "Vår prosess er transparent, samarbeidsorientert og alltid fokusert på din langsiktige suksess og vekst.",
+      "Vi er mer enn bare leverandører - vi blir din forlengede arm innen digital utvikling. Med dype fagkunnskap og forståelse for moderne forretningsutfordringer hjelper vi deg å realisere digitale ambisjoner.",
+      "Gjennom transparent kommunikasjon og brukerorientert design sikrer vi at hver løsning bidrar til din langsiktige konkurransekraft og vekst.",
     ],
     imageContainerCustomClass: "aspect-[4/3] bg-gray-300 dark:bg-gray-700",
   };
 
   const section2Data = {
     imageSrc: "/creativity.jpg",
-    altText: "Placeholder image 2",
-    title: "Kreativitet og Teknologi",
+    altText: "Innovativ teknologi og kreativ problemløsning",
+    title: "Der innovasjon møter håndverk",
     paragraphs: [
-      "Vi kombinerer nyskapende design med den nyeste teknologien for å skape løsninger som ikke bare ser bra ut, men som også fungerer feilfritt.",
-      "Kvalitet og innovasjon er kjernen i alt vi gjør, fra konsept til ferdig produkt.",
+      "Vi forener kreativ problemløsning med solid teknisk ekspertise. Våre løsninger er ikke bare funksjonelle, men også intuitive og skalerbare for fremtidens behov.",
+      "Fra AI-drevne automatiseringer til engasjerende videoinnhold - kvalitet og innovation er grunnpilaren i alt vi leverer.",
     ],
     imageContainerCustomClass: "aspect-[4/3] bg-gray-400 dark:bg-gray-600",
   };
 
   const contactAdventureData = {
-    line1: "ET NYTT KAPITTEL",
-    line2: "VENTER PÅ DEG.",
-    line3: "TRYKK FOR Å AVDEKKE",
-    line4: "POTENSIALET SAMMEN.",
-    button: "START DITT NESTE KAPITTEL",
+    line1: "KLAR FOR DIGITAL",
+    line2: "TRANSFORMASJON?",
+    line3: "LA OSS BYGGE",
+    line4: "FREMTIDEN SAMMEN.",
+    button: "START DIN DIGITALE REISE",
   };
 
   const defaultPageBg = "bg-gray-900 dark:bg-black";
@@ -144,26 +144,26 @@ export default function Home() {
               shouldPageBeWhite ? "to-white dark:to-gray-100" : "to-gray-900 dark:to-black"
             } z-0`}
           />
-          <div className="absolute left-0 w-full top-[60%] md:top-1/2 -translate-y-1/4 md:-translate-y-1/2 z-10 px-6 sm:px-12">
+          <div className="absolute left-0 w-full bottom-0 top-auto translate-y-0 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-10 px-6 sm:px-12 mb-8 md:mb-0">
             <h1 className="font-serif text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-tight tracking-tight drop-shadow-lg text-left select-none opacity-0 animate-fade-in">
-              Vi hjelper deg med å ta det neste steget
+              Digitale løsninger som driver din bedrift fremover
             </h1>
           </div>
         </section>
 
         <BigTextGrid
-          line1Text="WE CRAFT DIGITAL"
-          line2Text="EXPERIENCES THAT"
-          line3Text="TRULY RESONATE DEEPLY."
-          line4Text="INNOVATION DRIVES OUR EVERY MOVE."
+          line1Text="VI SKAPER DIGITALE"
+          line2Text="OPPLEVELSER SOM"
+          line3Text="ENGASJERER OG KONVERTERER."
+          line4Text="TEKNOLOGI ER VÅR LIDENSKAP."
         />
 
         <section>
           <div className="container mx-auto px-4">
             <div className="text-center">
-              <h2 className="text-4xl font-bold tracking-tight">Hva vi gjør</h2>
+              <h2 className="text-4xl font-bold tracking-tight">Ekspertise som gir resultater</h2>
               <p className="mt-4 text-xl text-gray-400 dark:text-gray-500">
-                Vi tilbyr en rekke tjenester for å hjelpe din bedrift å vokse og lykkes
+                Fra AI-automatisering til visuelt innhold - vi leverer skreddersydde digitale løsninger som transformerer måten du driver forretning på
               </p>
             </div>
             <div className="mt-16">

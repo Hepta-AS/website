@@ -115,18 +115,24 @@ export const AuthProvider = ({
 
   // Update the checkAuth function to fetch and set the user's role
   const checkAuth = useCallback(async () => {
+    console.log("[AuthContext] ===== CHECKAUTH FUNCTION STARTED =====");
     console.log("[AuthContext] checkAuth: Starting authentication check...");
 
     const testSession = getLocalStorage("testSession");
+    console.log("[AuthContext] checkAuth: Test session from localStorage:", testSession);
+    
     if (testSession && typeof testSession === "object" && testSession !== null && "user" in testSession) {
       try {
         console.log("[AuthContext] checkAuth: Found valid test session in localStorage.");
         const testUser = testSession.user as User;
+        console.log("[AuthContext] checkAuth: Test user data:", testUser);
+        
         setUser(testUser);
         setSessionToken(testSession.token as string);
         // @ts-ignore
         setUserRole(testUser.role || "customer");
         console.log("[AuthContext] checkAuth: Test session state has been set.");
+        console.log("[AuthContext] checkAuth: ===== CHECKAUTH COMPLETED (TEST SESSION) =====");
         return { isLoggedIn: true, user: testUser };
       } catch (error) {
         console.error("[AuthContext] checkAuth: Error processing test session:", error);
@@ -135,52 +141,91 @@ export const AuthProvider = ({
     }
 
     console.log("[AuthContext] checkAuth: No test session found, checking Supabase for a session.");
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
+    
+    try {
+      const sessionStartTime = Date.now();
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+      const sessionEndTime = Date.now();
+      
+      console.log("[AuthContext] checkAuth: getSession completed in:", sessionEndTime - sessionStartTime, "ms");
+      console.log("[AuthContext] checkAuth: Session data:", session);
+      console.log("[AuthContext] checkAuth: Session error:", sessionError);
 
-    if (sessionError) {
-      console.error("[AuthContext] checkAuth: Error getting session from Supabase:", sessionError);
-      return { isLoggedIn: false, user: null };
-    }
+      if (sessionError) {
+        console.error("[AuthContext] checkAuth: Error getting session from Supabase:", sessionError);
+        console.log("[AuthContext] checkAuth: ===== CHECKAUTH FAILED (SESSION ERROR) =====");
+        return { isLoggedIn: false, user: null };
+      }
 
-    if (session) {
-      console.log("[AuthContext] checkAuth: Supabase session found for user:", session.user.id);
-      setUser(session.user);
-      setSessionToken(session.access_token);
+      if (session) {
+        console.log("[AuthContext] checkAuth: Supabase session found for user:", session.user.id);
+        console.log("[AuthContext] checkAuth: Session user email:", session.user.email);
+        console.log("[AuthContext] checkAuth: Access token exists:", !!session.access_token);
+        
+        setUser(session.user);
+        setSessionToken(session.access_token);
 
-      console.log("[AuthContext] checkAuth: Fetching profile from Supabase for user:", session.user.id);
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role, stripe_customer_id")
-        .eq("user_id", session.user.id)
-        .single();
+        console.log("[AuthContext] checkAuth: About to fetch profile from Supabase for user:", session.user.id);
+        
+        try {
+          const profileStartTime = Date.now();
+          const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("role, stripe_customer_id")
+            .eq("user_id", session.user.id)
+            .single();
+          const profileEndTime = Date.now();
+          
+          console.log("[AuthContext] checkAuth: Profile query completed in:", profileEndTime - profileStartTime, "ms");
+          console.log("[AuthContext] checkAuth: Profile data:", profile);
+          console.log("[AuthContext] checkAuth: Profile error:", profileError);
 
-      if (profileError && profileError.code !== "PGRST116") {
-        console.error("[AuthContext] checkAuth: Error fetching user profile:", profileError);
-        setUserRole("customer"); 
-        setStripeCustomerId(null);
-      } else if (profile) {
-        console.log("[AuthContext] checkAuth: Profile found. Role:", profile.role, "Stripe ID:", profile.stripe_customer_id);
-        setUserRole(profile.role || "customer");
-        setStripeCustomerId(profile.stripe_customer_id || null);
+          if (profileError && profileError.code !== "PGRST116") {
+            console.error("[AuthContext] checkAuth: Error fetching user profile:", profileError);
+            console.log("[AuthContext] checkAuth: Setting default role and null stripe ID due to profile error");
+            setUserRole("customer"); 
+            setStripeCustomerId(null);
+          } else if (profile) {
+            console.log("[AuthContext] checkAuth: Profile found. Role:", profile.role, "Stripe ID:", profile.stripe_customer_id);
+            setUserRole(profile.role || "customer");
+            setStripeCustomerId(profile.stripe_customer_id || null);
+          } else {
+            console.log("[AuthContext] checkAuth: No profile found for new user, setting default role.");
+            setUserRole("customer");
+            setStripeCustomerId(null);
+          }
+        } catch (profileError) {
+          console.error("[AuthContext] checkAuth: Exception during profile fetch:", profileError);
+          setUserRole("customer");
+          setStripeCustomerId(null);
+        }
+        
+        console.log("[AuthContext] checkAuth: User is logged in - all profile processing complete.");
       } else {
-        console.log("[AuthContext] checkAuth: No profile found for new user, setting default role.");
-        setUserRole("customer");
+        console.log("[AuthContext] checkAuth: No Supabase session found. User is logged out.");
+        setUser(null);
+        setSessionToken(null);
+        setUserRole(null);
         setStripeCustomerId(null);
       }
-      console.log("[AuthContext] checkAuth: User is logged in.");
-    } else {
-      console.log("[AuthContext] checkAuth: No Supabase session found. User is logged out.");
+
+      console.log("[AuthContext] checkAuth: ===== CHECKAUTH COMPLETED =====");
+      return { isLoggedIn: !!session, user: session?.user || null };
+    } catch (error) {
+      console.error("[AuthContext] checkAuth: ===== CHECKAUTH EXCEPTION =====");
+      console.error("[AuthContext] checkAuth: Unexpected error:", error);
+      console.log("[AuthContext] checkAuth: Setting logged out state due to exception");
+      
       setUser(null);
       setSessionToken(null);
       setUserRole(null);
       setStripeCustomerId(null);
+      
+      return { isLoggedIn: false, user: null };
     }
-
-    console.log("[AuthContext] checkAuth: Finished.");
-    return { isLoggedIn: !!session, user: session?.user || null };
   }, [supabase.auth])
 
   useEffect(() => {
@@ -251,30 +296,65 @@ export const AuthProvider = ({
   }
 
   const login = async (email: string, password: string): Promise<void> => {
-    console.log("[AuthContext] login: Attempting login for", email);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    console.log("[AuthContext] ===== LOGIN FUNCTION STARTED =====");
+    console.log("[AuthContext] login: Attempting login for email:", email);
+    console.log("[AuthContext] login: Password provided:", password ? "YES" : "NO");
+    console.log("[AuthContext] login: Password length:", password?.length || 0);
+    console.log("[AuthContext] login: Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log("[AuthContext] login: Supabase Anon Key exists:", !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+    
+    try {
+      console.log("[AuthContext] login: About to call supabase.auth.signInWithPassword...");
+      const signInStartTime = Date.now();
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      const signInEndTime = Date.now();
+      console.log("[AuthContext] login: signInWithPassword completed in:", signInEndTime - signInStartTime, "ms");
+      console.log("[AuthContext] login: Supabase response data:", data);
+      console.log("[AuthContext] login: Supabase response error:", error);
 
-    if (error) {
-      console.error("[AuthContext] login: Supabase sign-in failed:", error);
-      
-      // Provide user-friendly error messages in Norwegian
-      if (
-        error.message?.toLowerCase().includes("invalid login credentials") ||
-        error.message?.toLowerCase().includes("invalid credentials") ||
-        error.status === 400
-      ) {
-        throw new Error("Ikke riktig brukernavn og/eller passord");
+      if (error) {
+        console.error("[AuthContext] login: ===== SUPABASE SIGNIN FAILED =====");
+        console.error("[AuthContext] login: Error object:", error);
+        console.error("[AuthContext] login: Error message:", error.message);
+        console.error("[AuthContext] login: Error status:", error.status);
+        console.error("[AuthContext] login: Error name:", error.name);
+        
+        // Provide user-friendly error messages in Norwegian
+        if (
+          error.message?.toLowerCase().includes("invalid login credentials") ||
+          error.message?.toLowerCase().includes("invalid credentials") ||
+          error.status === 400
+        ) {
+          console.log("[AuthContext] login: Throwing Norwegian error message");
+          throw new Error("Ikke riktig brukernavn og/eller passord");
+        }
+        
+        // For other errors, throw the original error
+        console.log("[AuthContext] login: Throwing original error");
+        throw error;
       }
+
+      console.log("[AuthContext] login: Supabase sign-in successful!");
+      console.log("[AuthContext] login: Session data:", data.session);
+      console.log("[AuthContext] login: User data:", data.user);
+      console.log("[AuthContext] login: About to call checkAuth...");
       
-      // For other errors, throw the original error
+      const checkAuthStartTime = Date.now();
+      await checkAuth();
+      const checkAuthEndTime = Date.now();
+      
+      console.log("[AuthContext] login: checkAuth completed in:", checkAuthEndTime - checkAuthStartTime, "ms");
+      console.log("[AuthContext] login: ===== LOGIN FUNCTION COMPLETED SUCCESSFULLY =====");
+    } catch (error) {
+      console.error("[AuthContext] login: ===== LOGIN FUNCTION FAILED =====");
+      console.error("[AuthContext] login: Caught error:", error);
       throw error;
     }
-
-    console.log("[AuthContext] login: Supabase sign-in successful. Triggering auth check.");
-    await checkAuth();
   };
 
   const logout = async () => {

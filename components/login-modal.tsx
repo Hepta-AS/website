@@ -30,23 +30,47 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log("[LoginModal] Login form submitted for email:", email)
+    console.log("[LoginModal] ===== LOGIN ATTEMPT STARTED =====")
+    console.log("[LoginModal] Form submitted with email:", email)
+    console.log("[LoginModal] Password length:", password.length)
+    console.log("[LoginModal] Current loading state:", loading)
+    
     setLoading(true)
     setError(null)
+    console.log("[LoginModal] Set loading to true and cleared error")
 
     try {
-      console.log("[LoginModal] Calling login function from auth context...")
+      console.log("[LoginModal] About to call login function from auth context...")
+      console.log("[LoginModal] Email being sent:", email)
+      console.log("[LoginModal] Password being sent: [HIDDEN]")
+      
+      const loginStartTime = Date.now()
       await login(email, password)
-      console.log("[LoginModal] Login successful. Redirecting to /dashboard...")
+      const loginEndTime = Date.now()
+      
+      console.log("[LoginModal] Login function completed successfully!")
+      console.log("[LoginModal] Login took:", loginEndTime - loginStartTime, "ms")
+      console.log("[LoginModal] About to close modal and redirect...")
+      
       onClose()
       router.push("/dashboard")
       router.refresh()
+      
+      console.log("[LoginModal] Redirect initiated to /dashboard")
     } catch (err: any) {
-      console.error("[LoginModal] Login failed. Error:", err)
-      setError(err.message || "An unknown error occurred during login.")
+      console.error("[LoginModal] ===== LOGIN FAILED =====")
+      console.error("[LoginModal] Error object:", err)
+      console.error("[LoginModal] Error message:", err.message)
+      console.error("[LoginModal] Error stack:", err.stack)
+      console.error("[LoginModal] Error type:", typeof err)
+      
+      const errorMessage = err.message || "An unknown error occurred during login."
+      console.log("[LoginModal] Setting error message:", errorMessage)
+      setError(errorMessage)
     } finally {
-      console.log("[LoginModal] handleLogin function finished.")
+      console.log("[LoginModal] Setting loading to false")
       setLoading(false)
+      console.log("[LoginModal] ===== LOGIN ATTEMPT FINISHED =====")
     }
   }
 

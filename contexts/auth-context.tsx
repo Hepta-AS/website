@@ -164,22 +164,11 @@ export const AuthProvider = ({
       } else if (profile) {
         console.log("[AuthContext] checkAuth: Profile found. Role:", profile.role, "Stripe ID:", profile.stripe_customer_id);
         setUserRole(profile.role || "customer");
-        setStripeCustomerId(profile.stripe_customer_id);
-
-        if (!profile.stripe_customer_id) {
-          console.log("[AuthContext] checkAuth: Stripe customer ID is missing, creating one...");
-          const newCustomerId = await ensureStripeCustomer(session.user);
-          if (newCustomerId) {
-            setStripeCustomerId(newCustomerId);
-          }
-        }
+        setStripeCustomerId(profile.stripe_customer_id || null);
       } else {
-        console.log("[AuthContext] checkAuth: No profile found for new user, creating Stripe customer...");
+        console.log("[AuthContext] checkAuth: No profile found for new user, setting default role.");
         setUserRole("customer");
-        const newCustomerId = await ensureStripeCustomer(session.user);
-        if (newCustomerId) {
-          setStripeCustomerId(newCustomerId);
-        }
+        setStripeCustomerId(null);
       }
       console.log("[AuthContext] checkAuth: User is logged in.");
     } else {
@@ -192,7 +181,7 @@ export const AuthProvider = ({
 
     console.log("[AuthContext] checkAuth: Finished.");
     return { isLoggedIn: !!session, user: session?.user || null };
-  }, [supabase.auth, ensureStripeCustomer])
+  }, [supabase.auth])
 
   useEffect(() => {
     console.log("[AuthContext] useEffect: Initializing AuthProvider.");
@@ -256,13 +245,9 @@ export const AuthProvider = ({
     setUser(TEST_USER as User)
     setSessionToken(token)
     setUserRole("admin") // Set role for test session
+    setStripeCustomerId(null) // Don't create Stripe customer during test session
 
     console.log("[AuthContext] createTestSession: Test session created successfully.");
-
-    // Ensure the test user has a Stripe customer ID
-    if (process.env.NODE_ENV === "development") {
-      await ensureStripeCustomer(TEST_USER as User)
-    }
   }
 
   const login = async (email: string, password: string): Promise<void> => {
@@ -274,6 +259,17 @@ export const AuthProvider = ({
 
     if (error) {
       console.error("[AuthContext] login: Supabase sign-in failed:", error);
+      
+      // Provide user-friendly error messages in Norwegian
+      if (
+        error.message?.toLowerCase().includes("invalid login credentials") ||
+        error.message?.toLowerCase().includes("invalid credentials") ||
+        error.status === 400
+      ) {
+        throw new Error("Ikke riktig brukernavn og/eller passord");
+      }
+      
+      // For other errors, throw the original error
       throw error;
     }
 

@@ -330,6 +330,7 @@ export const AuthProvider = ({
     console.log("[AuthContext] login: Trying direct fetch approach as primary method...");
     try {
       console.log("[AuthContext] ===== DIRECT FETCH LOGIN STARTED v2.0 =====");
+      console.log("[AuthContext] Direct fetch: Code execution continuing...");
       
       // Create AbortController for timeout (more compatible than AbortSignal.timeout)
       console.log("[AuthContext] Direct fetch: Setting up AbortController and 5-second timeout...");

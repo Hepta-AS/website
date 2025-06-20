@@ -332,16 +332,23 @@ export const AuthProvider = ({
       console.log("[AuthContext] ===== DIRECT FETCH LOGIN STARTED =====");
       
       // Create AbortController for timeout (more compatible than AbortSignal.timeout)
+      console.log("[AuthContext] Direct fetch: Setting up AbortController and 5-second timeout...");
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
-        console.log("[AuthContext] Direct fetch: Aborting after 5 seconds...");
+        console.log("[AuthContext] Direct fetch: TIMEOUT TRIGGERED - Aborting after 5 seconds...");
         controller.abort();
       }, 5000); // Reduced to 5 seconds for faster fallback
+      console.log("[AuthContext] Direct fetch: Timeout set with ID:", timeoutId);
       
       console.log("[AuthContext] Direct fetch: About to make fetch request...");
       console.log("[AuthContext] Direct fetch: URL:", `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`);
+      console.log("[AuthContext] Direct fetch: Headers prepared");
+      console.log("[AuthContext] Direct fetch: Body prepared");
+      console.log("[AuthContext] Direct fetch: AbortController signal ready");
       
       const fetchStartTime = Date.now();
+      console.log("[AuthContext] Direct fetch: Starting fetch call at", fetchStartTime);
+      
       const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`, {
         method: 'POST',
         headers: {
@@ -355,6 +362,8 @@ export const AuthProvider = ({
         }),
         signal: controller.signal
       });
+      
+      console.log("[AuthContext] Direct fetch: Fetch call returned!");
       
       clearTimeout(timeoutId); // Clear timeout if we got a response
       const fetchEndTime = Date.now();

@@ -165,45 +165,63 @@ export const AuthProvider = ({
         console.log("[AuthContext] checkAuth: Session user email:", session.user.email);
         console.log("[AuthContext] checkAuth: Access token exists:", !!session.access_token);
         
+        // Set basic user data immediately
         setUser(session.user);
         setSessionToken(session.access_token);
-
-        console.log("[AuthContext] checkAuth: About to fetch profile from Supabase for user:", session.user.id);
         
+        // Set default values first, then try to fetch profile
+        setUserRole("customer");
+        setStripeCustomerId(null);
+
+        console.log("[AuthContext] checkAuth: Basic user state set, attempting to fetch profile...");
+        
+        // Try to fetch profile with timeout and fallback
         try {
           const profileStartTime = Date.now();
-          const { data: profile, error: profileError } = await supabase
+          
+          // Add timeout for profile query
+          const profilePromise = supabase
             .from("profiles")
             .select("role, stripe_customer_id")
             .eq("user_id", session.user.id)
             .single();
+            
+          const profileTimeout = new Promise((_, reject) => {
+            setTimeout(() => {
+              reject(new Error("Profile query timeout"));
+            }, 3000); // 3 second timeout for profile
+          });
+          
+          const { data: profile, error: profileError } = await Promise.race([
+            profilePromise, 
+            profileTimeout
+          ]) as any;
+          
           const profileEndTime = Date.now();
           
           console.log("[AuthContext] checkAuth: Profile query completed in:", profileEndTime - profileStartTime, "ms");
           console.log("[AuthContext] checkAuth: Profile data:", profile);
           console.log("[AuthContext] checkAuth: Profile error:", profileError);
 
-          if (profileError && profileError.code !== "PGRST116") {
-            console.error("[AuthContext] checkAuth: Error fetching user profile:", profileError);
-            console.log("[AuthContext] checkAuth: Setting default role and null stripe ID due to profile error");
-            setUserRole("customer"); 
-            setStripeCustomerId(null);
+          if (profileError) {
+            if (profileError.code === "PGRST116") {
+              console.log("[AuthContext] checkAuth: No profile found (PGRST116), using defaults");
+            } else {
+              console.error("[AuthContext] checkAuth: Profile query error:", profileError);
+            }
+            // Keep default values - don't fail the login
           } else if (profile) {
             console.log("[AuthContext] checkAuth: Profile found. Role:", profile.role, "Stripe ID:", profile.stripe_customer_id);
             setUserRole(profile.role || "customer");
             setStripeCustomerId(profile.stripe_customer_id || null);
-          } else {
-            console.log("[AuthContext] checkAuth: No profile found for new user, setting default role.");
-            setUserRole("customer");
-            setStripeCustomerId(null);
           }
         } catch (profileError) {
-          console.error("[AuthContext] checkAuth: Exception during profile fetch:", profileError);
-          setUserRole("customer");
-          setStripeCustomerId(null);
+          console.error("[AuthContext] checkAuth: Profile fetch failed or timed out:", profileError);
+          console.log("[AuthContext] checkAuth: Continuing with default role and no Stripe ID");
+          // Don't fail the login - continue with defaults
         }
         
-        console.log("[AuthContext] checkAuth: User is logged in - all profile processing complete.");
+        console.log("[AuthContext] checkAuth: User is logged in - profile processing complete (or skipped).");
       } else {
         console.log("[AuthContext] checkAuth: No Supabase session found. User is logged out.");
         setUser(null);
@@ -295,6 +313,42 @@ export const AuthProvider = ({
     console.log("[AuthContext] createTestSession: Test session created successfully.");
   }
 
+  const loginWithDirectFetch = async (email: string, password: string): Promise<void> => {
+    console.log("[AuthContext] ===== DIRECT FETCH LOGIN STARTED =====");
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+        signal: AbortSignal.timeout(5000)
+      });
+      
+      console.log("[AuthContext] Direct fetch response status:", response.status);
+      const data = await response.json();
+      console.log("[AuthContext] Direct fetch response data:", data);
+      
+      if (!response.ok) {
+        throw new Error(data.error_description || data.msg || 'Login failed');
+      }
+      
+      // If successful, trigger checkAuth to update state
+      await checkAuth();
+      console.log("[AuthContext] ===== DIRECT FETCH LOGIN SUCCESSFUL =====");
+      
+    } catch (error) {
+      console.error("[AuthContext] Direct fetch login failed:", error);
+      throw error;
+    }
+  };
+
   const login = async (email: string, password: string): Promise<void> => {
     console.log("[AuthContext] ===== LOGIN FUNCTION STARTED =====");
     console.log("[AuthContext] login: Attempting login for email:", email);
@@ -306,6 +360,16 @@ export const AuthProvider = ({
     // Check network connectivity
     if (typeof navigator !== 'undefined') {
       console.log("[AuthContext] login: Network online status:", navigator.onLine);
+    }
+    
+    // Try direct fetch approach first as a workaround
+    console.log("[AuthContext] login: Trying direct fetch approach first...");
+    try {
+      await loginWithDirectFetch(email, password);
+      return; // If successful, exit early
+    } catch (directError) {
+      console.log("[AuthContext] login: Direct fetch failed, falling back to Supabase client...");
+      console.error("[AuthContext] login: Direct fetch error:", directError);
     }
     
     // Quick connectivity test to Supabase

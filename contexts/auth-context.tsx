@@ -303,17 +303,53 @@ export const AuthProvider = ({
     console.log("[AuthContext] login: Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
     console.log("[AuthContext] login: Supabase Anon Key exists:", !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
     
+    // Check network connectivity
+    if (typeof navigator !== 'undefined') {
+      console.log("[AuthContext] login: Network online status:", navigator.onLine);
+    }
+    
+    // Quick connectivity test to Supabase
+    try {
+      console.log("[AuthContext] login: Testing Supabase connectivity...");
+      const testUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/`;
+      const testResponse = await fetch(testUrl, {
+        method: 'HEAD',
+        signal: AbortSignal.timeout(3000) // 3 second timeout for connectivity test
+      });
+      console.log("[AuthContext] login: Supabase connectivity test status:", testResponse.status);
+    } catch (connectError) {
+      console.error("[AuthContext] login: Supabase connectivity test failed:", connectError);
+      console.error("[AuthContext] login: This might indicate network or Supabase issues");
+    }
+    
     try {
       console.log("[AuthContext] login: About to call supabase.auth.signInWithPassword...");
       const signInStartTime = Date.now();
       
-      const { data, error } = await supabase.auth.signInWithPassword({
+      // Reduced timeout to 5 seconds for faster feedback
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          console.error("[AuthContext] login: TIMEOUT - Supabase did not respond within 5 seconds");
+          reject(new Error("Innlogging tok for lang tid - prøv igjen eller sjekk internettforbindelsen din"));
+        }, 5000); // 5 second timeout
+      });
+      
+      const signInPromise = supabase.auth.signInWithPassword({
         email,
         password,
       });
       
+      console.log("[AuthContext] login: SignIn promise created, waiting for response...");
+      console.log("[AuthContext] login: Starting race between signin and timeout...");
+      
+      const result = await Promise.race([signInPromise, timeoutPromise]);
+      
       const signInEndTime = Date.now();
       console.log("[AuthContext] login: signInWithPassword completed in:", signInEndTime - signInStartTime, "ms");
+      
+      // Type assertion since Promise.race can return either type
+      const { data, error } = result as any;
+      
       console.log("[AuthContext] login: Supabase response data:", data);
       console.log("[AuthContext] login: Supabase response error:", error);
 
@@ -340,8 +376,8 @@ export const AuthProvider = ({
       }
 
       console.log("[AuthContext] login: Supabase sign-in successful!");
-      console.log("[AuthContext] login: Session data:", data.session);
-      console.log("[AuthContext] login: User data:", data.user);
+      console.log("[AuthContext] login: Session data:", data?.session);
+      console.log("[AuthContext] login: User data:", data?.user);
       console.log("[AuthContext] login: About to call checkAuth...");
       
       const checkAuthStartTime = Date.now();
@@ -353,6 +389,20 @@ export const AuthProvider = ({
     } catch (error) {
       console.error("[AuthContext] login: ===== LOGIN FUNCTION FAILED =====");
       console.error("[AuthContext] login: Caught error:", error);
+      console.error("[AuthContext] login: Error type:", typeof error);
+      console.error("[AuthContext] login: Error constructor:", error?.constructor?.name);
+      console.error("[AuthContext] login: Error message:", (error as Error)?.message);
+      
+      // Log additional network diagnostics
+      if (typeof navigator !== 'undefined') {
+        console.log("[AuthContext] login: Navigator online status:", navigator.onLine);
+        console.log("[AuthContext] login: Connection type:", (navigator as any)?.connection?.effectiveType);
+      }
+      
+      // Log Supabase client state
+      console.log("[AuthContext] login: Supabase client exists:", !!supabase);
+      console.log("[AuthContext] login: Supabase auth exists:", !!supabase?.auth);
+      
       throw error;
     }
   };

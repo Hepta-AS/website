@@ -388,8 +388,19 @@ export const AuthProvider = ({
       console.log("[AuthContext] Direct fetch response data keys:", Object.keys(data));
       console.log("[AuthContext] Direct fetch: Has access_token:", !!data.access_token);
       
-      // If successful, trigger checkAuth to update state and continue
-      console.log("[AuthContext] Direct fetch successful! Triggering checkAuth...");
+      // Set the session in Supabase client using the tokens we received
+      console.log("[AuthContext] Direct fetch: Setting session in Supabase client...");
+      const { error: setSessionError } = await supabase.auth.setSession({
+        access_token: data.access_token,
+        refresh_token: data.refresh_token
+      });
+      
+      if (setSessionError) {
+        console.error("[AuthContext] Direct fetch: Error setting session:", setSessionError);
+        throw setSessionError;
+      }
+      
+      console.log("[AuthContext] Direct fetch: Session set successfully! Triggering checkAuth...");
       await checkAuth();
       console.log("[AuthContext] ===== DIRECT FETCH LOGIN SUCCESSFUL =====");
       return; // Exit successfully

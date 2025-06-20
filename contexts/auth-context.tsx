@@ -314,7 +314,7 @@ export const AuthProvider = ({
   }
 
   const login = async (email: string, password: string): Promise<void> => {
-    console.log("[AuthContext] ===== LOGIN FUNCTION STARTED =====");
+    console.log("[AuthContext] ===== LOGIN FUNCTION STARTED v2.0 =====");
     console.log("[AuthContext] login: Attempting login for email:", email);
     console.log("[AuthContext] login: Password provided:", password ? "YES" : "NO");
     console.log("[AuthContext] login: Password length:", password?.length || 0);
@@ -329,7 +329,7 @@ export const AuthProvider = ({
     // PRIMARY APPROACH: Try direct fetch first (most reliable)
     console.log("[AuthContext] login: Trying direct fetch approach as primary method...");
     try {
-      console.log("[AuthContext] ===== DIRECT FETCH LOGIN STARTED =====");
+      console.log("[AuthContext] ===== DIRECT FETCH LOGIN STARTED v2.0 =====");
       
       // Create AbortController for timeout (more compatible than AbortSignal.timeout)
       console.log("[AuthContext] Direct fetch: Setting up AbortController and 5-second timeout...");

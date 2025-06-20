@@ -331,6 +331,17 @@ export const AuthProvider = ({
     try {
       console.log("[AuthContext] ===== DIRECT FETCH LOGIN STARTED =====");
       
+      // Create AbortController for timeout (more compatible than AbortSignal.timeout)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        console.log("[AuthContext] Direct fetch: Aborting after 5 seconds...");
+        controller.abort();
+      }, 5000); // Reduced to 5 seconds for faster fallback
+      
+      console.log("[AuthContext] Direct fetch: About to make fetch request...");
+      console.log("[AuthContext] Direct fetch: URL:", `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`);
+      
+      const fetchStartTime = Date.now();
       const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`, {
         method: 'POST',
         headers: {
@@ -342,12 +353,18 @@ export const AuthProvider = ({
           email,
           password,
         }),
-        signal: AbortSignal.timeout(8000) // 8 second timeout
+        signal: controller.signal
       });
       
+      clearTimeout(timeoutId); // Clear timeout if we got a response
+      const fetchEndTime = Date.now();
+      
+      console.log("[AuthContext] Direct fetch: Response received in:", fetchEndTime - fetchStartTime, "ms");
       console.log("[AuthContext] Direct fetch response status:", response.status);
+      console.log("[AuthContext] Direct fetch response ok:", response.ok);
       
       if (!response.ok) {
+        console.log("[AuthContext] Direct fetch: Response not ok, parsing error...");
         const errorData = await response.json();
         console.log("[AuthContext] Direct fetch error data:", errorData);
         
@@ -357,8 +374,10 @@ export const AuthProvider = ({
         throw new Error(errorData.error_description || errorData.msg || 'Login failed');
       }
       
+      console.log("[AuthContext] Direct fetch: Parsing response JSON...");
       const data = await response.json();
-      console.log("[AuthContext] Direct fetch response data:", data);
+      console.log("[AuthContext] Direct fetch response data keys:", Object.keys(data));
+      console.log("[AuthContext] Direct fetch: Has access_token:", !!data.access_token);
       
       // If successful, trigger checkAuth to update state and continue
       console.log("[AuthContext] Direct fetch successful! Triggering checkAuth...");
@@ -368,17 +387,25 @@ export const AuthProvider = ({
       
     } catch (directError) {
       console.error("[AuthContext] Direct fetch login failed:", directError);
+      console.log("[AuthContext] Direct fetch error name:", (directError as Error).name);
+      console.log("[AuthContext] Direct fetch error message:", (directError as Error).message);
       
       // If it's a user credential error, don't try fallback
       if ((directError as Error).message.includes("Ikke riktig brukernavn")) {
         throw directError;
       }
       
-      console.log("[AuthContext] login: Direct fetch failed, attempting Supabase SDK fallback...");
+      // If it's an abort error, that's expected for timeout
+      if ((directError as Error).name === 'AbortError') {
+        console.log("[AuthContext] login: Direct fetch timed out, attempting Supabase SDK fallback...");
+      } else {
+        console.log("[AuthContext] login: Direct fetch failed with error, attempting Supabase SDK fallback...");
+      }
     }
     
     // FALLBACK: Try Supabase SDK (only if direct fetch had network issues)
     try {
+      console.log("[AuthContext] ===== SUPABASE SDK FALLBACK STARTED =====");
       console.log("[AuthContext] login: About to call supabase.auth.signInWithPassword...");
       const signInStartTime = Date.now();
       
@@ -390,6 +417,7 @@ export const AuthProvider = ({
         }, 3000); // 3 second timeout for fallback
       });
       
+      console.log("[AuthContext] Supabase SDK: Creating signIn promise...");
       const signInPromise = supabase.auth.signInWithPassword({
         email,
         password,
@@ -404,7 +432,7 @@ export const AuthProvider = ({
       
       const { data, error } = result as any;
       
-      console.log("[AuthContext] login: Supabase response data:", data);
+      console.log("[AuthContext] login: Supabase response data exists:", !!data);
       console.log("[AuthContext] login: Supabase response error:", error);
 
       if (error) {
@@ -429,6 +457,8 @@ export const AuthProvider = ({
     } catch (error) {
       console.error("[AuthContext] login: ===== LOGIN FUNCTION FAILED =====");
       console.error("[AuthContext] login: Final error:", error);
+      console.error("[AuthContext] login: Error type:", typeof error);
+      console.error("[AuthContext] login: Error constructor:", (error as any)?.constructor?.name);
       
       if (typeof navigator !== 'undefined') {
         console.log("[AuthContext] login: Navigator online status:", navigator.onLine);

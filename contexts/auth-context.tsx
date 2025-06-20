@@ -313,42 +313,6 @@ export const AuthProvider = ({
     console.log("[AuthContext] createTestSession: Test session created successfully.");
   }
 
-  const loginWithDirectFetch = async (email: string, password: string): Promise<void> => {
-    console.log("[AuthContext] ===== DIRECT FETCH LOGIN STARTED =====");
-    
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-        signal: AbortSignal.timeout(5000)
-      });
-      
-      console.log("[AuthContext] Direct fetch response status:", response.status);
-      const data = await response.json();
-      console.log("[AuthContext] Direct fetch response data:", data);
-      
-      if (!response.ok) {
-        throw new Error(data.error_description || data.msg || 'Login failed');
-      }
-      
-      // If successful, trigger checkAuth to update state
-      await checkAuth();
-      console.log("[AuthContext] ===== DIRECT FETCH LOGIN SUCCESSFUL =====");
-      
-    } catch (error) {
-      console.error("[AuthContext] Direct fetch login failed:", error);
-      throw error;
-    }
-  };
-
   const login = async (email: string, password: string): Promise<void> => {
     console.log("[AuthContext] ===== LOGIN FUNCTION STARTED =====");
     console.log("[AuthContext] login: Attempting login for email:", email);
@@ -362,40 +326,68 @@ export const AuthProvider = ({
       console.log("[AuthContext] login: Network online status:", navigator.onLine);
     }
     
-    // Try direct fetch approach first as a workaround
-    console.log("[AuthContext] login: Trying direct fetch approach first...");
+    // PRIMARY APPROACH: Try direct fetch first (most reliable)
+    console.log("[AuthContext] login: Trying direct fetch approach as primary method...");
     try {
-      await loginWithDirectFetch(email, password);
-      return; // If successful, exit early
-    } catch (directError) {
-      console.log("[AuthContext] login: Direct fetch failed, falling back to Supabase client...");
-      console.error("[AuthContext] login: Direct fetch error:", directError);
-    }
-    
-    // Quick connectivity test to Supabase
-    try {
-      console.log("[AuthContext] login: Testing Supabase connectivity...");
-      const testUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/`;
-      const testResponse = await fetch(testUrl, {
-        method: 'HEAD',
-        signal: AbortSignal.timeout(3000) // 3 second timeout for connectivity test
+      console.log("[AuthContext] ===== DIRECT FETCH LOGIN STARTED =====");
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+        signal: AbortSignal.timeout(8000) // 8 second timeout
       });
-      console.log("[AuthContext] login: Supabase connectivity test status:", testResponse.status);
-    } catch (connectError) {
-      console.error("[AuthContext] login: Supabase connectivity test failed:", connectError);
-      console.error("[AuthContext] login: This might indicate network or Supabase issues");
+      
+      console.log("[AuthContext] Direct fetch response status:", response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log("[AuthContext] Direct fetch error data:", errorData);
+        
+        if (response.status === 400) {
+          throw new Error("Ikke riktig brukernavn og/eller passord");
+        }
+        throw new Error(errorData.error_description || errorData.msg || 'Login failed');
+      }
+      
+      const data = await response.json();
+      console.log("[AuthContext] Direct fetch response data:", data);
+      
+      // If successful, trigger checkAuth to update state and continue
+      console.log("[AuthContext] Direct fetch successful! Triggering checkAuth...");
+      await checkAuth();
+      console.log("[AuthContext] ===== DIRECT FETCH LOGIN SUCCESSFUL =====");
+      return; // Exit successfully
+      
+    } catch (directError) {
+      console.error("[AuthContext] Direct fetch login failed:", directError);
+      
+      // If it's a user credential error, don't try fallback
+      if ((directError as Error).message.includes("Ikke riktig brukernavn")) {
+        throw directError;
+      }
+      
+      console.log("[AuthContext] login: Direct fetch failed, attempting Supabase SDK fallback...");
     }
     
+    // FALLBACK: Try Supabase SDK (only if direct fetch had network issues)
     try {
       console.log("[AuthContext] login: About to call supabase.auth.signInWithPassword...");
       const signInStartTime = Date.now();
       
-      // Reduced timeout to 5 seconds for faster feedback
+      // Shorter timeout for fallback
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
-          console.error("[AuthContext] login: TIMEOUT - Supabase did not respond within 5 seconds");
+          console.error("[AuthContext] login: TIMEOUT - Supabase SDK did not respond within 3 seconds");
           reject(new Error("Innlogging tok for lang tid - prøv igjen eller sjekk internettforbindelsen din"));
-        }, 5000); // 5 second timeout
+        }, 3000); // 3 second timeout for fallback
       });
       
       const signInPromise = supabase.auth.signInWithPassword({
@@ -404,14 +396,12 @@ export const AuthProvider = ({
       });
       
       console.log("[AuthContext] login: SignIn promise created, waiting for response...");
-      console.log("[AuthContext] login: Starting race between signin and timeout...");
       
       const result = await Promise.race([signInPromise, timeoutPromise]);
       
       const signInEndTime = Date.now();
       console.log("[AuthContext] login: signInWithPassword completed in:", signInEndTime - signInStartTime, "ms");
       
-      // Type assertion since Promise.race can return either type
       const { data, error } = result as any;
       
       console.log("[AuthContext] login: Supabase response data:", data);
@@ -420,52 +410,29 @@ export const AuthProvider = ({
       if (error) {
         console.error("[AuthContext] login: ===== SUPABASE SIGNIN FAILED =====");
         console.error("[AuthContext] login: Error object:", error);
-        console.error("[AuthContext] login: Error message:", error.message);
-        console.error("[AuthContext] login: Error status:", error.status);
-        console.error("[AuthContext] login: Error name:", error.name);
         
-        // Provide user-friendly error messages in Norwegian
         if (
           error.message?.toLowerCase().includes("invalid login credentials") ||
           error.message?.toLowerCase().includes("invalid credentials") ||
           error.status === 400
         ) {
-          console.log("[AuthContext] login: Throwing Norwegian error message");
           throw new Error("Ikke riktig brukernavn og/eller passord");
         }
         
-        // For other errors, throw the original error
-        console.log("[AuthContext] login: Throwing original error");
         throw error;
       }
 
       console.log("[AuthContext] login: Supabase sign-in successful!");
-      console.log("[AuthContext] login: Session data:", data?.session);
-      console.log("[AuthContext] login: User data:", data?.user);
-      console.log("[AuthContext] login: About to call checkAuth...");
-      
-      const checkAuthStartTime = Date.now();
       await checkAuth();
-      const checkAuthEndTime = Date.now();
-      
-      console.log("[AuthContext] login: checkAuth completed in:", checkAuthEndTime - checkAuthStartTime, "ms");
       console.log("[AuthContext] login: ===== LOGIN FUNCTION COMPLETED SUCCESSFULLY =====");
+      
     } catch (error) {
       console.error("[AuthContext] login: ===== LOGIN FUNCTION FAILED =====");
-      console.error("[AuthContext] login: Caught error:", error);
-      console.error("[AuthContext] login: Error type:", typeof error);
-      console.error("[AuthContext] login: Error constructor:", error?.constructor?.name);
-      console.error("[AuthContext] login: Error message:", (error as Error)?.message);
+      console.error("[AuthContext] login: Final error:", error);
       
-      // Log additional network diagnostics
       if (typeof navigator !== 'undefined') {
         console.log("[AuthContext] login: Navigator online status:", navigator.onLine);
-        console.log("[AuthContext] login: Connection type:", (navigator as any)?.connection?.effectiveType);
       }
-      
-      // Log Supabase client state
-      console.log("[AuthContext] login: Supabase client exists:", !!supabase);
-      console.log("[AuthContext] login: Supabase auth exists:", !!supabase?.auth);
       
       throw error;
     }

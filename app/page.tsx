@@ -20,6 +20,7 @@ export default function Home() {
   const auth = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   const router = useRouter();
   const pathname = usePathname();
   const previousPath = useRef(pathname);
@@ -28,6 +29,13 @@ export default function Home() {
   useEffect(() => {
     auth.checkAuth();
   }, [auth]);
+
+  // Track scroll position for parallax effect
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Auto-close contact modal on route change
   useEffect(() => {
@@ -125,43 +133,25 @@ export default function Home() {
         {/* HERO SECTION */}
         <section
           className="relative flex flex-col overflow-hidden h-screen"
+          style={{
+            transform: `translateY(${scrollY * 0.5}px)`,
+          }}
         >
           <div
             className={`absolute inset-0 z-0 ${
               shouldPageBeWhite ? "opacity-0" : defaultPageBg
             } transition-opacity duration-1000`}
           />
-          {/* Fallback image for when video doesn't load */}
-          <Image
-            src="/herobg.jpg"
-            alt=""
-            fill
-            priority
-            quality={75}
-            className="object-cover opacity-70 z-0"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-          />
-          
-          {/* Video overlay - only loads if video is supported */}
+          {/* Hero video */}
           <video
             autoPlay
             loop
             muted
             playsInline
             preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover opacity-70 z-0"
-            onError={(e) => {
-              // Hide video on error and let fallback image show
-              e.currentTarget.style.display = 'none';
-            }}
-            onCanPlay={(e) => {
-              // Hide fallback image when video is ready
-              e.currentTarget.style.zIndex = '1';
-            }}
+            className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
           >
-            <source src="/videos/omosshero_compressed.mp4" type="video/mp4" />
+            <source src="/videos/network.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/60 z-0" />
           <div

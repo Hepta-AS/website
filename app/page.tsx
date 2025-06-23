@@ -190,9 +190,6 @@ export default function Home() {
         {/* HERO SECTION */}
         <section
           className="relative flex flex-col overflow-hidden h-screen"
-          style={{
-            transform: `translateY(${scrollY * 0.5}px)`,
-          }}
         >
           <div
             className={`absolute inset-0 z-0 ${

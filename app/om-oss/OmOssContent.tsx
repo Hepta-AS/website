@@ -36,7 +36,7 @@ export default function OmOssContent() {
             {/* Video Hero Section - Fixed height to prevent getting stuck */}
             <section className="relative h-screen max-h-[800px] min-h-[600px] overflow-hidden">
                 <VideoHero
-                    videoSrc="/videos/omosshero.mp4"
+                    videoSrc="/videos/omosshero_compressed.mp4"
                     title="HEPTA"
                     subtitle="Din partner for digital transformasjon"
                 />

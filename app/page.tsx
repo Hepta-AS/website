@@ -144,7 +144,7 @@ export default function Home() {
               shouldPageBeWhite ? "to-white dark:to-gray-100" : "to-gray-900 dark:to-black"
             } z-0`}
           />
-          <div className="absolute left-0 w-full bottom-0 top-auto translate-y-0 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-10 px-6 sm:px-12 mb-8 md:mb-0">
+          <div className="absolute left-0 w-full bottom-1/3 top-auto translate-y-0 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-10 px-6 sm:px-12">
             <h1 className="font-serif text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-tight tracking-tight drop-shadow-lg text-left select-none opacity-0 animate-fade-in">
               Digitale løsninger som driver din bedrift fremover
             </h1>

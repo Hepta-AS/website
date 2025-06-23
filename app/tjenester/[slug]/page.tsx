@@ -45,7 +45,7 @@ const services = {
     • Computer Vision
     • Chatbots og automatisering
     • AI-strategi og implementering`,
-    image: "/group11.png"
+          image: "/group11.jpg"
   },
   "innsikt-og-analyse": {
     title: "Innsikt og analyse",

@@ -4,7 +4,7 @@ export const services = [
     description: "Innhold som skaper inntrykk, salg eller engasjement",
     content: "Vi utvikler skreddersydde innholdsløsninger som driver din virksomhet fremover. Fra video til grafisk design, vi skaper innhold som engasjerer.",
     slug: "AI",
-    image: "/group11.png",
+          image: "/group11.jpg",
   },
   {
     title: "Videoproduksjon",

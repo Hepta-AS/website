@@ -13,6 +13,7 @@ import { BigTextGrid } from "@/components/BigTextGrid";
 import { TextAndImage } from "@/components/TextAndImage";
 import { ContactCallToAction } from "@/components/ContactCallToAction";
 import { SimpleAnimation } from "@/components/SimpleAnimation";
+import Image from "next/image";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 
 export default function Home() {
@@ -45,7 +46,7 @@ export default function Home() {
       title: "AI og automasjon",
       content: "Effektiviser forretningsprosessene dine med skreddersydde AI-løsninger og automatiserte arbeidsflyter som sparer tid og øker lønnsomheten.",
       slug: "AI",
-      image: "/group11.png",
+      image: "/group11.jpg",
     },
     {
       title: "Videoproduksjon",
@@ -130,15 +131,37 @@ export default function Home() {
               shouldPageBeWhite ? "opacity-0" : defaultPageBg
             } transition-opacity duration-1000`}
           />
+          {/* Fallback image for when video doesn't load */}
+          <Image
+            src="/herobg.jpg"
+            alt=""
+            fill
+            priority
+            quality={75}
+            className="object-cover opacity-70 z-0"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+          />
+          
+          {/* Video overlay - only loads if video is supported */}
           <video
             autoPlay
             loop
             muted
             playsInline
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover opacity-70 z-0"
+            onError={(e) => {
+              // Hide video on error and let fallback image show
+              e.currentTarget.style.display = 'none';
+            }}
+            onCanPlay={(e) => {
+              // Hide fallback image when video is ready
+              e.currentTarget.style.zIndex = '1';
+            }}
           >
-            <source src="/videos/network.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
+            <source src="/videos/omosshero_compressed.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/60 z-0" />
           <div

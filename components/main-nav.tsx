@@ -14,7 +14,6 @@ const navItems = [
   { name: 'Hjem', href: '/' },
   { name: 'Tjenester', href: '/tjenester' },
   { name: 'Om oss', href: '/om-oss' },
-  { name: 'Kontakt', href: '/contact' },
 ];
 
 interface MainNavProps {

@@ -6,11 +6,11 @@ export function Footer() {
   return (
     <footer className="border-t border-gray-800 bg-black">
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div>
             <h3 className="text-lg font-semibold mb-4">Hepta</h3>
             <p className="text-gray-400">
-              Vi er et team av dedikerte fagfolk som brenner for å skape digitale løsninger som gjør en forskjell.
+              Med røtter i Molde og base i Oslo, er Hepta et markedsførings- og teknologiselskap dedikert til å skape digitale løsninger som gjør en forskjell.
             </p>
           </div>
 
@@ -60,13 +60,9 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4">Kontakt</h3>
             <div className="space-y-2 text-gray-400">
               <div>
-                <p className="font-medium text-white">Adresse</p>
-                <p>Molde, Norge</p>
-              </div>
-              <div>
                 <p className="font-medium text-white">E-post</p>
-                <a href="mailto:post@hepta.no" className="hover:text-blue-500">
-                  post@hepta.no
+                <a href="mailto:hey@hepta.biz" className="hover:text-blue-500">
+                  hey@hepta.biz
                 </a>
               </div>
             </div>

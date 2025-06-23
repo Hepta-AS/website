@@ -234,15 +234,28 @@ export default function Home() {
 
 
 
-        <ParallaxFade>
-          <BigTextGrid
-            line1Text="VI SKAPER DIGITALE"
-            line2Text="OPPLEVELSER SOM"
-            line3Text="ENGASJERER OG KONVERTERER."
-            line4Text="TEKNOLOGI ER VÅR LIDENSKAP."
-            shouldPageBeWhite={shouldPageBeWhite}
-          />
-        </ParallaxFade>
+        <section className="py-20 sm:py-32">
+          <div className="container mx-auto px-4 text-center">
+            <ParallaxFade>
+              <h2 className={`text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight ${shouldPageBeWhite ? 'text-gray-900' : 'text-white'}`}>
+                Teknologi i kjernen av alt vi gjør
+              </h2>
+            </ParallaxFade>
+            <ParallaxFade>
+              <p className={`mt-6 max-w-3xl mx-auto text-lg sm:text-xl ${shouldPageBeWhite ? 'text-gray-600' : 'text-gray-300'}`}>
+                Vi bygger ikke bare nettsider, vi skaper digitale økosystemer. Fra avanserte webapplikasjoner til AI-drevne automatiseringsløsninger, bruker vi den nyeste teknologien for å gi deg et konkurransefortrinn.
+              </p>
+            </ParallaxFade>
+            <ParallaxFade>
+              <div className="mt-10">
+                <Button onClick={handleServiceNavigation} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105">
+                  Utforsk våre tjenester
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
+            </ParallaxFade>
+          </div>
+        </section>
 
         <section className={`py-24 transition-colors duration-1000 ${shouldPageBeWhite ? whitePageBg : defaultPageBg}`}>
           <div className="container mx-auto px-4">

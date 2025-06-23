@@ -5,6 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, Users, Zap, Target } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 import { ContactFormModal } from "@/components/contact-form-modal";
 import { useAuth } from "@/contexts/auth-context";
@@ -295,6 +297,8 @@ export default function Home() {
             shouldPageBeWhite={shouldPageBeWhite}
           />
         </ParallaxFade>
+
+        
 
         <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />
       </div>

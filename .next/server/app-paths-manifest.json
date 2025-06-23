@@ -1,3 +1,6 @@
 {
+  "/not-found": "app/not-found.js",
+  "/om-oss/page": "app/om-oss/page.js",
+  "/tjenester/[slug]/page": "app/tjenester/[slug]/page.js",
   "/page": "app/page.js"
 }

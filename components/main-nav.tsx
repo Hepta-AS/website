@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -25,8 +25,8 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const lastScrollY = useRef(0);
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout, checkAuth } = useAuth();
@@ -40,7 +40,7 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
       
       // Hide/show navbar based on scroll direction
       if (currentScrollY > 100) { // Only hide after scrolling past 100px
-        if (currentScrollY > lastScrollY && currentScrollY > 200) {
+        if (currentScrollY > lastScrollY.current && currentScrollY > 200) {
           // Scrolling down
           setIsHidden(true);
           setIsOpen(false); // Close mobile menu when hiding
@@ -53,12 +53,12 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
         setIsHidden(false);
       }
       
-      setLastScrollY(currentScrollY);
+      lastScrollY.current = currentScrollY;
     };
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   useEffect(() => {
     checkAuth();

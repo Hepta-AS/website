@@ -12,7 +12,7 @@ import { ServiceCards } from "@/components/serviceCards";
 import { BigTextGrid } from "@/components/BigTextGrid";
 import { TextAndImage } from "@/components/TextAndImage";
 import { ContactCallToAction } from "@/components/ContactCallToAction";
-import { SvgAnimation } from "@/components/SvgAnimation";
+import { SimpleAnimation } from "@/components/SimpleAnimation";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 
 export default function Home() {
@@ -153,7 +153,7 @@ export default function Home() {
           </div>
         </section>
 
-        <SvgAnimation />
+        <SimpleAnimation />
 
         <BigTextGrid
           line1Text="VI SKAPER DIGITALE"

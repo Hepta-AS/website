@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Dot } from 'lucide-react';
-import { Center } from '@/components';
+import { Center } from './Center';
 import { preloaderWords } from '@/data';
 import { useDimensions, useTimeOut } from '@/hooks';
 

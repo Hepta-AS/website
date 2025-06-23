@@ -28,6 +28,7 @@ export default function Home() {
     }
     return true;
   });
+  const [isVideoReady, setIsVideoReady] = useState(false);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -170,17 +171,11 @@ export default function Home() {
           sessionStorage.setItem('hepta-visited', 'true');
         }
         setIsLoading(false);
-        // Simple video autoplay after preloader
-        if (videoRef.current) {
-          videoRef.current.play().catch(e => {
-            console.log('Video autoplay blocked by browser policy');
-          });
-        }
       }} />}
       <div
         className={`w-full overflow-x-hidden ${
           shouldPageBeWhite ? `${whitePageBg} ${whitePageFg}` : `${defaultPageBg} ${defaultPageFg}`
-        } ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+        } ${isLoading || !isVideoReady ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
         style={{ scrollBehavior: 'auto' }}
       >
       <div className="space-y-32 overflow-x-hidden">
@@ -201,14 +196,10 @@ export default function Home() {
             loop
             muted
             playsInline
-            preload="none"
+            onCanPlay={() => setIsVideoReady(true)}
             className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
-            style={{
-              WebkitAppearance: 'none',
-              appearance: 'none',
-            }}
           >
-            <source src="/videos/ork_compressed.mp4" type="video/mp4" />
+            <source src="/videos/ork_super_compressed.mp4#t=0.1" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/20 z-0" />
           <div

@@ -13,6 +13,7 @@ import { BigTextGrid } from "@/components/BigTextGrid";
 import { TextAndImage } from "@/components/TextAndImage";
 import { ContactCallToAction } from "@/components/ContactCallToAction";
 import { SimpleAnimation } from "@/components/SimpleAnimation";
+import { ParallaxSlider } from "@/components/ParallaxSlider";
 import Image from "next/image";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 
@@ -166,7 +167,7 @@ export default function Home() {
           </div>
         </section>
 
-        <SimpleAnimation />
+        <ParallaxSlider />
 
         <BigTextGrid
           line1Text="VI SKAPER DIGITALE"

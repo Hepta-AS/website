@@ -44,7 +44,7 @@ const itemVariants = {
 export default function Home() {
   const auth = useAuth();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
+
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -60,12 +60,7 @@ export default function Home() {
     auth.checkAuth();
   }, [auth]);
 
-  // Track scroll position for parallax effect
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+
 
   // Auto-close contact modal on route change
   useEffect(() => {
@@ -108,7 +103,7 @@ export default function Home() {
   const triggerSectionRef = useRef<HTMLDivElement | null>(null);
   const entry = useIntersectionObserverInit(triggerSectionRef, {
     threshold: 0.4,
-    freezeOnceVisible: false,
+    freezeOnceVisible: true,
   });
   const shouldPageBeWhite = mounted ? !!entry?.isIntersecting : false;
 
@@ -159,7 +154,7 @@ export default function Home() {
               loop
               muted
               playsInline
-              preload="metadata"
+              preload="none"
               className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
             >
               <source src="/videos/ork_compressed.mp4" type="video/mp4" />
@@ -182,7 +177,7 @@ export default function Home() {
 
   return (
       <div
-        className={`w-full transition-colors duration-1000 ease-in-out overflow-x-hidden ${
+        className={`w-full overflow-x-hidden ${
           shouldPageBeWhite ? `${whitePageBg} ${whitePageFg}` : `${defaultPageBg} ${defaultPageFg}`
         }`}
       >
@@ -194,19 +189,19 @@ export default function Home() {
           <div
             className={`absolute inset-0 z-0 ${
               shouldPageBeWhite ? "opacity-0" : defaultPageBg
-            } transition-opacity duration-1000`}
+            }`}
           />
           {/* Hero video */}
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
-          >
-            <source src="/videos/ork_compressed.mp4" type="video/mp4" />
-          </video>
+                      <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="none"
+              className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
+            >
+              <source src="/videos/ork_compressed.mp4" type="video/mp4" />
+            </video>
           <div className="absolute inset-0 bg-black/20 z-0" />
           <div
             className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent ${
@@ -257,7 +252,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={`py-24 transition-colors duration-1000 ${shouldPageBeWhite ? whitePageBg : defaultPageBg}`}>
+        <section className={`py-24 ${shouldPageBeWhite ? whitePageBg : defaultPageBg}`}>
           <div className="container mx-auto px-4">
             <ParallaxFade>
               <div className="text-center">
@@ -281,7 +276,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section ref={triggerSectionRef} className={`py-16 sm:py-24 lg:py-32 transition-colors duration-1000 ${shouldPageBeWhite ? whitePageBg : defaultPageBg}`}>
+        <section ref={triggerSectionRef} className={`py-16 sm:py-24 lg:py-32 ${shouldPageBeWhite ? whitePageBg : defaultPageBg}`}>
           <div className="container mx-auto px-4">
             <ParallaxFade>
               <div className="mb-16 md:mb-24">

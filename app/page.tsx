@@ -45,7 +45,13 @@ const itemVariants = {
 export default function Home() {
   const auth = useAuth();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => {
+    // Only show preloader on first visit (no sessionStorage item)
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('hepta-visited');
+    }
+    return true;
+  });
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -178,16 +184,23 @@ export default function Home() {
 
   return (
     <>
-      {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
+      {isLoading && <Preloader onComplete={() => {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('hepta-visited', 'true');
+        }
+        setIsLoading(false);
+      }} />}
       <div
         className={`w-full overflow-x-hidden ${
           shouldPageBeWhite ? `${whitePageBg} ${whitePageFg}` : `${defaultPageBg} ${defaultPageFg}`
         } ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+        style={{ scrollBehavior: 'auto' }}
       >
       <div className="space-y-32 overflow-x-hidden">
         {/* HERO SECTION */}
         <section
           className="relative flex flex-col overflow-hidden h-screen"
+          style={{ touchAction: 'auto' }}
         >
           <div
             className={`absolute inset-0 z-0 ${
@@ -219,10 +232,7 @@ export default function Home() {
               transition={{ duration: 1, delay: 0.2 }}
             >
               <h1 className="font-serif text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-tight tracking-tight drop-shadow-lg text-left select-none mb-8">
-                <ParallaxReveal 
-                  paragraph="Digitale løsninger som driver din bedrift fremover"
-                  className="text-white"
-                />
+                Digitale løsninger som driver din bedrift fremover
               </h1>
               
 
@@ -234,24 +244,18 @@ export default function Home() {
 
         <section className="py-20 sm:py-32">
           <div className="container mx-auto px-4 text-center">
-            <ParallaxFade>
-              <h2 className={`text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight ${shouldPageBeWhite ? 'text-gray-900' : 'text-white'}`}>
-                Teknologi i kjernen av alt vi gjør
-              </h2>
-            </ParallaxFade>
-            <ParallaxFade>
-              <p className={`mt-6 max-w-3xl mx-auto text-lg sm:text-xl ${shouldPageBeWhite ? 'text-gray-600' : 'text-gray-300'}`}>
-                Vi bygger ikke bare nettsider, vi skaper digitale økosystemer. Fra avanserte webapplikasjoner til AI-drevne automatiseringsløsninger, bruker vi den nyeste teknologien for å gi deg et konkurransefortrinn.
-              </p>
-            </ParallaxFade>
-            <ParallaxFade>
-              <div className="mt-10">
-                <Button onClick={handleServiceNavigation} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105">
-                  Utforsk våre tjenester
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </div>
-            </ParallaxFade>
+            <h2 className={`text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight ${shouldPageBeWhite ? 'text-gray-900' : 'text-white'}`}>
+              Teknologi i kjernen av alt vi gjør
+            </h2>
+            <p className={`mt-6 max-w-3xl mx-auto text-lg sm:text-xl ${shouldPageBeWhite ? 'text-gray-600' : 'text-gray-300'}`}>
+              Vi bygger ikke bare nettsider, vi skaper digitale økosystemer. Fra avanserte webapplikasjoner til AI-drevne automatiseringsløsninger, bruker vi den nyeste teknologien for å gi deg et konkurransefortrinn.
+            </p>
+            <div className="mt-10">
+              <Button onClick={handleServiceNavigation} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105">
+                Utforsk våre tjenester
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </section>
 

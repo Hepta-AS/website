@@ -16,21 +16,6 @@
       "static/chunks/main-app.js",
       "static/chunks/app/tjenester/page.js"
     ],
-    "/tjenester/[slug]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/tjenester/[slug]/page.js"
-    ],
-    "/contact/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/contact/page.js"
-    ],
-    "/contact/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/contact/layout.js"
-    ],
     "/om-oss/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",

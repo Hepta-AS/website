@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
 
 import { ContactFormModal } from "@/components/contact-form-modal";
 import { useAuth } from "@/contexts/auth-context";
@@ -34,20 +33,11 @@ export default function Home() {
   const pathname = usePathname();
   const previousPath = useRef(pathname);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   // Handle hydration
   useEffect(() => {
     setMounted(true);
-    // Check if device is mobile
-    setIsMobile(window.innerWidth <= 768);
-    
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Check auth state on mount
@@ -144,13 +134,21 @@ export default function Home() {
           {/* Static hero section for SSR */}
           <section className="relative flex flex-col overflow-hidden h-screen">
             <div className="absolute inset-0 z-0 bg-gray-900 dark:bg-black" />
-            <Image
-              src="/herobg_compressed.jpg"
-              alt="Hepta hero background"
-              fill
-              className="object-cover opacity-50 z-0"
-              priority
-            />
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              poster="/herobg_compressed.jpg"
+              className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
+              controls={false}
+              style={{
+                WebkitAppearance: 'none',
+              }}
+            >
+              <source src="/videos/ork_compressed.mp4" type="video/mp4" />
+            </video>
             <div className="absolute inset-0 bg-black/20 z-0" />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-gray-900 dark:to-black z-0" />
             
@@ -174,10 +172,22 @@ export default function Home() {
           sessionStorage.setItem('hepta-visited', 'true');
         }
         setIsLoading(false);
-        // Force video to load and play (only on desktop)
-        if (!isMobile && videoRef.current) {
-          videoRef.current.load();
-          videoRef.current.play().catch(e => console.log('Video autoplay failed:', e));
+        // Force video to load and play with mobile-friendly approach
+        if (videoRef.current) {
+          const video = videoRef.current;
+          video.muted = true; // Ensure muted for autoplay
+          video.volume = 0; // Double ensure no sound
+          video.load();
+          
+          // Try to play with error handling
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(e => {
+              console.log('Video autoplay failed:', e);
+              // Fallback: show poster image
+              video.style.display = 'none';
+            });
+          }
         }
       }} />}
       <div
@@ -197,28 +207,26 @@ export default function Home() {
               shouldPageBeWhite ? "opacity-0" : defaultPageBg
             }`}
           />
-          {/* Hero background - video on desktop, image on mobile */}
-          {isMobile ? (
-            <Image
-              src="/herobg_compressed.jpg"
-              alt="Hepta hero background"
-              fill
-              className="object-cover opacity-50 z-0"
-              priority
-            />
-          ) : (
-            <video
-              ref={videoRef}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
-            >
-              <source src="/videos/ork_compressed.mp4" type="video/mp4" />
-            </video>
-          )}
+          {/* Hero video with fallback */}
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            poster="/herobg_compressed.jpg"
+            className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
+            onLoadedData={() => setVideoLoaded(true)}
+            onError={() => setVideoLoaded(false)}
+            style={{
+              // Hide video controls completely
+              WebkitAppearance: 'none',
+            }}
+            controls={false}
+          >
+            <source src="/videos/ork_compressed.mp4" type="video/mp4" />
+          </video>
           <div className="absolute inset-0 bg-black/20 z-0" />
           <div
             className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent ${

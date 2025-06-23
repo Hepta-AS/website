@@ -138,7 +138,12 @@ export default function Home() {
               loop
               muted
               playsInline
+              preload="none"
               className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
+              style={{
+                WebkitAppearance: 'none',
+                appearance: 'none',
+              }}
             >
               <source src="/videos/ork_compressed.mp4" type="video/mp4" />
             </video>
@@ -190,13 +195,18 @@ export default function Home() {
             }`}
           />
           {/* Hero video with fallback */}
-                    <video
+          <video
             ref={videoRef}
             autoPlay
             loop
             muted
             playsInline
+            preload="none"
             className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
+            style={{
+              WebkitAppearance: 'none',
+              appearance: 'none',
+            }}
           >
             <source src="/videos/ork_compressed.mp4" type="video/mp4" />
           </video>

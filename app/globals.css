@@ -94,20 +94,54 @@
   animation: fade-in 0.5s ease-out forwards;
 }
 
-/* Hide video controls completely on all browsers */
-video::-webkit-media-controls {
-  display: none !important;
-}
-
+/* Remove iOS video controls and play button */
 video::-webkit-media-controls-panel {
   display: none !important;
+  -webkit-appearance: none;
 }
 
 video::-webkit-media-controls-play-button {
   display: none !important;
+  -webkit-appearance: none;
 }
 
 video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+video::-webkit-media-controls-timeline {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+video::-webkit-media-controls-current-time-display {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+video::-webkit-media-controls-time-remaining-display {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+video::-webkit-media-controls-volume-slider {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+video::-webkit-media-controls-mute-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+video::-webkit-media-controls-fullscreen-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+/* Hide video controls on all browsers */
+video::-webkit-media-controls {
   display: none !important;
 }
 
@@ -115,11 +149,17 @@ video::-moz-media-controls {
   display: none !important;
 }
 
-video::-ms-media-controls {
+video::--ms-media-controls {
   display: none !important;
 }
 
+/* Additional mobile optimizations */
 video {
-  outline: none;
+  pointer-events: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 

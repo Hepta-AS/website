@@ -11,20 +11,15 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/om-oss/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/om-oss/page.js"
-    ],
     "/tjenester/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/tjenester/page.js"
     ],
-    "/tjenester/[slug]/page": [
+    "/om-oss/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/tjenester/[slug]/page.js"
+      "static/chunks/app/om-oss/page.js"
     ]
   }
 }

@@ -212,7 +212,7 @@ export default function Home() {
             playsInline
             className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
           >
-            <source src="/videos/ork_super_compressed.mp4#t=0.1" type="video/mp4" />
+            <source src="/videos/ork_compressed.mp4#t=0.1" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/20 z-0" />
           <div

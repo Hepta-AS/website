@@ -139,13 +139,14 @@ export default function Home() {
               loop
               muted
               playsInline
+              preload="metadata"
               className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
               controls={false}
               style={{
                 WebkitAppearance: 'none',
               }}
             >
-              <source src="/videos/ork_compressed.mp4" type="video/mp4" />
+              <source src="/videos/ork_compressed.mp4#t=0.001" type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-black/20 z-0" />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-gray-900 dark:to-black z-0" />
@@ -170,22 +171,32 @@ export default function Home() {
           sessionStorage.setItem('hepta-visited', 'true');
         }
         setIsLoading(false);
-        // Force video to load and play with mobile-friendly approach
+        // Force video to load and play with mobile-optimized approach
         if (videoRef.current) {
           const video = videoRef.current;
-          video.muted = true; // Ensure muted for autoplay
-          video.volume = 0; // Double ensure no sound
+          
+          // Ensure video is properly muted for autoplay compliance
+          video.muted = true;
+          video.volume = 0;
+          
+          // Force reload to ensure #t=0.001 is processed
           video.load();
           
-          // Try to play with error handling
-          const playPromise = video.play();
-          if (playPromise !== undefined) {
-            playPromise.catch(e => {
-              console.log('Video autoplay failed:', e);
-              // Fallback: show poster image
-              video.style.display = 'none';
-            });
-          }
+          // Add a small delay to ensure video metadata is loaded
+          setTimeout(() => {
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+              playPromise
+                .then(() => {
+                  console.log('Video autoplay successful');
+                })
+                .catch(e => {
+                  console.log('Video autoplay failed, likely due to browser policy:', e);
+                  // On iOS, this often happens in Low Power Mode
+                  // The #t=0.001 trick should still show the first frame
+                });
+            }
+          }, 100);
         }
       }} />}
       <div
@@ -212,6 +223,8 @@ export default function Home() {
             loop
             muted
             playsInline
+            preload="metadata"
+
             className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
             onLoadedData={() => setVideoLoaded(true)}
             onError={() => setVideoLoaded(false)}
@@ -221,7 +234,7 @@ export default function Home() {
             }}
             controls={false}
           >
-            <source src="/videos/ork_compressed.mp4" type="video/mp4" />
+            <source src="/videos/ork_compressed.mp4#t=0.001" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/20 z-0" />
           <div

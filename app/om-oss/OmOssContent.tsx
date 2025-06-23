@@ -13,7 +13,7 @@ export default function OmOssContent() {
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
     const teamImages = [
-        "/Molde_compressed.jpg",
+        "/Molde.jpg",
     ];
 
     const teknologiImages = [

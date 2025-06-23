@@ -127,6 +127,20 @@ export default function Home() {
   const whitePageBg = "bg-white dark:bg-gray-100";
   const whitePageFg = "text-gray-900 dark:text-gray-800";
 
+  useEffect(() => {
+    // Only handle video on client
+    if (typeof window !== 'undefined' && videoRef.current) {
+      // If preloader is done, try to play
+      if (!isLoading) {
+        const video = videoRef.current;
+        video.play().catch(error => {
+          console.error("Video autoplay was prevented:", error);
+          // Optional: Add a custom play button here if needed
+        });
+      }
+    }
+  }, [isLoading]);
+
   if (!mounted) {
     return (
       <div className="w-full bg-gray-900 dark:bg-black text-gray-100 dark:text-gray-50 overflow-x-hidden">
@@ -175,7 +189,7 @@ export default function Home() {
       <div
         className={`w-full overflow-x-hidden ${
           shouldPageBeWhite ? `${whitePageBg} ${whitePageFg}` : `${defaultPageBg} ${defaultPageFg}`
-        } ${isLoading || !isVideoReady ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+        } ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
         style={{ scrollBehavior: 'auto' }}
       >
       <div className="space-y-32 overflow-x-hidden">
@@ -192,14 +206,12 @@ export default function Home() {
           {/* Hero video with fallback */}
           <video
             ref={videoRef}
-            autoPlay
             loop
             muted
             playsInline
-            onCanPlay={() => setIsVideoReady(true)}
             className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
           >
-            <source src="/videos/ork_super_compressed.mp4#t=0.1" type="video/mp4" />
+            <source src="/videos/ork_final_compressed.mp4#t=0.1" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/20 z-0" />
           <div

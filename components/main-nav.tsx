@@ -1,158 +1,360 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
+import { useRouter, usePathname } from "next/navigation";
+import { Menu, X, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 import { LoginModal } from "@/components/login-modal";
-import { Menu, X } from "lucide-react";
+import Image from "next/image";
 
-export function MainNav() {
-  const { logout, checkAuth } = useAuth();
+const navItems = [
+  { name: 'Hjem', href: '/' },
+  { name: 'Tjenester', href: '/tjenester' },
+  { name: 'Om oss', href: '/om-oss' },
+  { name: 'Kontakt', href: '/contact' },
+];
+
+interface MainNavProps {
+  shouldPageBeWhite?: boolean;
+}
+
+export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const { user, logout, checkAuth } = useAuth();
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
-      const { isLoggedIn: loginStatus } = await checkAuth();
-      setIsLoggedIn(loginStatus);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Check if scrolled
+      setScrolled(currentScrollY > 20);
+      
+      // Hide/show navbar based on scroll direction
+      if (currentScrollY > 100) { // Only hide after scrolling past 100px
+        if (currentScrollY > lastScrollY && currentScrollY > 200) {
+          // Scrolling down
+          setIsHidden(true);
+          setIsOpen(false); // Close mobile menu when hiding
+        } else {
+          // Scrolling up
+          setIsHidden(false);
+        }
+      } else {
+        // Near top of page, always show
+        setIsHidden(false);
+      }
+      
+      setLastScrollY(currentScrollY);
     };
-    checkLoginStatus();
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
+  useEffect(() => {
+    checkAuth();
   }, [checkAuth]);
+
+  const handleDashboard = () => {
+    router.push('/dashboard');
+    setIsOpen(false);
+  };
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
-    setIsMobileMenuOpen(false);
+    setIsOpen(false);
   };
 
-  const handleLogoutClick = async () => {
+  const handleLogout = async () => {
     await logout();
-    setIsMobileMenuOpen(false);
+    setIsOpen(false);
     if (pathname !== "/") {
       router.push("/");
     }
   };
 
-  const handleContactClick = () => {
-    router.push("/contact");
-    setIsMobileMenuOpen(false);
+  const handleShowNav = () => {
+    setIsHidden(false);
   };
 
-  const getLinkClass = (path: string) => {
-    const baseStyle = "font-medium text-sm hover:text-blue-400 transition-colors";
-    return pathname === path
-      ? `text-blue-500 ${baseStyle}`
-      : `text-neutral-300 ${baseStyle}`;
-  };
-
+  const primaryColor = shouldPageBeWhite ? 'text-blue-600' : 'text-blue-500';
+  
   return (
     <>
-      <div className="fixed top-0 left-0 w-full z-50 bg-neutral-950/80 backdrop-blur-sm border-b border-neutral-800 px-4 md:px-6 py-2 shadow-sm flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center" aria-label="Hepta Hjem">
-          <div className="relative h-5 w-auto aspect-[4/1]">
-            <Image
-              src="/A_white_hepta.png"
-              alt="Hepta Logo"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
-        </Link>
+      <motion.header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled 
+            ? 'bg-neutral-950/90 backdrop-blur-lg border-b border-neutral-800/50' 
+            : 'bg-neutral-950/80 backdrop-blur-sm border-b border-neutral-800'
+        }`}
+        initial={{ y: -100 }}
+        animate={{ y: isHidden ? -100 : 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
+        <nav className="container mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link href="/" className="flex items-center">
+                <div className="relative h-5 w-auto aspect-[4/1]">
+                  <Image
+                    src="/A_white_hepta.png"
+                    alt="Hepta Logo"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </Link>
+            </motion.div>
 
-        {/* Desktop Links */}
-        <nav className="hidden md:flex items-center gap-4 ml-4">
-          {isLoggedIn ? (
-            <>
-              <Link href="/" className={getLinkClass("/")}>Hjem</Link>
-              <Link href="/dashboard" className={getLinkClass("/dashboard")}>Dashboard</Link>
-            </>
-          ) : (
-            <>
-              <Link href="/" className={getLinkClass("/")}>Hjem</Link>
-              <Link href="/tjenester" className={getLinkClass("/tjenester")}>Tjenester</Link>
-              <Link href="/om-oss" className={getLinkClass("/om-oss")}>Om oss</Link>
-            </>
-          )}
-        </nav>
-
-        {/* Desktop Buttons */}
-        <div className="hidden md:flex items-center space-x-3 ml-auto">
-          <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-1.5 rounded-full text-sm"
-            onClick={handleContactClick}
-          >
-            Kontakt
-          </Button>
-          <Button
-            className={`${isLoggedIn
-                ? "bg-neutral-100 hover:bg-neutral-200 text-neutral-900"
-                : "bg-white hover:bg-gray-100 text-blue-700"
-              } font-medium px-4 py-1.5 rounded-full text-sm`}
-            onClick={isLoggedIn ? handleLogoutClick : handleLoginClick}
-          >
-            {isLoggedIn ? "Logg ut" : "Logg inn"}
-          </Button>
-        </div>
-
-        {/* Mobile Menu Toggle */}
-        <div className="md:hidden ml-auto">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-white hover:bg-neutral-800"
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </Button>
-        </div>
-      </div>
-
-      {/* Mobile Menu Panel */}
-      {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 top-14 bg-neutral-950 z-40 md:hidden flex flex-col items-center justify-center animate-fade-in"
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <nav className="flex flex-col items-center gap-8 text-center">
-            {isLoggedIn ? (
-              <>
-                <Link href="/" className={`${getLinkClass("/")} text-3xl`}>Hjem</Link>
-                <Link href="/dashboard" className={`${getLinkClass("/dashboard")} text-3xl`}>Dashboard</Link>
-              </>
-            ) : (
-              <>
-                <Link href="/" className={`${getLinkClass("/")} text-3xl`}>Hjem</Link>
-                <Link href="/tjenester" className={`${getLinkClass("/tjenester")} text-3xl`}>Tjenester</Link>
-                <Link href="/om-oss" className={`${getLinkClass("/om-oss")} text-3xl`}>Om oss</Link>
-              </>
-            )}
-            <div className="mt-8 flex flex-col gap-4 w-full px-8 max-w-xs">
-              <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-md text-base w-full"
-                onClick={handleContactClick}
-              >
-                Kontakt
-              </Button>
-              <Button
-                className={`${isLoggedIn
-                    ? "bg-neutral-700 hover:bg-neutral-600 text-white"
-                    : "bg-white hover:bg-gray-200 text-blue-700"
-                  } font-medium px-6 py-3 rounded-md text-base w-full`}
-                onClick={isLoggedIn ? handleLogoutClick : handleLoginClick}
-              >
-                {isLoggedIn ? "Logg ut" : "Logg inn"}
-              </Button>
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-8">
+              {user ? (
+                <>
+                  <motion.div whileHover={{ y: -2 }}>
+                    <Link
+                      href="/"
+                      className={`relative text-sm font-medium transition-colors ${
+                        pathname === '/'
+                          ? 'text-blue-500'
+                          : 'text-neutral-300 hover:text-white'
+                      }`}
+                    >
+                      Hjem
+                      {pathname === '/' && (
+                        <motion.div
+                          className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-500 rounded-full"
+                          layoutId="activeTab"
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                  <motion.div whileHover={{ y: -2 }}>
+                    <Link
+                      href="/dashboard"
+                      className={`relative text-sm font-medium transition-colors ${
+                        pathname === '/dashboard'
+                          ? primaryColor
+                          : 'text-neutral-300 hover:text-white'
+                      }`}
+                    >
+                      Dashboard
+                      {pathname === '/dashboard' && (
+                        <motion.div
+                          className={`absolute -bottom-1 left-0 right-0 h-0.5 rounded-full ${
+                            shouldPageBeWhite ? 'bg-blue-600' : 'bg-blue-500'
+                          }`}
+                          layoutId="activeTab"
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                </>
+              ) : (
+                navItems.map((item) => (
+                  <motion.div key={item.name} whileHover={{ y: -2 }}>
+                    <Link
+                      href={item.href}
+                      className={`relative text-sm font-medium transition-colors ${
+                        pathname === item.href
+                          ? primaryColor
+                          : 'text-neutral-300 hover:text-white'
+                      }`}
+                    >
+                      {item.name}
+                      {pathname === item.href && (
+                        <motion.div
+                          className={`absolute -bottom-1 left-0 right-0 h-0.5 rounded-full ${
+                            shouldPageBeWhite ? 'bg-blue-600' : 'bg-blue-500'
+                          }`}
+                          layoutId="activeTab"
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                ))
+              )}
             </div>
-          </nav>
-        </div>
-      )}
+
+            {/* Desktop Actions */}
+            <div className="hidden lg:flex items-center space-x-4">
+              {!user && (
+                <Button
+                  onClick={() => router.push('/contact')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Kontakt
+                </Button>
+              )}
+              {user ? (
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="border-neutral-600 text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                >
+                  Logg ut
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleLoginClick}
+                  variant="outline"
+                  className="border-neutral-600 text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                >
+                  Logg inn
+                </Button>
+              )}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <motion.button
+              className="lg:hidden p-2 rounded-lg text-neutral-300"
+              onClick={() => setIsOpen(!isOpen)}
+              whileTap={{ scale: 0.95 }}
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </motion.button>
+          </div>
+
+          {/* Mobile Navigation */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                className="lg:hidden absolute top-full left-0 right-0 bg-neutral-950 border-b border-neutral-800 shadow-lg"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="px-6 py-4 space-y-4">
+                  {user ? (
+                    <>
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0 * 0.1 }}
+                      >
+                        <Link
+                          href="/"
+                          className={`block text-lg font-medium transition-colors ${
+                            pathname === '/'
+                              ? primaryColor
+                              : 'text-neutral-300 hover:text-white'
+                          }`}
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Hjem
+                        </Link>
+                      </motion.div>
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1 * 0.1 }}
+                      >
+                        <Link
+                          href="/dashboard"
+                          className={`block text-lg font-medium transition-colors ${
+                            pathname === '/dashboard'
+                              ? primaryColor
+                              : 'text-neutral-300 hover:text-white'
+                          }`}
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Dashboard
+                        </Link>
+                      </motion.div>
+                    </>
+                  ) : (
+                    navItems.map((item, index) => (
+                      <motion.div
+                        key={item.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Link
+                          href={item.href}
+                          className={`block text-lg font-medium transition-colors ${
+                            pathname === item.href
+                              ? primaryColor
+                              : 'text-neutral-300 hover:text-white'
+                          }`}
+                          onClick={() => setIsOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      </motion.div>
+                    ))
+                  )}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: (user ? 2 : navItems.length) * 0.1 }}
+                    className="pt-4 border-t border-neutral-800"
+                  >
+                    {!user && (
+                      <Button
+                        onClick={() => {
+                          router.push('/contact');
+                          setIsOpen(false);
+                        }}
+                        className="w-full mb-3 bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Kontakt
+                      </Button>
+                    )}
+                    {user ? (
+                      <Button
+                        onClick={handleLogout}
+                        className="w-full bg-neutral-800 hover:bg-neutral-700 text-white"
+                      >
+                        Logg ut
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={handleLoginClick}
+                        className="w-full bg-neutral-800 hover:bg-neutral-700 text-white"
+                      >
+                        Logg inn
+                      </Button>
+                    )}
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </nav>
+      </motion.header>
+
+      {/* Floating Nav Button - Shows when navbar is hidden */}
+      <AnimatePresence>
+        {isHidden && (
+          <motion.button
+            className="fixed top-4 right-4 z-50 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg backdrop-blur-sm border border-blue-500/20"
+            onClick={handleShowNav}
+            initial={{ opacity: 0, scale: 0, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0, y: -20 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <ChevronUp size={20} />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Login Modal */}
       <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />

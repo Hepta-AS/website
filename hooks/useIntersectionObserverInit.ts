@@ -17,6 +17,11 @@ function useIntersectionObserver(
   }: Args,
 ): IntersectionObserverEntry | undefined {
   const [entry, setEntry] = useState<IntersectionObserverEntry>();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const frozen = entry?.isIntersecting && freezeOnceVisible;
 
@@ -25,6 +30,8 @@ function useIntersectionObserver(
   };
 
   useEffect(() => {
+    if (!mounted) return;
+    
     const node = elementRef?.current; // DOM Ref
     const hasIOSupport = !!window.IntersectionObserver;
 
@@ -38,7 +45,7 @@ function useIntersectionObserver(
     return () => observer.disconnect();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elementRef?.current, JSON.stringify(threshold), root, rootMargin, frozen]);
+  }, [mounted, elementRef?.current, JSON.stringify(threshold), root, rootMargin, frozen]);
 
   return entry;
 }

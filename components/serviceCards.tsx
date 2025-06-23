@@ -16,6 +16,7 @@ interface Service {
 
 interface ServiceCardsProps {
   services: Service[];
+  shouldPageBeWhite?: boolean;
 }
 
 // Updated to match example image more closely
@@ -23,7 +24,7 @@ const defaultAccentColors = [
   "bg-blue-500",
 ];
 
-export const ServiceCards = ({ services }: ServiceCardsProps) => {
+export const ServiceCards = ({ services, shouldPageBeWhite = false }: ServiceCardsProps) => {
   const [isScrolling, setIsScrolling] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -52,8 +53,13 @@ export const ServiceCards = ({ services }: ServiceCardsProps) => {
     setTimeout(() => setIsScrolling(false), 500);
   };
 
+  const bgColor = shouldPageBeWhite ? 'bg-white' : 'bg-black';
+  const buttonBg = shouldPageBeWhite ? 'bg-gray-200/80 hover:bg-gray-300/90' : 'bg-neutral-800/80 hover:bg-neutral-700/90';
+  const buttonText = shouldPageBeWhite ? 'text-gray-800' : 'text-white';
+  const focusRing = shouldPageBeWhite ? 'focus-visible:ring-offset-white focus-visible:ring-gray-500' : 'focus-visible:ring-offset-black focus-visible:ring-white';
+
   return (
-      <div className="relative py-12 md:py-16 lg:py-20 bg-black">
+      <div className={`relative py-12 md:py-16 lg:py-20 ${bgColor} transition-colors duration-1000`}>
         <div
             ref={containerRef}
             id="service-cards-container"
@@ -64,7 +70,7 @@ export const ServiceCards = ({ services }: ServiceCardsProps) => {
               <Link
                   href={`/tjenester/${service.slug}`}
                   key={service.slug}
-                  className="group flex-shrink-0 snap-center block w-[280px] sm:w-[300px] md:w-[340px] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:ring-white"
+                  className={`group flex-shrink-0 snap-center block w-[280px] sm:w-[300px] md:w-[340px] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${focusRing}`}
                   passHref
               >
                 <div // This div is now the visual card that receives hover effects
@@ -113,7 +119,7 @@ export const ServiceCards = ({ services }: ServiceCardsProps) => {
         <div className="flex justify-center gap-x-3 sm:gap-x-4 w-full mx-auto mt-8 md:mt-10">
           <button
               onClick={() => scroll('left')}
-              className="bg-neutral-800/80 hover:bg-neutral-700/90 text-white rounded-full p-2.5 sm:p-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:ring-white transition-all hover:scale-105 disabled:opacity-50"
+              className={`${buttonBg} ${buttonText} rounded-full p-2.5 sm:p-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${focusRing} transition-all hover:scale-105 disabled:opacity-50`}
               aria-label="Forrige"
               disabled={isScrolling}
           >
@@ -122,7 +128,7 @@ export const ServiceCards = ({ services }: ServiceCardsProps) => {
 
           <button
               onClick={() => scroll('right')}
-              className="bg-neutral-800/80 hover:bg-neutral-700/90 text-white rounded-full p-2.5 sm:p-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:ring-white transition-all hover:scale-105 disabled:opacity-50"
+              className={`${buttonBg} ${buttonText} rounded-full p-2.5 sm:p-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${focusRing} transition-all hover:scale-105 disabled:opacity-50`}
               aria-label="Neste"
               disabled={isScrolling}
           >

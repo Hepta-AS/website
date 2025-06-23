@@ -144,31 +144,31 @@ export const AuthProvider = ({
     
     try {
       const sessionStartTime = Date.now();
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
       const sessionEndTime = Date.now();
       
       console.log("[AuthContext] checkAuth: getSession completed in:", sessionEndTime - sessionStartTime, "ms");
       console.log("[AuthContext] checkAuth: Session data:", session);
       console.log("[AuthContext] checkAuth: Session error:", sessionError);
 
-      if (sessionError) {
-        console.error("[AuthContext] checkAuth: Error getting session from Supabase:", sessionError);
+    if (sessionError) {
+      console.error("[AuthContext] checkAuth: Error getting session from Supabase:", sessionError);
         console.log("[AuthContext] checkAuth: ===== CHECKAUTH FAILED (SESSION ERROR) =====");
-        return { isLoggedIn: false, user: null };
-      }
+      return { isLoggedIn: false, user: null };
+    }
 
-      if (session) {
-        console.log("[AuthContext] checkAuth: Supabase session found for user:", session.user.id);
+    if (session) {
+      console.log("[AuthContext] checkAuth: Supabase session found for user:", session.user.id);
         console.log("[AuthContext] checkAuth: Session user email:", session.user.email);
         console.log("[AuthContext] checkAuth: Access token exists:", !!session.access_token);
         
         // Set basic user data immediately
-        setUser(session.user);
-        setSessionToken(session.access_token);
-        
+      setUser(session.user);
+      setSessionToken(session.access_token);
+
         // Set default values first, then try to fetch profile
         setUserRole("customer");
         setStripeCustomerId(null);
@@ -181,11 +181,11 @@ export const AuthProvider = ({
           
           // Add timeout for profile query
           const profilePromise = supabase
-            .from("profiles")
-            .select("role, stripe_customer_id")
-            .eq("user_id", session.user.id)
-            .single();
-            
+        .from("profiles")
+        .select("role, stripe_customer_id")
+        .eq("user_id", session.user.id)
+        .single();
+
           const profileTimeout = new Promise((_, reject) => {
             setTimeout(() => {
               reject(new Error("Profile query timeout"));
@@ -210,9 +210,9 @@ export const AuthProvider = ({
               console.error("[AuthContext] checkAuth: Profile query error:", profileError);
             }
             // Keep default values - don't fail the login
-          } else if (profile) {
-            console.log("[AuthContext] checkAuth: Profile found. Role:", profile.role, "Stripe ID:", profile.stripe_customer_id);
-            setUserRole(profile.role || "customer");
+      } else if (profile) {
+        console.log("[AuthContext] checkAuth: Profile found. Role:", profile.role, "Stripe ID:", profile.stripe_customer_id);
+        setUserRole(profile.role || "customer");
             setStripeCustomerId(profile.stripe_customer_id || null);
           }
         } catch (profileError) {
@@ -228,7 +228,7 @@ export const AuthProvider = ({
         setSessionToken(null);
         setUserRole(null);
         setStripeCustomerId(null);
-      }
+        }
 
       console.log("[AuthContext] checkAuth: ===== CHECKAUTH COMPLETED =====");
       return { isLoggedIn: !!session, user: session?.user || null };
@@ -342,9 +342,9 @@ export const AuthProvider = ({
       
       console.log("[AuthContext] Supabase SDK: Creating signIn promise...");
       const signInPromise = supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      email,
+      password,
+    });
       
       console.log("[AuthContext] login: SignIn promise created, waiting for response...");
       
@@ -358,7 +358,7 @@ export const AuthProvider = ({
       console.log("[AuthContext] login: Supabase response data exists:", !!data);
       console.log("[AuthContext] login: Supabase response error:", error);
 
-      if (error) {
+    if (error) {
         console.error("[AuthContext] login: ===== SUPABASE SIGNIN FAILED =====");
         console.error("[AuthContext] login: Error object:", error);
         

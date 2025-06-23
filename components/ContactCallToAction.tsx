@@ -7,7 +7,7 @@ import Image from "next/image";
 
 const rowHeight = "h-[120px] sm:h-[160px] md:h-[200px] lg:h-[280px] xl:h-[350px]";
 const responsiveFontSize = "text-[clamp(1rem,_0.5rem_+_3vw,_3rem)]";
-const textStyle = `font-bold break-words text-center sm:text-left tracking-tighter leading-tight text-white text-[clamp(1rem,_1vw_+_1rem,_2rem)]`;
+// Text style will be defined inside the component with dynamic colors
 
 
 interface ContactCallToActionProps {
@@ -17,6 +17,7 @@ interface ContactCallToActionProps {
   buttonText: string;
   onButtonClick: () => void;
   id?: string;
+  shouldPageBeWhite?: boolean;
 }
 
 export const ContactCallToAction: React.FC<ContactCallToActionProps> = ({
@@ -26,20 +27,30 @@ export const ContactCallToAction: React.FC<ContactCallToActionProps> = ({
   buttonText,
   onButtonClick,
   id,
+  shouldPageBeWhite = false,
 }) => {
+  const bgColor = shouldPageBeWhite ? 'bg-white' : 'bg-black';
+  const textColor = shouldPageBeWhite ? 'text-gray-800' : 'text-white';
+  const borderColor = shouldPageBeWhite ? 'border-gray-300' : 'border-neutral-800';
+  const imageBg = shouldPageBeWhite ? 'bg-gray-200/30' : 'bg-neutral-800/30';
+  const buttonStyle = shouldPageBeWhite 
+    ? 'bg-gray-800 text-white hover:bg-gray-700' 
+    : 'bg-white text-black hover:bg-gray-200';
+  const textStyle = `font-bold break-words text-center sm:text-left tracking-tighter leading-tight ${textColor} text-[clamp(1rem,_1vw_+_1rem,_2rem)]`;
+
   return (
     <section
       id={id}
-      className="relative bg-black text-white min-h-[70vh] sm:min-h-[80vh] flex flex-col justify-center items-center py-16 sm:py-20 px-4 overflow-hidden"
+      className={`relative ${bgColor} ${textColor} min-h-[70vh] sm:min-h-[80vh] flex flex-col justify-center items-center py-16 sm:py-20 px-4 overflow-hidden transition-colors duration-1000`}
     >
       <div className="absolute inset-0 overflow-hidden">
         <div
           aria-hidden
-          className="absolute top-0 left-0 w-[150px] h-[150px] sm:w-[250px] sm:h-[250px] md:w-[350px] md:h-[350px] border border-neutral-800 rounded-full -translate-x-1/2 -translate-y-1/2 opacity-40"
+          className={`absolute top-0 left-0 w-[150px] h-[150px] sm:w-[250px] sm:h-[250px] md:w-[350px] md:h-[350px] border ${borderColor} rounded-full -translate-x-1/2 -translate-y-1/2 opacity-40`}
         />
         <div
           aria-hidden
-          className="absolute bottom-0 right-0 w-[150px] h-[150px] sm:w-[250px] sm:h-[250px] md:w-[350px] md:h-[350px] border border-neutral-800 rounded-full translate-x-1/2 translate-y-1/2 opacity-40"
+          className={`absolute bottom-0 right-0 w-[150px] h-[150px] sm:w-[250px] sm:h-[250px] md:w-[350px] md:h-[350px] border ${borderColor} rounded-full translate-x-1/2 translate-y-1/2 opacity-40`}
         />
       </div>
 
@@ -52,7 +63,7 @@ export const ContactCallToAction: React.FC<ContactCallToActionProps> = ({
             </h1>
           </div>
           <div
-            className={`flex items-center justify-center sm:w-1/2 ${rowHeight} bg-neutral-800/30 rounded-lg overflow-hidden`}
+            className={`flex items-center justify-center sm:w-1/2 ${rowHeight} ${imageBg} rounded-lg overflow-hidden`}
           >
             <Image
               src="/4.jpg"
@@ -68,7 +79,7 @@ export const ContactCallToAction: React.FC<ContactCallToActionProps> = ({
         {/* ROW 2 */}
         <div className="flex flex-col sm:flex-row items-center sm:items-stretch gap-4">
           <div
-            className={`flex items-center justify-center sm:w-1/2 ${rowHeight} bg-neutral-800/30 rounded-lg overflow-hidden`}
+            className={`flex items-center justify-center sm:w-1/2 ${rowHeight} ${imageBg} rounded-lg overflow-hidden`}
           >
             <Image
               src="/5.jpg"
@@ -96,7 +107,7 @@ export const ContactCallToAction: React.FC<ContactCallToActionProps> = ({
   </div>
 
   {/* Image */}
-  <div className={`sm:w-1/2 ${rowHeight} bg-neutral-800/30 rounded-lg overflow-hidden flex items-center justify-center`}>
+  <div className={`sm:w-1/2 ${rowHeight} ${imageBg} rounded-lg overflow-hidden flex items-center justify-center`}>
     <Image
       src="/6.jpg"
       alt="Placeholder 3"
@@ -111,7 +122,7 @@ export const ContactCallToAction: React.FC<ContactCallToActionProps> = ({
 
         <div className="flex justify-center mt-8">
           <Button
-            className="h-14 px-8 text-lg bg-white text-black hover:bg-gray-200"
+            className={`h-14 px-8 text-lg ${buttonStyle}`}
             onClick={onButtonClick}
           >
             {buttonText}

@@ -139,8 +139,6 @@ export default function Home() {
               loop
               muted
               playsInline
-              preload="metadata"
-              poster="/herobg_compressed.jpg"
               className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
               controls={false}
               style={{
@@ -214,8 +212,6 @@ export default function Home() {
             loop
             muted
             playsInline
-            preload="metadata"
-            poster="/herobg_compressed.jpg"
             className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
             onLoadedData={() => setVideoLoaded(true)}
             onError={() => setVideoLoaded(false)}

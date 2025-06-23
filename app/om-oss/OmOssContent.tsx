@@ -13,15 +13,15 @@ export default function OmOssContent() {
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
     const teamImages = [
-        "/team.jpg",
+        "/Molde_compressed.jpg",
     ];
 
     const teknologiImages = [
-        "/technology.jpg",
+        "/technology_compressed.jpg",
     ];
 
     const kreativitetImages = [
-        "/creativity.jpg",
+        "/creativity_compressed.jpg",
     ];
 
     const omOssContactData = {
@@ -59,7 +59,7 @@ export default function OmOssContent() {
             <div className="bg-neutral-900 py-16">
                 <ImageTextSplitSection
                     imageSrc={teamImages[0]}
-                    altText="Hepta-teamet i kreativt samarbeid"
+                    altText="Molde - hvor Hepta har sine røtter"
                     title="Vår Historie og Visjon"
                     paragraphs={[
                         "Hepta ble grunnlagt med en klar visjon: å være den foretrukne partneren for bedrifter som ønsker å utnytte teknologiens kraft for å skape varig verdi. Vi kombinerer dyp teknisk kunnskap med kreativ problemløsning.",

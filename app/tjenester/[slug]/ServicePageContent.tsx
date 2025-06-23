@@ -21,7 +21,7 @@ Våre videoproduksjonstjenester omfatter hele prosessen fra konseptutvikling til
 • Optimalisering for ulike plattformer
 
 Fra korte sosiale medier-videoer til omfattende bedriftsdokumentarer - vi tilpasser produksjonen etter dine behov og budsjett. Vårt mål er å skape innhold som ikke bare ser profesjonelt ut, men som også driver handlinger og resultater.`,
-    image: "/creation.jpg",
+    image: "/creation_compressed.jpg",
     features: ["4K-kvalitet", "Drone-filming", "Live streaming", "360° video"],
     benefits: ["Økt engasjement", "Bedre konvertering", "Sterkere merkevare", "Målrettet innhold"]
   },
@@ -40,7 +40,7 @@ Våre utviklingstjenester dekker hele spekteret fra enkle nettsider til kompleks
 • Cloud-deployment og DevOps
 
 Vi bruker agile utviklingsmetoder for å sikre transparent kommunikasjon og rask levering. Gjennom tett samarbeid med våre kunder skaper vi løsninger som ikke bare oppfyller tekniske krav, men som også bidrar til forretningssuksess.`,
-    image: "/technology.jpg",
+    image: "/technology_compressed.jpg",
     features: ["React/Next.js", "React Native", "Node.js", "Cloud hosting"],
     benefits: ["Rask time-to-market", "Skalerbar arkitektur", "Moderne UX/UI", "24/7 support"]
   },
@@ -59,7 +59,7 @@ Våre AI-tjenester spenner fra enkle chatbots til avanserte maskinlæringsmodell
 • Custom AI-modeller og maskinlæring
 
 Vi starter alltid med å forstå dine forretningsprosesser før vi foreslår AI-løsninger. Målet er å skape teknologi som utfyller og forbedrer menneskelig ekspertise, ikke erstatter den. Våre AI-implementeringer er designet for å være intuitive og enkle å bruke.`,
-    image: "/ai.jpg",
+    image: "/ai_compressed.jpg",
     features: ["Machine Learning", "Computer Vision", "NLP", "Automation"],
     benefits: ["Økt effektivitet", "Reduserte kostnader", "Bedre beslutninger", "Konkurransefortrinn"]
   },
@@ -78,7 +78,7 @@ Våre analysetjenester går langt utover tradisjonell rapportering. Vi skaper in
 • Real-time overvåking og alerting
 
 Vi arbeider med moderne analyseplatformer og verktøy for å sikre at dataene dine er tilgjengelige, nøyaktige og handlingsrettede. Vårt mål er å gjøre kompleks data forståelig og brukbar for beslutningstakere på alle nivåer i organisasjonen.`,
-    image: "/technology.jpg",
+    image: "/technology_compressed.jpg",
     features: ["Power BI", "Google Analytics", "Tableau", "Custom dashboards"],
     benefits: ["Bedre innsikt", "Raskere beslutninger", "Økt ROI", "Risikominimering"]
   },
@@ -97,7 +97,7 @@ Vårt kommunikasjonsteam kombinerer strategisk tenkning med kreativ utførelse f
 • Content marketing og storytelling
 
 Vi arbeider tett med våre kunder for å forstå deres verdier, mål og målgrupper. Gjennom databaserte innsikter og kreativ utførelse skaper vi kommunikasjon som ikke bare informerer, men som også inspirerer og motiverer til handling.`,
-    image: "/samarbeid.jpg",
+    image: "/samarbeid_compressed.jpg",
     features: ["PR-strategi", "Medieovervåking", "Content creation", "Crisis management"],
     benefits: ["Styrket omdømme", "Økt synlighet", "Bedre relasjoner", "Kriseberedskap"]
   },
@@ -118,7 +118,7 @@ Vårt team av digitale markedsføringseksperter holder seg oppdatert på de nyes
 • Content marketing og blogging
 
 Vi starter hver kampanje med grundig målgruppeforskning og konkurrentanalyse. Gjennom A/B-testing og kontinuerlig optimalisering sikrer vi at hver krone du investerer gir maksimal avkastning.`,
-    image: "/digmark.jpg",
+    image: "/digmark_compressed.jpg",
     features: ["Multi-platform", "A/B testing", "Automation", "ROI tracking"],
     benefits: ["Økt trafikk", "Bedre konvertering", "Lavere CPA", "Høyere ROI"]
   },
@@ -138,7 +138,7 @@ Vårt designteam kombinerer estetisk forståelse med strategisk tenkning for å 
 • Emballasjedesign og produktpresentasjon
 
 Vi starter hver designprosess med å forstå din merkevare, målgruppe og forretningsmål. Gjennom iterativ design og brukertesting sikrer vi at det endelige resultatet ikke bare er visuelt tiltalende, men også effektivt i å nå dine mål.`,
-    image: "/creativity.jpg",
+    image: "/creativity_compressed.jpg",
     features: ["Brand identity", "UI/UX", "Print design", "Digital assets"],
     benefits: ["Sterkere merkevare", "Bedre gjenkjennelse", "Økt tillit", "Profesjonelt uttrykk"]
   },
@@ -158,7 +158,7 @@ Vi forstår at hver organisasjon har unike behov og begrensninger. Vår rådgivn
 • Change management og organisasjonsutvikling
 
 Våre rådgivningstjenester er fleksible og kan tilpasses dine behov - fra engangskonsultasjoner til langsiktige strategiske partnerskap. Vi tror på å dele kunnskap og bygge intern kompetanse i organisasjonen din.`,
-    image: "/consulting.jpg",
+    image: "/consulting_compressed.jpg",
     features: ["Strategic planning", "Workshop facilitation", "Training programs", "Ongoing support"],
     benefits: ["Økt kompetanse", "Bedre strategi", "Raskere implementering", "Langsiktig suksess"]
   },
@@ -178,7 +178,7 @@ Vårt team består av erfarne filmskaper, animatorer og kreative som forstår kr
 • Post-produksjon og lyddesign
 
 Vi arbeider tett med våre kunder gjennom hele produksjonsprosessen for å sikre at det endelige produktet overgår forventningene. Vårt mål er å skape innhold som ikke bare ser profesjonelt ut, men som også driver ønskede handlinger.`,
-    image: "/creation.jpg",
+    image: "/creation_compressed.jpg",
     features: ["4K production", "3D animation", "Motion graphics", "Sound design"],
     benefits: ["Økt engasjement", "Bedre storytelling", "Profesjonell kvalitet", "Memorable content"]
   },
@@ -198,7 +198,7 @@ Våre opplæringsprogrammer er praktisk orienterte og basert på virkelige cases
 • Mentoring og coaching
 
 Vi tilpasser alle våre opplæringsprogrammer til målgruppens kunnskapsnivå og spesifikke behov. Målet er ikke bare å formidle kunnskap, men å skape varig kompetanseheving som gir målbare resultater.`,
-    image: "/team.jpg",
+    image: "/team_compressed.jpg",
     features: ["Custom training", "Online courses", "Certification", "Ongoing support"],
     benefits: ["Økt kompetanse", "Bedre resultater", "Raskere adoptasjon", "Competitive advantage"]
   },

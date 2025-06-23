@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Om Hepta - Din Partner for Digital Transformasjon',
     description: 'Hepta kombinerer teknologisk ekspertise med kreativ innovasjon for å skape løsninger som driver din virksomhet fremover.',
-    images: ['/team.jpg'],
+    images: ['/team_compressed.jpg'],
   }
 };
 

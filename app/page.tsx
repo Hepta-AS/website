@@ -14,7 +14,7 @@ import { ParallaxReveal } from "@/components/ParallaxReveal";
 import { ParallaxFade } from "@/components/ParallaxFade";
 import { ParallaxSlider } from "@/components/ParallaxSlider";
 import { ServiceCards } from "@/components/serviceCards";
-import { BigTextGrid } from "@/components/BigTextGrid";
+
 import { TextAndImage } from "@/components/TextAndImage";
 import { ContactCallToAction } from "@/components/ContactCallToAction";
 import { MagneticButton } from "@/components/MagneticButton";
@@ -83,25 +83,25 @@ export default function Home() {
       title: "AI og automasjon",
       content: "Effektiviser forretningsprosessene dine med skreddersydde AI-løsninger og automatiserte arbeidsflyter som sparer tid og øker lønnsomheten.",
       slug: "AI",
-      image: "/group11.jpg",
+      image: "/group11_compressed.jpg",
     },
     {
       title: "Videoproduksjon",
       content: "Fra konsept til ferdig film - vi produserer engasjerende videoinnhold som styrker ditt merke og når din målgruppe effektivt.",
       slug: "Videoproduksjon",
-      image: "/IMG_9003.JPG",
+      image: "/IMG_9003_compressed.JPG",
     },
     {
       title: "Digital markedsføring",
       content: "Databaserte markedsføringsstrategier som treffer riktig målgruppe, øker synlighet og genererer målbare resultater for din bedrift.",
       slug: "Digitalmarkedsforing",
-      image: "/ai.jpg",
+      image: "/ai_compressed.jpg",
     },
     {
       title: "Utvikling",
       content: "Skalerbare tekniske løsninger fra webapplikasjoner til avansert infrastruktur - vi bygger fremtidens digitale plattformer.",
       slug: "Utvikling",
-      image: "/consulting.jpg",
+      image: "/consulting_compressed.jpg",
     },
   ];
 
@@ -113,7 +113,7 @@ export default function Home() {
   const shouldPageBeWhite = mounted ? !!entry?.isIntersecting : false;
 
   const section1Data = {
-    imageSrc: "/samarbeid.jpg",
+    imageSrc: "/samarbeid_compressed.jpg",
     altText: "Strategisk samarbeid mellom Hepta og klient",
     title: "Din strategiske teknologipartner",
     paragraphs: [
@@ -124,7 +124,7 @@ export default function Home() {
   };
 
   const section2Data = {
-    imageSrc: "/creativity.jpg",
+    imageSrc: "/creativity_compressed.jpg",
     altText: "Innovativ teknologi og kreativ problemløsning",
     title: "Der innovasjon møter håndverk",
     paragraphs: [

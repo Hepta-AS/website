@@ -83,7 +83,7 @@ export default function Dashboard() {
           <div className="absolute inset-0 bg-blue-50/30 z-0"></div>
           <div className="absolute inset-0 z-0">
             <Image 
-              src="/herobg.jpg" 
+                              src="/herobg_compressed.jpg" 
               alt="" 
               fill 
               priority 

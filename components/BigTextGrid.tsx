@@ -67,7 +67,7 @@ export const BigTextGrid: React.FC<BigTextGridProps> = ({ line1Text, line2Text, 
                             className={`flex-grow flex-shrink-0 basis-[20%] sm:basis-[40%] md:basis-[45%] ${placeholderHeight} rounded-lg overflow-hidden relative`}
                         >
                             <Image
-                                src="/2.jpg"
+                                src="/2_compressed.jpg"
                                 alt="Digital graphic"
                                 fill
                                 className="object-cover"
@@ -85,7 +85,7 @@ export const BigTextGrid: React.FC<BigTextGridProps> = ({ line1Text, line2Text, 
                             className={`flex-grow flex-shrink-0 basis-[20%] sm:basis-[45%] md:basis-[50%] ${placeholderHeight} rounded-lg overflow-hidden relative bg-neutral-800/30`}
                         >
                             <Image
-                                src="/1.jpg"
+                                src="/1_compressed.jpg"
                                 alt="Experiences concept"
                                 fill
                                 className="object-cover"
@@ -111,7 +111,7 @@ export const BigTextGrid: React.FC<BigTextGridProps> = ({ line1Text, line2Text, 
                             className={`flex-grow flex-shrink-0 basis-[35%] sm:basis-[45%] md:basis-[45%] ${placeholderHeight} rounded-lg overflow-hidden relative bg-neutral-800/30`}
                         >
                             <Image
-                                src="/3.jpg"
+                                src="/3_compressed.jpg"
                                 alt="Visual concept"
                                 fill
                                 className="object-cover"

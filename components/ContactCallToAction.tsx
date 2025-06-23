@@ -66,7 +66,7 @@ export const ContactCallToAction: React.FC<ContactCallToActionProps> = ({
             className={`flex items-center justify-center sm:w-1/2 ${rowHeight} ${imageBg} rounded-lg overflow-hidden`}
           >
             <Image
-              src="/4.jpg"
+              src="/4_compressed.jpg"
               alt="Placeholder 1"
               width={300}
               height={300}
@@ -82,7 +82,7 @@ export const ContactCallToAction: React.FC<ContactCallToActionProps> = ({
             className={`flex items-center justify-center sm:w-1/2 ${rowHeight} ${imageBg} rounded-lg overflow-hidden`}
           >
             <Image
-              src="/5.jpg"
+              src="/5_compressed.jpg"
               alt="Placeholder 2"
               width={300}
               height={300}
@@ -109,7 +109,7 @@ export const ContactCallToAction: React.FC<ContactCallToActionProps> = ({
   {/* Image */}
   <div className={`sm:w-1/2 ${rowHeight} ${imageBg} rounded-lg overflow-hidden flex items-center justify-center`}>
     <Image
-      src="/6.jpg"
+      src="/6_compressed.jpg"
       alt="Placeholder 3"
       width={300}
       height={300}

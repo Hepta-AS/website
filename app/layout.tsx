@@ -16,6 +16,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     title: "Hepta",
     description: "Hepta - Din partner for digitalisering",
+    icons: {
+        icon: "/A_white_hepta.png",
+        apple: "/A_white_hepta.png",
+    },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

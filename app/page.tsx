@@ -18,6 +18,7 @@ import { ServiceCards } from "@/components/serviceCards";
 import { TextAndImage } from "@/components/TextAndImage";
 import { ContactCallToAction } from "@/components/ContactCallToAction";
 import { MagneticButton } from "@/components/MagneticButton";
+import { Preloader } from "@/components/preloader";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 
 const containerVariants = {
@@ -44,7 +45,7 @@ const itemVariants = {
 export default function Home() {
   const auth = useAuth();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -103,7 +104,7 @@ export default function Home() {
   const triggerSectionRef = useRef<HTMLDivElement | null>(null);
   const entry = useIntersectionObserverInit(triggerSectionRef, {
     threshold: 0.4,
-    freezeOnceVisible: true,
+    freezeOnceVisible: false,
   });
   const shouldPageBeWhite = mounted ? !!entry?.isIntersecting : false;
 
@@ -176,10 +177,12 @@ export default function Home() {
   }
 
   return (
+    <>
+      {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
       <div
         className={`w-full overflow-x-hidden ${
           shouldPageBeWhite ? `${whitePageBg} ${whitePageFg}` : `${defaultPageBg} ${defaultPageFg}`
-        }`}
+        } ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
       >
       <div className="space-y-32 overflow-x-hidden">
         {/* HERO SECTION */}
@@ -308,5 +311,6 @@ export default function Home() {
         <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />
       </div>
     </div>
+    </>
   );
 }

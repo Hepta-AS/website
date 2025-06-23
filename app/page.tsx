@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
+
 import { LoginModal } from "@/components/login-modal";
 import { ContactFormModal } from "@/components/contact-form-modal";
 import { useAuth } from "@/contexts/auth-context";
@@ -12,6 +12,7 @@ import { ServiceCards } from "@/components/serviceCards";
 import { BigTextGrid } from "@/components/BigTextGrid";
 import { TextAndImage } from "@/components/TextAndImage";
 import { ContactCallToAction } from "@/components/ContactCallToAction";
+import { SvgAnimation } from "@/components/SvgAnimation";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 
 export default function Home() {
@@ -129,15 +130,16 @@ export default function Home() {
               shouldPageBeWhite ? "opacity-0" : defaultPageBg
             } transition-opacity duration-1000`}
           />
-          <Image
-            src="/herobg.jpg"
-            alt=""
-            fill
-            priority
-            quality={100}
-            className="object-cover opacity-70 z-0"
-            sizes="100vw"
-          />
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-70 z-0"
+          >
+            <source src="/videos/network.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
           <div className="absolute inset-0 bg-black/60 z-0" />
           <div
             className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent ${
@@ -150,6 +152,8 @@ export default function Home() {
             </h1>
           </div>
         </section>
+
+        <SvgAnimation />
 
         <BigTextGrid
           line1Text="VI SKAPER DIGITALE"

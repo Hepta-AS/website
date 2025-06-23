@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="no" suppressHydrationWarning className="h-full overflow-x-hidden">
+        <html lang="no" suppressHydrationWarning className="h-full overflow-x-hidden scroll-smooth">
             <body className={`${inter.className} h-full bg-background text-foreground overflow-x-hidden`}>
                 <ProgressBar />
                 <Providers>

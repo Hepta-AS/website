@@ -206,6 +206,7 @@ export default function Home() {
           {/* Hero video with fallback */}
           <video
             ref={videoRef}
+            autoPlay
             loop
             muted
             playsInline

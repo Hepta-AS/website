@@ -60,6 +60,7 @@
     "react-chartjs-2": "5.2.0",
     "react-day-picker": "8.9.1",
     "react-dom": "18.2.0",
+    "react-hot-toast": "^2.5.2",
     "react-resizable-panels": "1.0.5",
     "react18-input-otp": "^1.1.4",
     "recharts": "2.10.1",

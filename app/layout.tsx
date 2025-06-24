@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import { MainNav } from "@/components/main-nav";
+import { MainNav } from "./main-nav";
 import { Footer } from "@/components/footer";
 import { ProgressBar } from "@/components/progress-bar";
 import { Analytics } from "@vercel/analytics/react";
@@ -12,8 +12,9 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { Providers } from "./providers";
 import SmoothScroll from "@/components/SmoothScroll";
 import { ThemeProvider } from "next-themes";
-import { AuthProvider } from "@/components/auth-provider";
-import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "@/contexts/auth-context";
+import { Toaster } from "@/components/ui/sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Footer />
                 </Providers>
                 <Analytics />
+                <SpeedInsights />
             </body>
         </html>
     );

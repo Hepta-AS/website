@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
-import { MagneticButton } from "./MagneticButton";
 
 interface FloatingMenuButtonProps {
   onClick: () => void;
@@ -18,11 +17,13 @@ export const FloatingMenuButton = ({ onClick, colorClass, hoverColorClass }: Flo
     exit={{ scale: 0, opacity: 0 }}
     transition={{ duration: 0.3 }}
   >
-    <MagneticButton
+    <motion.button
       onClick={onClick}
-      className={`rounded-full shadow-lg h-16 w-16 flex items-center justify-center ${colorClass} ${hoverColorClass}`}
+      className={`rounded-full shadow-lg h-16 w-16 flex items-center justify-center transition-colors ${colorClass} ${hoverColorClass}`}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.95 }}
     >
       <Menu size={24} />
-    </MagneticButton>
+    </motion.button>
   </motion.div>
 ); 

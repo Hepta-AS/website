@@ -10,6 +10,7 @@ import { ProgressBar } from "@/components/progress-bar";
 import { Analytics } from "@vercel/analytics/react";
 import { CookieConsent } from "@/components/cookie-consent";
 import { Providers } from "./providers";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="no" suppressHydrationWarning className="h-full overflow-x-hidden">
             <body className={`${inter.className} h-full bg-background text-foreground overflow-x-hidden`}>
+                <SmoothScroll />
                 <ProgressBar />
                 <Providers>
                     <div className="flex flex-col min-h-screen">

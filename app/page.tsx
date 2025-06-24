@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -18,7 +18,22 @@ import { Preloader } from "@/components/preloader";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 import InteractiveCtaSection from "@/components/InteractiveCtaSection";
 
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode, className?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
 
+  return (
+    <motion.section
+      ref={ref}
+      className={className}
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      {children}
+    </motion.section>
+  );
+}
 
 export default function Home() {
   const auth = useAuth();
@@ -182,102 +197,87 @@ export default function Home() {
         }
         setIsLoading(false);
       }} />}
-      <motion.div
-        className={`w-full overflow-x-hidden bg-black text-gray-100 ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+      <div
+        className={`w-full overflow-x-hidden bg-black text-white ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
         style={{ scrollBehavior: 'auto' }}
       >
-      <div className="space-y-32 overflow-x-hidden">
-        {/* HERO SECTION */}
-        <section
-          className="relative flex flex-col overflow-hidden h-screen"
-          style={{ touchAction: 'auto' }}
-        >
-          <div
-            className={`absolute inset-0 z-0 bg-black`}
-          />
-          {/* Hero video with fallback */}
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
+        <div className="space-y-32 overflow-x-hidden">
+          {/* HERO SECTION */}
+          <section
+            className="relative flex flex-col overflow-hidden h-screen"
+            style={{ touchAction: 'auto' }}
           >
-            <source src="/videos/ork_compressed.mp4#t=0.1" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-black/20 z-0" />
-          <div
-            className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black z-0`}
-          />
-          
-          <div className="absolute left-0 w-full bottom-1/3 top-auto translate-y-0 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-10 px-6 sm:px-12">
-            <div>
-              <h1 className="font-serif text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-tight tracking-tight drop-shadow-lg text-left select-none mb-8">
-                Digitale løsninger som driver din bedrift fremover
-              </h1>
+            <div className="absolute inset-0 z-0 bg-black" />
+            <video
+              ref={videoRef}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
+            >
+              <source src="/videos/ork_compressed.mp4#t=0.1" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-black/20 z-0" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black z-0" />
+            
+            <div className="absolute left-0 w-full bottom-1/3 top-auto translate-y-0 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-10 px-6 sm:px-12">
+              <div>
+                <h1 className="font-serif text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-tight tracking-tight drop-shadow-lg text-left select-none mb-8">
+                  Digitale løsninger som driver din bedrift fremover
+                </h1>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-
-
-        <section className="py-20 sm:py-32">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className={`text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white`}>
-              Teknologi i kjernen av alt vi gjør
-            </h2>
-            <p className={`mt-6 max-w-3xl mx-auto text-lg sm:text-xl text-gray-300`}>
-              Vi bygger ikke bare nettsider, vi skaper digitale økosystemer. Fra avanserte webapplikasjoner til AI-drevne automatiseringsløsninger, bruker vi den nyeste teknologien for å gi deg et konkurransefortrinn.
-            </p>
-            <div className="mt-10">
-              <Button onClick={handleServiceNavigation} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105">
-                Utforsk våre tjenester
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        <section className={`py-24`}>
-          <div className="container mx-auto px-4">
-            <div className="text-center">
-              <h2 className={`text-4xl font-bold tracking-tight text-white`}>
-                Ekspertise som gir resultater
+          <AnimatedSection className="py-20 sm:py-32">
+            <div className="container mx-auto px-4 text-center">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
+                Teknologi i kjernen av alt vi gjør
               </h2>
-              <p className={`mt-4 text-xl text-gray-400`}>
-                Fra AI-automatisering til visuelt innhold - vi leverer skreddersydde digitale løsninger som transformerer måten du driver forretning på
+              <p className="mt-6 max-w-3xl mx-auto text-lg sm:text-xl text-gray-300">
+                Vi bygger ikke bare nettsider, vi skaper digitale økosystemer. Fra avanserte webapplikasjoner til AI-drevne automatiseringsløsninger, bruker vi den nyeste teknologien for å gi deg et konkurransefortrinn.
               </p>
+              <div className="mt-10">
+                <Button onClick={handleServiceNavigation} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105">
+                  Utforsk våre tjenester
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
             </div>
-            <div className="mt-16">
-              <ServiceCards services={services} shouldPageBeWhite={false} />
-            </div>
-          </div>
-        </section>
+          </AnimatedSection>
+          
+          <AnimatedSection className="py-24 bg-white text-black">
+              <div className="container mx-auto px-4">
+                  <div className="text-center">
+                      <h2 className="text-4xl font-bold tracking-tight text-black">
+                          Ekspertise som gir resultater
+                      </h2>
+                      <p className="mt-4 text-xl text-gray-600">
+                          Fra AI-automatisering til visuelt innhold - vi leverer skreddersydde digitale løsninger som transformerer måten du driver forretning på
+                      </p>
+                  </div>
+                  <div className="mt-16">
+                      <ServiceCards services={services} />
+                  </div>
+              </div>
+          </AnimatedSection>
 
-        <motion.section 
-          className={`py-16 sm:py-24 lg:py-32`}
-          initial={{ backgroundColor: darkBg, color: darkFg }}
-          whileInView={{ backgroundColor: lightBg, color: lightFg }}
-          viewport={{ once: false, amount: 0.4, margin: "0px 0px -200px 0px" }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="container mx-auto px-4">
-            <div className="mb-16 md:mb-24">
-              <TextAndImage {...section1Data} imageOnLeft={false} useDarkText={true} />
-            </div>
-            <div>
-              <TextAndImage {...section2Data} imageOnLeft={true} useDarkText={true} />
-            </div>
-          </div>
-        </motion.section>
+          <AnimatedSection className="bg-white text-black py-24">
+            <TextAndImage {...section1Data} imagePosition="left" />
+          </AnimatedSection>
 
-        <InteractiveCtaSection />
+          <AnimatedSection className="bg-white text-black py-24">
+            <TextAndImage {...section2Data} imagePosition="right" />
+          </AnimatedSection>
 
-
-        <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />
+          <AnimatedSection>
+             <InteractiveCtaSection />
+          </AnimatedSection>
+          
+        </div>
       </div>
-    </motion.div>
+      <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />
     </>
   );
 }

@@ -9,12 +9,11 @@ interface TextAndImageProps {
   altText: string;
   title: string;
   paragraphs: string[];
-  imageOnLeft?: boolean;
+  imagePosition?: 'left' | 'right';
   imageClassName?: string;
   textContainerClassName?: string;
   imageContainerClassName?: string;
   imageContainerCustomClass?: string;
-  useDarkText?: boolean;
 }
 
 export const TextAndImage: React.FC<TextAndImageProps> = ({
@@ -22,24 +21,21 @@ export const TextAndImage: React.FC<TextAndImageProps> = ({
                                                             altText,
                                                             title,
                                                             paragraphs,
-                                                            imageOnLeft = false,
+                                                            imagePosition = 'left',
                                                             imageClassName = "object-cover",
                                                             textContainerClassName = "",
                                                             imageContainerClassName = "aspect-[3/4] sm:aspect-[2/3]",
                                                             imageContainerCustomClass,
-                                                            useDarkText = false
                                                           }) => {
-
-  const textColorClass = useDarkText ? 'text-gray-800' : 'text-gray-200';
-  const titleColorClass = useDarkText ? 'text-black' : 'text-white';
+  const isImageOnLeft = imagePosition === 'left';
 
   const textContent = (
       <div className={`space-y-4 md:space-y-6 ${textContainerClassName}`}>
-        <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight ${titleColorClass}`}>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
           {title}
         </h2>
         {paragraphs.map((p, index) => (
-            <p key={index} className={`text-base sm:text-lg leading-relaxed ${textColorClass}`}>
+            <p key={index} className="text-base sm:text-lg leading-relaxed opacity-90">
               {p}
             </p>
         ))}
@@ -59,12 +55,14 @@ export const TextAndImage: React.FC<TextAndImageProps> = ({
   );
 
   return (
-      <div className="flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-16 items-center">
-        <div className={`w-full md:w-1/2 ${imageOnLeft ? 'md:order-2' : 'md:order-1'}`}>
-          {textContent}
-        </div>
-        <div className={`w-full md:w-1/2 ${imageOnLeft ? 'md:order-1' : 'md:order-2'}`}>
-          {imageContent}
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-16 items-center">
+          <div className={`w-full md:w-1/2 ${isImageOnLeft ? 'md:order-2' : 'md:order-1'}`}>
+            {textContent}
+          </div>
+          <div className={`w-full md:w-1/2 ${isImageOnLeft ? 'md:order-1' : 'md:order-2'}`}>
+            {imageContent}
+          </div>
         </div>
       </div>
   );

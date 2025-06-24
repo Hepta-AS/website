@@ -95,13 +95,14 @@ export default function Home() {
       }
     );
 
-    if (whiteSection1Ref.current) {
-      observer.observe(whiteSection1Ref.current);
+    const target = whiteSection1Ref.current;
+    if (target) {
+      observer.observe(target);
     }
 
     return () => {
-      if (whiteSection1Ref.current) {
-        observer.unobserve(whiteSection1Ref.current);
+      if (target) {
+        observer.unobserve(target);
       }
     };
   }, [isInWhiteSection]);
@@ -282,13 +283,13 @@ export default function Home() {
             </div>
           </AnimatedSection>
           
-          <AnimatedSection className="py-24 bg-white text-black">
+          <AnimatedSection className="py-24">
               <div className="container mx-auto px-4">
                   <div className="text-center">
-                      <h2 className="text-4xl font-bold tracking-tight text-black">
+                      <h2 className="text-4xl font-bold tracking-tight">
                           Ekspertise som gir resultater
                       </h2>
-                      <p className="mt-4 text-xl text-gray-600">
+                      <p className="mt-4 text-xl text-gray-300">
                           Fra AI-automatisering til visuelt innhold - vi leverer skreddersydde digitale løsninger som transformerer måten du driver forretning på
                       </p>
                   </div>

@@ -11,6 +11,9 @@ import { Analytics } from "@vercel/analytics/react";
 import { CookieConsent } from "@/components/cookie-consent";
 import { Providers } from "./providers";
 import SmoothScroll from "@/components/SmoothScroll";
+import { ThemeProvider } from "next-themes";
+import { AuthProvider } from "@/components/auth-provider";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,17 +33,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <SmoothScroll />
                 <ProgressBar />
                 <Providers>
-                    <div className="flex flex-col min-h-screen">
-                        <MainNav />
-                        <main className="flex-grow overflow-x-hidden w-full relative">
-                            <Suspense fallback={<div>Loading...</div>}>
-                                {children}
-                            </Suspense>
-                        </main>
-                        <Footer />
-                    </div>
+                    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+                        <AuthProvider>
+                            <main>{children}</main>
+                            <Toaster />
+                            <CookieConsent />
+                        </AuthProvider>
+                    </ThemeProvider>
+                    <Footer />
                 </Providers>
-                <CookieConsent />
                 <Analytics />
             </body>
         </html>

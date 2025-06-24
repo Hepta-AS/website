@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -17,14 +17,16 @@ import { TextAndImage } from "@/components/TextAndImage";
 import { Preloader } from "@/components/preloader";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 import InteractiveCtaSection from "@/components/InteractiveCtaSection";
+import { MainNav } from "@/components/main-nav";
 
-function AnimatedSection({ children, className = "" }: { children: React.ReactNode, className?: string }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+function AnimatedSection({ children, className = "", forwardedRef }: { children: React.ReactNode, className?: string, forwardedRef?: React.RefObject<HTMLElement> }) {
+  const internalRef = useRef<HTMLElement>(null);
+  const sectionRef = forwardedRef || internalRef;
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
   return (
     <motion.section
-      ref={ref}
+      ref={sectionRef}
       className={className}
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -47,10 +49,12 @@ export default function Home() {
   });
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isInWhiteSection, setIsInWhiteSection] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const previousPath = useRef(pathname);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const whiteSection1Ref = useRef<HTMLDivElement>(null);
 
   // Handle hydration
   useEffect(() => {
@@ -62,8 +66,6 @@ export default function Home() {
     auth.checkAuth();
   }, [auth]);
 
-
-
   // Auto-close contact modal on route change
   useEffect(() => {
     if (isContactModalOpen && pathname !== previousPath.current) {
@@ -71,6 +73,38 @@ export default function Home() {
     }
     previousPath.current = pathname;
   }, [pathname, isContactModalOpen]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
+            setIsInWhiteSection(true);
+          } else if (!entry.isIntersecting && isInWhiteSection) {
+            // Only set to false if we're scrolling back up past the white sections
+            const rect = entry.boundingClientRect;
+            if (rect.bottom < 0) {
+              setIsInWhiteSection(false);
+            }
+          }
+        });
+      },
+      { 
+        threshold: [0, 0.2, 0.5, 1],
+        rootMargin: '-50px 0px -50px 0px'
+      }
+    );
+
+    if (whiteSection1Ref.current) {
+      observer.observe(whiteSection1Ref.current);
+    }
+
+    return () => {
+      if (whiteSection1Ref.current) {
+        observer.unobserve(whiteSection1Ref.current);
+      }
+    };
+  }, [isInWhiteSection]);
 
   const handleStartClick = () => setIsContactModalOpen(true);
   const handleServiceNavigation = () => router.push("/tjenester");
@@ -191,6 +225,7 @@ export default function Home() {
 
   return (
     <>
+      <MainNav shouldPageBeWhite={isInWhiteSection} />
       {isLoading && <Preloader onComplete={() => {
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('hepta-visited', 'true');
@@ -258,12 +293,12 @@ export default function Home() {
                       </p>
                   </div>
                   <div className="mt-16">
-                      <ServiceCards services={services} />
+                      <ServiceCards services={services} shouldPageBeWhite={isInWhiteSection} />
                   </div>
               </div>
           </AnimatedSection>
 
-          <AnimatedSection className="bg-white text-black py-24">
+          <AnimatedSection forwardedRef={whiteSection1Ref} className="bg-white text-black py-24">
             <TextAndImage {...section1Data} imagePosition="left" />
           </AnimatedSection>
 

@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -12,9 +14,9 @@ import { useAuth } from "@/contexts/auth-context";
 import { ServiceCards } from "@/components/serviceCards";
 
 import { TextAndImage } from "@/components/TextAndImage";
-import { ContactCallToAction } from "@/components/ContactCallToAction";
 import { Preloader } from "@/components/preloader";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
+import InteractiveCtaSection from "@/components/InteractiveCtaSection";
 
 
 
@@ -85,13 +87,6 @@ export default function Home() {
     },
   ];
 
-  const triggerSectionRef = useRef<HTMLDivElement | null>(null);
-  const entry = useIntersectionObserverInit(triggerSectionRef, {
-    threshold: 0.4,
-    freezeOnceVisible: false,
-  });
-  const shouldPageBeWhite = mounted ? !!entry?.isIntersecting : false;
-
   const section1Data = {
     imageSrc: "/samarbeid_compressed.jpg",
     altText: "Strategisk samarbeid mellom Hepta og klient",
@@ -122,10 +117,11 @@ export default function Home() {
     button: "START DIN DIGITALE REISE",
   };
 
-  const defaultPageBg = "bg-gray-900 dark:bg-black";
-  const defaultPageFg = "text-gray-100 dark:text-gray-50";
-  const whitePageBg = "bg-white dark:bg-gray-100";
-  const whitePageFg = "text-gray-900 dark:text-gray-800";
+  // Define colors for motion
+  const darkBg = "#000000";
+  const darkFg = "#F3F4F6"; // text-gray-100
+  const lightBg = "#FFFFFF";
+  const lightFg = "#1F2937"; // text-gray-800
 
   useEffect(() => {
     // Only handle video on client
@@ -186,10 +182,8 @@ export default function Home() {
         }
         setIsLoading(false);
       }} />}
-      <div
-        className={`w-full overflow-x-hidden ${
-          shouldPageBeWhite ? `${whitePageBg} ${whitePageFg}` : `${defaultPageBg} ${defaultPageFg}`
-        } ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+      <motion.div
+        className={`w-full overflow-x-hidden bg-black text-gray-100 ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
         style={{ scrollBehavior: 'auto' }}
       >
       <div className="space-y-32 overflow-x-hidden">
@@ -199,9 +193,7 @@ export default function Home() {
           style={{ touchAction: 'auto' }}
         >
           <div
-            className={`absolute inset-0 z-0 ${
-              shouldPageBeWhite ? "opacity-0" : defaultPageBg
-            }`}
+            className={`absolute inset-0 z-0 bg-black`}
           />
           {/* Hero video with fallback */}
           <video
@@ -216,9 +208,7 @@ export default function Home() {
           </video>
           <div className="absolute inset-0 bg-black/20 z-0" />
           <div
-            className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent ${
-              shouldPageBeWhite ? "to-white dark:to-gray-100" : "to-gray-900 dark:to-black"
-            } z-0`}
+            className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black z-0`}
           />
           
           <div className="absolute left-0 w-full bottom-1/3 top-auto translate-y-0 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-10 px-6 sm:px-12">
@@ -234,10 +224,10 @@ export default function Home() {
 
         <section className="py-20 sm:py-32">
           <div className="container mx-auto px-4 text-center">
-            <h2 className={`text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight ${shouldPageBeWhite ? 'text-gray-900' : 'text-white'}`}>
+            <h2 className={`text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white`}>
               Teknologi i kjernen av alt vi gjør
             </h2>
-            <p className={`mt-6 max-w-3xl mx-auto text-lg sm:text-xl ${shouldPageBeWhite ? 'text-gray-600' : 'text-gray-300'}`}>
+            <p className={`mt-6 max-w-3xl mx-auto text-lg sm:text-xl text-gray-300`}>
               Vi bygger ikke bare nettsider, vi skaper digitale økosystemer. Fra avanserte webapplikasjoner til AI-drevne automatiseringsløsninger, bruker vi den nyeste teknologien for å gi deg et konkurransefortrinn.
             </p>
             <div className="mt-10">
@@ -249,48 +239,45 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={`py-24 ${shouldPageBeWhite ? whitePageBg : defaultPageBg}`}>
+        <section className={`py-24`}>
           <div className="container mx-auto px-4">
             <div className="text-center">
-              <h2 className={`text-4xl font-bold tracking-tight ${shouldPageBeWhite ? whitePageFg : defaultPageFg}`}>
+              <h2 className={`text-4xl font-bold tracking-tight text-white`}>
                 Ekspertise som gir resultater
               </h2>
-              <p className={`mt-4 text-xl ${shouldPageBeWhite ? 'text-gray-600' : 'text-gray-400 dark:text-gray-500'}`}>
+              <p className={`mt-4 text-xl text-gray-400`}>
                 Fra AI-automatisering til visuelt innhold - vi leverer skreddersydde digitale løsninger som transformerer måten du driver forretning på
               </p>
             </div>
             <div className="mt-16">
-              <ServiceCards services={services} shouldPageBeWhite={shouldPageBeWhite} />
+              <ServiceCards services={services} shouldPageBeWhite={false} />
             </div>
           </div>
         </section>
 
-        <section ref={triggerSectionRef} className={`py-16 sm:py-24 lg:py-32 ${shouldPageBeWhite ? whitePageBg : defaultPageBg}`}>
+        <motion.section 
+          className={`py-16 sm:py-24 lg:py-32`}
+          initial={{ backgroundColor: darkBg, color: darkFg }}
+          whileInView={{ backgroundColor: lightBg, color: lightFg }}
+          viewport={{ once: false, amount: 0.4, margin: "0px 0px -200px 0px" }}
+          transition={{ duration: 0.8 }}
+        >
           <div className="container mx-auto px-4">
             <div className="mb-16 md:mb-24">
-              <TextAndImage {...section1Data} imageOnLeft={false} useDarkText={shouldPageBeWhite} />
+              <TextAndImage {...section1Data} imageOnLeft={false} useDarkText={true} />
             </div>
             <div>
-              <TextAndImage {...section2Data} imageOnLeft={true} useDarkText={shouldPageBeWhite} />
+              <TextAndImage {...section2Data} imageOnLeft={true} useDarkText={true} />
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        <ContactCallToAction
-          id="kontakt-oss"
-          line1={contactAdventureData.line1}
-          line2={contactAdventureData.line2}
-          line3={contactAdventureData.line3}
-          buttonText={contactAdventureData.button}
-          onButtonClick={handleStartClick}
-          shouldPageBeWhite={shouldPageBeWhite}
-        />
+        <InteractiveCtaSection />
 
-        
 
         <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />
       </div>
-    </div>
+    </motion.div>
     </>
   );
 }

@@ -3,7 +3,7 @@
 import { ContactFormModal } from "@/components/contact-form-modal";
 import { VideoHero } from '@/components/video-hero';
 import { ImageTextSplitSection } from '@/components/image-text-split-section';
-import { ContactCallToAction } from '@/components/ContactCallToAction';
+import InteractiveCtaSection from "@/components/InteractiveCtaSection";
 
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
@@ -23,13 +23,6 @@ export default function OmOssContent() {
     const kreativitetImages = [
         "/creativity_compressed.jpg",
     ];
-
-    const omOssContactData = {
-        line1: "KLAR FOR NESTE STEG?",
-        line2: "LA OSS SKAPE NOE",
-        line3: "UTROLIG SAMMEN.",
-        buttonText: "KONTAKT OSS NÅ",
-    };
 
     return (
         <div className="w-full overflow-x-hidden">
@@ -147,15 +140,8 @@ export default function OmOssContent() {
                 </div>
             </section>
 
-            {/* CTA Section */}
-            <ContactCallToAction
-                id="om-oss-kontakt"
-                line1={omOssContactData.line1}
-                line2={omOssContactData.line2}
-                line3={omOssContactData.line3}
-                buttonText={omOssContactData.buttonText}
-                onButtonClick={() => router.push("/contact")}
-            />
+            {/* New Interactive CTA Section */}
+            <InteractiveCtaSection />
 
             {/* Contact Form Modal */}
             <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />

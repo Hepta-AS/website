@@ -242,6 +242,7 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
           <FullscreenMenu
             onClose={() => setIsMenuVisible(false)}
             navItems={navItems}
+            shouldPageBeWhite={shouldPageBeWhite}
           />
         )}
       </AnimatePresence>

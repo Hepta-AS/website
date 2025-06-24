@@ -9,20 +9,26 @@ import { X } from "lucide-react";
 interface FullscreenMenuProps {
   onClose: () => void;
   navItems: { name: string; href: string }[];
+  shouldPageBeWhite?: boolean;
 }
 
-export const FullscreenMenu = ({ onClose, navItems }: FullscreenMenuProps) => {
+export const FullscreenMenu = ({ onClose, navItems, shouldPageBeWhite = false }: FullscreenMenuProps) => {
   const router = useRouter();
+
+  const textColor = shouldPageBeWhite ? "text-black" : "text-white";
+  const hoverColor = shouldPageBeWhite ? "hover:text-blue-600" : "hover:text-blue-500";
+  const bgColor = shouldPageBeWhite ? "bg-white" : "bg-black";
+  const buttonTextColor = shouldPageBeWhite ? "text-white" : "text-white";
 
   return (
     <motion.div
-      className="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm z-50 flex flex-col items-center justify-center"
+      className={`fixed inset-0 ${bgColor} bg-opacity-90 backdrop-blur-sm z-50 flex flex-col items-center justify-center`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
       <motion.button
-        className="absolute top-8 right-8 text-white"
+        className={`absolute top-8 right-8 ${textColor}`}
         onClick={onClose}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -40,7 +46,7 @@ export const FullscreenMenu = ({ onClose, navItems }: FullscreenMenuProps) => {
             <Link
               href={item.href}
               onClick={onClose}
-              className="text-4xl font-bold text-white hover:text-blue-500 transition-colors"
+              className={`text-4xl font-bold ${textColor} ${hoverColor} transition-colors`}
             >
               {item.name}
             </Link>
@@ -57,7 +63,7 @@ export const FullscreenMenu = ({ onClose, navItems }: FullscreenMenuProps) => {
               router.push('/contact');
               onClose();
             }}
-            className="bg-blue-600 hover:bg-blue-700 text-white text-xl py-3 px-8 rounded-full"
+            className={`bg-blue-600 hover:bg-blue-700 ${buttonTextColor} text-xl py-3 px-8 rounded-full`}
           >
             Kontakt
           </Button>

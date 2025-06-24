@@ -26,6 +26,7 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isFloatingButtonVisible, setIsFloatingButtonVisible] = useState(false);
+  const [isNavHidden, setIsNavHidden] = useState(false);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -41,7 +42,8 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 20);
-      setIsFloatingButtonVisible(currentScrollY > 200);
+      setIsFloatingButtonVisible(currentScrollY > 100);
+      setIsNavHidden(currentScrollY > 200);
     };
     
     window.addEventListener('scroll', handleScroll);
@@ -72,7 +74,9 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
   return (
     <>
       <header
-        className={`absolute top-0 left-0 right-0 z-40 transition-colors duration-300 ${
+        className={`absolute top-0 left-0 right-0 z-40 transition-colors duration-300 transform transition-transform ${
+          isNavHidden ? '-translate-y-full' : 'translate-y-0'
+        } ${
           scrolled 
             ? 'bg-neutral-950/90 backdrop-blur-lg border-b border-neutral-800/50' 
             : 'bg-transparent'

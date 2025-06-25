@@ -35,7 +35,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
                         <AuthProvider>
                             <MainNav />
-                            <main>{children}</main>
+                            <main className="pt-20">
+                                {children}
+                            </main>
                             <Footer />
                             <Toaster />
                         </AuthProvider>

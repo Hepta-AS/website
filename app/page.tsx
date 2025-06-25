@@ -15,7 +15,6 @@ import { Footer } from "@/components/footer";
 import { services } from "@/lib/services";
 import TextAndImage, { TextAndImageProps } from "@/components/TextAndImage";
 import { Preloader } from "@/components/preloader";
-import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import InteractiveCtaSection from "@/components/InteractiveCtaSection";
 import { ServiceCards } from "@/components/serviceCards";
 
@@ -158,9 +157,6 @@ export default function Home() {
       setIsLoading(false);
     }
   }, []);
-
-  // Initialize intersection observers
-  useIntersectionObserver();
 
   if (!mounted) {
     return null;

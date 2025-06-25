@@ -28,7 +28,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="no" suppressHydrationWarning className="overflow-x-hidden">
             <body className={`${inter.className} bg-background text-foreground overflow-x-hidden`}>
-                <SmoothScroll />
                 <ProgressBar />
                 <Providers>
                     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>

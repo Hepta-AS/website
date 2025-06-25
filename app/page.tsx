@@ -234,13 +234,13 @@ export default function Home() {
         setIsLoading(false);
       }} />}
       <div
-        className={`w-full overflow-x-hidden bg-black text-white ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+        className={`w-full overflow-x-hidden bg-black text-white ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500 h-screen overflow-y-scroll snap-y snap-mandatory`}
         style={{ scrollBehavior: 'auto' }}
       >
         <div className="overflow-x-hidden">
           {/* HERO SECTION */}
           <section
-            className="relative flex flex-col overflow-hidden h-screen"
+            className="relative flex flex-col overflow-hidden h-screen snap-start"
             style={{ touchAction: 'auto' }}
           >
             <div className="absolute inset-0 z-0 bg-black" />
@@ -266,7 +266,7 @@ export default function Home() {
             </div>
           </section>
 
-          <AnimatedSection className="py-20 sm:py-32">
+          <AnimatedSection className="py-20 sm:py-32 snap-start">
             <div className="container mx-auto px-4 text-center">
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
                 Teknologi i kjernen av alt vi gjør
@@ -283,7 +283,7 @@ export default function Home() {
             </div>
           </AnimatedSection>
           
-          <AnimatedSection className="py-24">
+          <AnimatedSection className="py-24 snap-start">
               <div className="container mx-auto px-4">
                   <div className="text-center">
                       <h2 className="text-4xl font-bold tracking-tight">
@@ -299,15 +299,15 @@ export default function Home() {
               </div>
           </AnimatedSection>
 
-          <AnimatedSection forwardedRef={whiteSection1Ref} className="bg-white text-black py-24">
+          <AnimatedSection forwardedRef={whiteSection1Ref} className="bg-white text-black py-24 snap-start">
             <TextAndImage {...section1Data} imagePosition="left" />
           </AnimatedSection>
 
-          <AnimatedSection className="bg-white text-black py-24">
+          <AnimatedSection className="bg-white text-black py-24 snap-start">
             <TextAndImage {...section2Data} imagePosition="right" />
           </AnimatedSection>
 
-          <AnimatedSection>
+          <AnimatedSection className="snap-start">
              <InteractiveCtaSection />
           </AnimatedSection>
           

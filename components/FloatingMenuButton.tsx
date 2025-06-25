@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu } from 'lucide-react';
-import { useIsMobile } from '../hooks/use-mobile';
+import useIsMobile from '../hooks/use-mobile';
 import { MagneticButton } from './MagneticButton';
 
 interface MenuButtonProps {

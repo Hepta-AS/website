@@ -40,13 +40,16 @@ export const FloatingMenuButton = ({ onClick }: MenuButtonProps) => {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed z-50 top-8 right-8 md:top-8 md:right-8 bottom-auto md:bottom-auto"
+          className="fixed z-50 bottom-8 right-8 md:top-8 md:bottom-auto"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0, opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <MagneticButton onClick={onClick}>
+          <MagneticButton 
+            onClick={onClick}
+            className="p-0 rounded-full"
+          >
             <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center">
               <Menu size={24} />
             </div>

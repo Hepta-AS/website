@@ -37,7 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                             <CookieConsent />
                         </AuthProvider>
                     </ThemeProvider>
-                    <Footer />
                 </Providers>
                 {/* Analytics and SpeedInsights temporarily removed due to build issues */}
             </body>

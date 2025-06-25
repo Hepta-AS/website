@@ -18,6 +18,7 @@ import { Preloader } from "@/components/preloader";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 import InteractiveCtaSection from "@/components/InteractiveCtaSection";
 import { MainNav } from "@/components/main-nav";
+import { Footer } from "@/components/footer";
 
 function AnimatedSection({ children, className = "", forwardedRef }: { children: React.ReactNode, className?: string, forwardedRef?: React.RefObject<HTMLElement> }) {
   const internalRef = useRef<HTMLElement>(null);
@@ -235,12 +236,12 @@ export default function Home() {
       }} />}
       <div
         className={`w-full overflow-x-hidden bg-black text-white ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500 h-screen overflow-y-scroll snap-y snap-mandatory`}
-        style={{ scrollBehavior: 'auto' }}
+        style={{ scrollBehavior: 'smooth' }}
       >
         <div className="overflow-x-hidden">
           {/* HERO SECTION */}
           <section
-            className="relative flex flex-col overflow-hidden h-screen snap-start"
+            className="relative flex flex-col justify-center overflow-hidden h-screen snap-start"
             style={{ touchAction: 'auto' }}
           >
             <div className="absolute inset-0 z-0 bg-black" />
@@ -266,7 +267,7 @@ export default function Home() {
             </div>
           </section>
 
-          <AnimatedSection className="py-20 sm:py-32 snap-start">
+          <AnimatedSection className="h-screen flex items-center justify-center snap-start">
             <div className="container mx-auto px-4 text-center">
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
                 Teknologi i kjernen av alt vi gjør
@@ -283,7 +284,7 @@ export default function Home() {
             </div>
           </AnimatedSection>
           
-          <AnimatedSection className="py-24 snap-start">
+          <AnimatedSection className="h-screen flex items-center justify-center snap-start">
               <div className="container mx-auto px-4">
                   <div className="text-center">
                       <h2 className="text-4xl font-bold tracking-tight">
@@ -299,18 +300,21 @@ export default function Home() {
               </div>
           </AnimatedSection>
 
-          <AnimatedSection forwardedRef={whiteSection1Ref} className="bg-white text-black py-24 snap-start">
+          <AnimatedSection forwardedRef={whiteSection1Ref} className="bg-white text-black h-screen flex items-center justify-center snap-start">
             <TextAndImage {...section1Data} imagePosition="left" />
           </AnimatedSection>
 
-          <AnimatedSection className="bg-white text-black py-24 snap-start">
+          <AnimatedSection className="bg-white text-black h-screen flex items-center justify-center snap-start">
             <TextAndImage {...section2Data} imagePosition="right" />
           </AnimatedSection>
 
-          <AnimatedSection className="snap-start">
+          <AnimatedSection className="h-screen flex items-center justify-center snap-start">
              <InteractiveCtaSection />
           </AnimatedSection>
           
+          <footer className="h-screen snap-start">
+            <Footer />
+          </footer>
         </div>
       </div>
       <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />

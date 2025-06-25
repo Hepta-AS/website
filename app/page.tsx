@@ -216,7 +216,7 @@ export default function Home() {
             </div>
           </AnimatedSection>
           
-          <AnimatedSection className="py-24 sticky top-0 z-10">
+          <AnimatedSection className="py-24 relative z-10 h-screen">
               <div className="container mx-auto px-4">
                   <div className="text-center">
                       <h2 className="text-4xl font-bold tracking-tight">
@@ -232,8 +232,8 @@ export default function Home() {
               </div>
           </AnimatedSection>
 
-          <div className="bg-white relative z-20">
-            <AnimatedSection forwardedRef={whiteSection1Ref} className="text-black py-32 min-h-screen">
+          <div className="bg-white relative z-20 -mt-96">
+            <AnimatedSection forwardedRef={whiteSection1Ref} className="text-black py-32 min-h-screen pt-96">
               <TextAndImage {...section1Data} imagePosition="left" />
             </AnimatedSection>
 

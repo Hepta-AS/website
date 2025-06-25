@@ -1,7 +1,7 @@
 // components/page-wrapper.tsx
 import type React from "react"
-import { MainNav } from "./main-nav"
-import { Footer } from "./footer"
+import { MainNav } from "@/components/main-nav"
+import { Footer } from "@/components/footer"
 
 interface PageWrapperProps {
   children: React.ReactNode

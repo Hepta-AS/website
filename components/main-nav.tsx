@@ -25,7 +25,6 @@ interface MainNavProps {
 export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isFloatingButtonVisible, setIsFloatingButtonVisible] = useState(false);
   const [isNavHidden, setIsNavHidden] = useState(false);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -42,7 +41,6 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 20);
-      setIsFloatingButtonVisible(currentScrollY > 100);
       setIsNavHidden(currentScrollY > 200);
     };
     
@@ -68,16 +66,14 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
   };
 
   const primaryColor = shouldPageBeWhite ? 'text-blue-600' : 'text-blue-500';
-  const floatingButtonColor = shouldPageBeWhite ? 'bg-black text-white' : 'bg-white text-black';
-  const floatingButtonHoverColor = shouldPageBeWhite ? 'hover:bg-blue-600' : 'hover:bg-blue-500';
 
   return (
     <>
       <header
-        className={`absolute top-0 left-0 right-0 z-40 transition-colors duration-300 transform transition-transform ${
-          isNavHidden ? '-translate-y-full' : 'translate-y-0'
+        className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-300 transform transition-transform ${
+          isNavHidden && !isMenuVisible ? '-translate-y-full' : 'translate-y-0'
         } ${
-          scrolled 
+          scrolled && !isMenuVisible
             ? 'bg-neutral-950/90 backdrop-blur-lg border-b border-neutral-800/50' 
             : 'bg-transparent'
         }`}
@@ -231,15 +227,10 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
         </nav>
       </header>
 
-      <AnimatePresence>
-        {isFloatingButtonVisible && (
-          <FloatingMenuButton
-            onClick={() => setIsMenuVisible(true)}
-            colorClass={floatingButtonColor}
-            hoverColorClass={floatingButtonHoverColor}
-          />
-        )}
-      </AnimatePresence>
+      <FloatingMenuButton
+        onClick={() => setIsMenuVisible(!isMenuVisible)}
+        isMenuOpen={isMenuVisible}
+      />
 
       <AnimatePresence>
         {isMenuVisible && (

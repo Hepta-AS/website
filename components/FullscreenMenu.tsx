@@ -27,14 +27,6 @@ export const FullscreenMenu = ({ onClose, navItems, shouldPageBeWhite = false }:
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <motion.button
-        className={`absolute top-8 right-8 ${textColor}`}
-        onClick={onClose}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-      >
-        <X size={32} />
-      </motion.button>
       <motion.div className="flex flex-col items-center space-y-8">
         {navItems.map((item, index) => (
           <motion.div

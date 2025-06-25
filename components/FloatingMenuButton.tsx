@@ -1,29 +1,57 @@
 "use client";
 
+import { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { MagneticButton } from "./MagneticButton";
+import { useIsMobile } from '../hooks/use-mobile';
 
 interface FloatingMenuButtonProps {
   onClick: () => void;
-  colorClass: string;
-  hoverColorClass: string;
+  isMenuOpen: boolean;
 }
 
-export const FloatingMenuButton = ({ onClick, colorClass, hoverColorClass }: FloatingMenuButtonProps) => (
-  <motion.div
-    className="fixed bottom-8 right-8 z-50"
-    initial={{ scale: 0, opacity: 0 }}
-    animate={{ scale: 1, opacity: 1 }}
-    exit={{ scale: 0, opacity: 0 }}
-    transition={{ duration: 0.3 }}
-  >
-    <motion.button
-      onClick={onClick}
-      className={`rounded-full shadow-lg h-16 w-16 flex items-center justify-center transition-colors ${colorClass} ${hoverColorClass}`}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      <Menu size={24} />
-    </motion.button>
-  </motion.div>
-); 
+export const FloatingMenuButton = ({ onClick, isMenuOpen }: FloatingMenuButtonProps) => {
+  const isMobile = useIsMobile();
+  const [showButton, setShowButton] = useState(false);
+
+  useEffect(() => {
+    if (isMobile) {
+      setShowButton(true);
+      return;
+    }
+
+    const handleScroll = () => {
+      if (window.scrollY > 200) {
+        setShowButton(true);
+      } else {
+        setShowButton(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Initial check
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile]);
+
+  if (!showButton && !isMenuOpen) {
+    return null;
+  }
+
+  return (
+    <div className="fixed bottom-8 right-8 z-50 md:top-8 md:bottom-auto">
+      <MagneticButton onClick={onClick}>
+        <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+          <motion.div
+            animate={{ rotate: isMenuOpen ? 90 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </motion.div>
+        </div>
+      </MagneticButton>
+    </div>
+  );
+}; 

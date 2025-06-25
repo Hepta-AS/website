@@ -11,7 +11,6 @@ import { ArrowRight } from "lucide-react";
 import { ContactFormModal } from "@/components/contact-form-modal";
 import { useAuth } from "@/components/auth-provider";
 import { MainNav } from "@/components/main-nav";
-import { Footer } from "@/components/footer";
 import { services } from "@/lib/services";
 import { TextAndImage, TextAndImageProps } from "@/components/TextAndImage";
 import { Preloader } from "@/components/preloader";
@@ -247,7 +246,6 @@ export default function Home() {
              <InteractiveCtaSection />
           </AnimatedSection>
           
-          <Footer />
         </div>
       </div>
       <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />

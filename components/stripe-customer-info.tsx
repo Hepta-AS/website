@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useAuth } from "@/contexts/auth-context"
+import { useAuth } from "@/components/auth-provider"
 import { RefreshCw } from "lucide-react"
 
 interface StripeCustomerInfoProps {

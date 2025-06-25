@@ -5,7 +5,7 @@ import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
 import { CheckoutForm } from "./checkout-form"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useAuth } from "@/contexts/auth-context"
+import { useAuth } from "@/components/auth-provider"
 
 // Load Stripe outside of component render to avoid recreating Stripe object on every render
 // Using the provided publishable key

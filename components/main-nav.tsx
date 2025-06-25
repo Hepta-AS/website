@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth } from "@/components/auth-provider";
 import { LoginModal } from "@/components/login-modal";
 import Image from "next/image";
 import { FloatingMenuButton } from "./FloatingMenuButton";

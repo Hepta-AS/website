@@ -25,7 +25,7 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useAuth } from "@/contexts/auth-context"
+import { useAuth } from "@/components/auth-provider"
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""

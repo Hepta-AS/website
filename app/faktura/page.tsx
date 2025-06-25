@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { InvoiceList } from "@/components/invoice-list"
 import { PaymentModal } from "@/components/payment-modal"
-import { useAuth } from "@/contexts/auth-context"
+import { useAuth } from "@/components/auth-provider"
 import { Loader2 } from "lucide-react"
 
 export default function Faktura() {

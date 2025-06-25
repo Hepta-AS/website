@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 import { ContactFormModal } from "@/components/contact-form-modal";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth } from "@/components/auth-provider";
 
 import { ServiceCards } from "@/components/serviceCards";
 

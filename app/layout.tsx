@@ -11,7 +11,7 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { Providers } from "./providers";
 import SmoothScroll from "@/components/SmoothScroll";
 import { ThemeProvider } from "next-themes";
-import { AuthProvider } from "@/contexts/auth-context";
+import { AuthProvider } from "@/components/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 

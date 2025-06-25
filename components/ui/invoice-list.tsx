@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatAmountFromStripe } from "@/lib/stripe"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
+import { useAuth } from "@/components/auth-provider"
 import { ArrowUpDown, Calendar, Check, Clock, Download, ExternalLink, FileText, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 

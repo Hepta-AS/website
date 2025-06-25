@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useAuth } from "@/contexts/auth-context"
+import { useAuth } from "@/components/auth-provider"
 import { Loader2, Search, UserPlus, RefreshCw, LinkIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useRouter } from "next/navigation"

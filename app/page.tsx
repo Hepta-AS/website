@@ -10,11 +10,14 @@ import { ArrowRight } from "lucide-react";
 
 import { ContactFormModal } from "@/components/contact-form-modal";
 import { useAuth } from "@/components/auth-provider";
+import { MainNav } from "@/components/main-nav";
+import { Footer } from "@/components/footer";
 import { services } from "@/lib/services";
-import { TextAndImage, TextAndImageProps } from "@/components/TextAndImage";
+import TextAndImage, { TextAndImageProps } from "@/components/TextAndImage";
 import { Preloader } from "@/components/preloader";
-import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import InteractiveCtaSection from "@/components/InteractiveCtaSection";
+import { ServiceCards } from "@/components/serviceCards";
 
 function AnimatedSection({ children, className = "", forwardedRef }: { children: React.ReactNode, className?: string, forwardedRef?: React.RefObject<HTMLElement> }) {
   const internalRef = useRef<HTMLElement>(null);
@@ -157,7 +160,7 @@ export default function Home() {
   }, []);
 
   // Initialize intersection observers
-  useIntersectionObserverInit();
+  useIntersectionObserver();
 
   if (!mounted) {
     return null;
@@ -168,6 +171,7 @@ export default function Home() {
       <AnimatePresence>
         {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
       </AnimatePresence>
+      <MainNav shouldPageBeWhite={isInWhiteSection} />
       <div
         className={`w-full overflow-x-hidden bg-black text-white ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
       >
@@ -247,6 +251,7 @@ export default function Home() {
              <InteractiveCtaSection />
           </AnimatedSection>
           
+          <Footer />
         </div>
       </div>
       <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />

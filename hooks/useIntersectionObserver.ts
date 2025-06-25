@@ -14,7 +14,7 @@ function useIntersectionObserver(
     root = null,
     rootMargin = '0%',
     freezeOnceVisible = false, // Stop observing after it becomes visible once
-  }: Args,
+  }: Args = {},
 ): IntersectionObserverEntry | undefined {
   const [entry, setEntry] = useState<IntersectionObserverEntry>();
   const [mounted, setMounted] = useState(false);

@@ -12,6 +12,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { MainNav } from '@/components/main-nav';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,9 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Providers>
                     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
                         <AuthProvider>
+                            <MainNav />
                             <main>{children}</main>
+                            <Footer />
                             <Toaster />
-                            <CookieConsent />
                         </AuthProvider>
                     </ThemeProvider>
                 </Providers>

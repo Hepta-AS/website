@@ -67,8 +67,8 @@ export const FullscreenMenu = ({ onClose, navItems, shouldPageBeWhite = false }:
           onClick={onClose}
           className="p-0 rounded-full"
         >
-            <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center">
-              <X size={24} />
+            <div className="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center">
+              <X size={32} />
             </div>
         </MagneticButton>
       </div>

@@ -3,22 +3,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 import { ContactFormModal } from "@/components/contact-form-modal";
 import { useAuth } from "@/components/auth-provider";
-
-import { ServiceCards } from "@/components/serviceCards";
-
-import { TextAndImage } from "@/components/TextAndImage";
+import { services } from "@/lib/services";
+import { TextAndImage, TextAndImageProps } from "@/components/TextAndImage";
 import { Preloader } from "@/components/preloader";
 import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 import InteractiveCtaSection from "@/components/InteractiveCtaSection";
-import { MainNav } from "@/components/main-nav";
-import { Footer } from "@/components/footer";
 
 function AnimatedSection({ children, className = "", forwardedRef }: { children: React.ReactNode, className?: string, forwardedRef?: React.RefObject<HTMLElement> }) {
   const internalRef = useRef<HTMLElement>(null);
@@ -41,21 +37,14 @@ function AnimatedSection({ children, className = "", forwardedRef }: { children:
 export default function Home() {
   const auth = useAuth();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(() => {
-    // Only show preloader on first visit (no sessionStorage item)
-    if (typeof window !== 'undefined') {
-      return !sessionStorage.getItem('hepta-visited');
-    }
-    return true;
-  });
-  const [isVideoReady, setIsVideoReady] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isInWhiteSection, setIsInWhiteSection] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   const previousPath = useRef(pathname);
   const videoRef = useRef<HTMLVideoElement>(null);
   const whiteSection1Ref = useRef<HTMLDivElement>(null);
+  const isInWhiteSection = useInView(whiteSection1Ref, { amount: 0.5 });
 
   // Handle hydration
   useEffect(() => {
@@ -111,33 +100,6 @@ export default function Home() {
   const handleStartClick = () => setIsContactModalOpen(true);
   const handleServiceNavigation = () => router.push("/tjenester");
 
-  const services = [
-    {
-      title: "AI og automasjon",
-      content: "Effektiviser forretningsprosessene dine med skreddersydde AI-løsninger og automatiserte arbeidsflyter som sparer tid og øker lønnsomheten.",
-      slug: "AI",
-      image: "/group11_compressed.jpg",
-    },
-    {
-      title: "Videoproduksjon",
-      content: "Fra konsept til ferdig film - vi produserer engasjerende videoinnhold som styrker ditt merke og når din målgruppe effektivt.",
-      slug: "Videoproduksjon",
-      image: "/IMG_9003_compressed.JPG",
-    },
-    {
-      title: "Digital markedsføring",
-      content: "Databaserte markedsføringsstrategier som treffer riktig målgruppe, øker synlighet og genererer målbare resultater for din bedrift.",
-      slug: "Digitalmarkedsforing",
-      image: "/ai_compressed.jpg",
-    },
-    {
-      title: "Utvikling",
-      content: "Skalerbare tekniske løsninger fra webapplikasjoner til avansert infrastruktur - vi bygger fremtidens digitale plattformer.",
-      slug: "Utvikling",
-      image: "/consulting_compressed.jpg",
-    },
-  ];
-
   const section1Data = {
     imageSrc: "/samarbeid_compressed.jpg",
     altText: "Strategisk samarbeid mellom Hepta og klient",
@@ -188,52 +150,24 @@ export default function Home() {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('hepta-visited')) {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Initialize intersection observers
+  useIntersectionObserverInit();
+
   if (!mounted) {
-    return (
-      <div className="w-full bg-gray-900 dark:bg-black text-gray-100 dark:text-gray-50 overflow-x-hidden">
-        <div className="space-y-32 overflow-x-hidden">
-          {/* Static hero section for SSR */}
-          <section className="relative flex flex-col overflow-hidden h-screen">
-            <div className="absolute inset-0 z-0 bg-gray-900 dark:bg-black" />
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="none"
-              className="absolute inset-0 w-full h-full object-cover opacity-50 z-0"
-              style={{
-                WebkitAppearance: 'none',
-                appearance: 'none',
-              }}
-            >
-              <source src="/videos/ork_compressed.mp4" type="video/mp4" />
-            </video>
-            <div className="absolute inset-0 bg-black/20 z-0" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-gray-900 dark:to-black z-0" />
-            
-            <div className="absolute left-0 w-full bottom-1/3 top-auto translate-y-0 md:top-1/2 md:bottom-auto md:-translate-y-1/2 z-10 px-6 sm:px-12">
-              <div>
-                <h1 className="font-serif text-white text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-tight tracking-tight drop-shadow-lg text-left select-none mb-8">
-                  Digitale løsninger som driver din bedrift fremover
-                </h1>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
     <>
-      <MainNav shouldPageBeWhite={isInWhiteSection} />
-      {isLoading && <Preloader onComplete={() => {
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('hepta-visited', 'true');
-        }
-        setIsLoading(false);
-      }} />}
+      <AnimatePresence>
+        {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
+      </AnimatePresence>
       <div
         className={`w-full overflow-x-hidden bg-black text-white ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
       >
@@ -313,7 +247,6 @@ export default function Home() {
              <InteractiveCtaSection />
           </AnimatedSection>
           
-          <Footer />
         </div>
       </div>
       <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />

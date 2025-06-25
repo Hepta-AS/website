@@ -26,8 +26,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="no" suppressHydrationWarning className="h-full overflow-x-hidden">
-            <body className={`${inter.className} h-full bg-background text-foreground overflow-x-hidden`}>
+        <html lang="no" suppressHydrationWarning className="overflow-x-hidden">
+            <body className={`${inter.className} bg-background text-foreground overflow-x-hidden`}>
                 <SmoothScroll />
                 <ProgressBar />
                 <Providers>

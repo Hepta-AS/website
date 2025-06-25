@@ -237,7 +237,7 @@ export default function Home() {
         className={`w-full overflow-x-hidden bg-black text-white ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
         style={{ scrollBehavior: 'auto' }}
       >
-        <div className="space-y-32 overflow-x-hidden">
+        <div className="overflow-x-hidden">
           {/* HERO SECTION */}
           <section
             className="relative flex flex-col overflow-hidden h-screen"

@@ -13,7 +13,7 @@ import { useAuth } from "@/components/auth-provider";
 import { MainNav } from "@/components/main-nav";
 import { Footer } from "@/components/footer";
 import { services } from "@/lib/services";
-import TextAndImage, { TextAndImageProps } from "@/components/TextAndImage";
+import { TextAndImage, TextAndImageProps } from "@/components/TextAndImage";
 import { Preloader } from "@/components/preloader";
 import InteractiveCtaSection from "@/components/InteractiveCtaSection";
 import { ServiceCards } from "@/components/serviceCards";

@@ -1,27 +1,37 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 
-const SmoothScroll = () => {
+export const useLenis = () => {
+  const [lenis, setLenis] = useState<Lenis | null>(null);
+
   useEffect(() => {
-    const lenis = new Lenis({
+    const newLenis = new Lenis({
       lerp: 0.07, // Lower value makes scrolling "heavier"
       smoothWheel: true,
     });
 
+    setLenis(newLenis);
+
     function raf(time: number) {
-      lenis.raf(time);
+      newLenis.raf(time);
       requestAnimationFrame(raf);
     }
 
     requestAnimationFrame(raf);
 
     return () => {
-      lenis.destroy();
+      newLenis.destroy();
+      setLenis(null);
     };
   }, []);
 
+  return lenis;
+};
+
+const SmoothScroll = () => {
+  useLenis(); // Initialize Lenis
   return null;
 };
 

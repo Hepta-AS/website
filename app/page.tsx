@@ -19,14 +19,17 @@ import useIntersectionObserverInit from "@/hooks/useIntersectionObserverInit";
 import InteractiveCtaSection from "@/components/InteractiveCtaSection";
 import { MainNav } from "@/components/main-nav";
 import { Footer } from "@/components/footer";
+import { useLenis } from "@/components/SmoothScroll";
+import { useScrollSnap } from "@/hooks/useScrollSnap";
 
-function AnimatedSection({ children, className = "", forwardedRef }: { children: React.ReactNode, className?: string, forwardedRef?: React.RefObject<HTMLElement> }) {
+function AnimatedSection({ children, className = "", forwardedRef, id }: { children: React.ReactNode, className?: string, forwardedRef?: React.RefObject<HTMLElement>, id?: string }) {
   const internalRef = useRef<HTMLElement>(null);
   const sectionRef = forwardedRef || internalRef;
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
   return (
     <motion.section
+      id={id}
       ref={sectionRef}
       className={className}
       initial={{ opacity: 0, y: 50 }}
@@ -56,6 +59,9 @@ export default function Home() {
   const previousPath = useRef(pathname);
   const videoRef = useRef<HTMLVideoElement>(null);
   const whiteSection1Ref = useRef<HTMLDivElement>(null);
+  const lenis = useLenis();
+
+  useScrollSnap('.snap-section', lenis);
 
   // Handle hydration
   useEffect(() => {
@@ -235,12 +241,13 @@ export default function Home() {
         setIsLoading(false);
       }} />}
       <div
-        className={`w-full overflow-x-hidden bg-black text-white ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500 h-screen overflow-y-scroll snap-y snap-mandatory`}
+        className={`w-full overflow-x-hidden bg-black text-white ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
       >
         <div className="overflow-x-hidden">
           {/* HERO SECTION */}
           <section
-            className="relative flex flex-col justify-center overflow-hidden h-screen snap-start"
+            id="hero-section"
+            className="relative flex flex-col justify-center overflow-hidden h-screen snap-section"
             style={{ touchAction: 'auto' }}
           >
             <div className="absolute inset-0 z-0 bg-black" />
@@ -266,7 +273,7 @@ export default function Home() {
             </div>
           </section>
 
-          <AnimatedSection className="h-screen flex items-center justify-center snap-start">
+          <AnimatedSection id="tech-intro-section" className="py-20 sm:py-32 snap-section">
             <div className="container mx-auto px-4 text-center">
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
                 Teknologi i kjernen av alt vi gjør
@@ -283,7 +290,7 @@ export default function Home() {
             </div>
           </AnimatedSection>
           
-          <AnimatedSection className="h-screen flex items-center justify-center snap-start">
+          <AnimatedSection id="expertise-section" className="py-24 snap-section">
               <div className="container mx-auto px-4">
                   <div className="text-center">
                       <h2 className="text-4xl font-bold tracking-tight">
@@ -299,21 +306,23 @@ export default function Home() {
               </div>
           </AnimatedSection>
 
-          <AnimatedSection forwardedRef={whiteSection1Ref} className="bg-white text-black h-screen flex items-center justify-center snap-start">
-            <TextAndImage {...section1Data} imagePosition="left" />
-          </AnimatedSection>
+          <div className="bg-white">
+            <AnimatedSection id="partner-section" forwardedRef={whiteSection1Ref} className="text-black py-24 snap-section">
+              <TextAndImage {...section1Data} imagePosition="left" />
+            </AnimatedSection>
 
-          <AnimatedSection className="bg-white text-black h-screen flex items-center justify-center snap-start">
-            <TextAndImage {...section2Data} imagePosition="right" />
-          </AnimatedSection>
+            <AnimatedSection id="innovation-section" className="text-black py-24 snap-section">
+              <TextAndImage {...section2Data} imagePosition="right" />
+            </AnimatedSection>
+          </div>
 
-          <AnimatedSection className="h-screen flex items-center justify-center snap-start">
+          <AnimatedSection id="cta-section" className="snap-section">
              <InteractiveCtaSection />
           </AnimatedSection>
           
-          <footer className="h-screen snap-start flex items-center justify-center">
+          <div id="footer-section" className="snap-section">
             <Footer />
-          </footer>
+          </div>
         </div>
       </div>
       <ContactFormModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />

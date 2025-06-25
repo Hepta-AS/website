@@ -236,7 +236,6 @@ export default function Home() {
       }} />}
       <div
         className={`w-full overflow-x-hidden bg-black text-white ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500 h-screen overflow-y-scroll snap-y snap-mandatory`}
-        style={{ scrollBehavior: 'smooth' }}
       >
         <div className="overflow-x-hidden">
           {/* HERO SECTION */}
@@ -312,7 +311,7 @@ export default function Home() {
              <InteractiveCtaSection />
           </AnimatedSection>
           
-          <footer className="h-screen snap-start">
+          <footer className="h-screen snap-start flex items-center justify-center">
             <Footer />
           </footer>
         </div>

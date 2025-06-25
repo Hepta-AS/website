@@ -6,14 +6,12 @@ import { Suspense } from "react";
 import "./globals.css";
 import { Footer } from "@/components/footer";
 import { ProgressBar } from "@/components/progress-bar";
-import { Analytics } from "@vercel/analytics/react";
 import { CookieConsent } from "@/components/cookie-consent";
 import { Providers } from "./providers";
 import SmoothScroll from "@/components/SmoothScroll";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,8 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     </ThemeProvider>
                     <Footer />
                 </Providers>
-                <Analytics />
-                <SpeedInsights />
+                {/* Analytics and SpeedInsights temporarily removed due to build issues */}
             </body>
         </html>
     );

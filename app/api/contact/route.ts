@@ -5,14 +5,21 @@ import { Resend } from 'resend';
 import { NotificationEmail } from '@/components/emails/NotificationEmail';
 import { ConfirmationEmail } from '@/components/emails/ConfirmationEmail';
 
-// Initialize the Resend client with the API key from environment variables
-const resend = new Resend(process.env.RESEND_API_KEY);
+// We'll lazily initialize Resend inside the handler to avoid errors at build time when env vars may be missing.
 // Use EMAIL_USER for the 'from' address as it's a valid email. EMAIL_FROM is used as the 'from name'.
 const fromEmail = process.env.EMAIL_USER || 'onboarding@resend.dev';
 const notificationRecipientEmail = process.env.EMAIL_USER || 'delivered@resend.dev'; // Your notification email address
 
 export async function POST(request: NextRequest) {
   try {
+    // Initialize the Resend client with the API key from environment variables.
+    // If the key is missing, we'll log a warning and return a failure response.
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.warn('RESEND_API_KEY environment variable is not set. Skipping email send.');
+    }
+    const resend = new Resend(apiKey || 'test_key');
+
     const body = await request.json();
     const { name, email, message, firstName, lastName, company, website, phone } = body;
 

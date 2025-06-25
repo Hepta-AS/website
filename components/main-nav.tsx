@@ -227,11 +227,12 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
         </nav>
       </header>
 
-      <FloatingMenuButton
-        onClick={() => setIsMenuVisible(!isMenuVisible)}
-        isMenuOpen={isMenuVisible}
-      />
-
+      <AnimatePresence>
+        {!isMenuVisible && (
+          <FloatingMenuButton onClick={() => setIsMenuVisible(true)} />
+        )}
+      </AnimatePresence>
+      
       <AnimatePresence>
         {isMenuVisible && (
           <FullscreenMenu

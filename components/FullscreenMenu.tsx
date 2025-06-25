@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { MagneticButton } from "./MagneticButton";
 
 interface FullscreenMenuProps {
   onClose: () => void;
@@ -27,7 +28,7 @@ export const FullscreenMenu = ({ onClose, navItems, shouldPageBeWhite = false }:
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <motion.div className="flex flex-col items-center space-y-8">
+      <div className="flex flex-col items-center space-y-8">
         {navItems.map((item, index) => (
           <motion.div
             key={item.name}
@@ -60,7 +61,14 @@ export const FullscreenMenu = ({ onClose, navItems, shouldPageBeWhite = false }:
             Kontakt
           </Button>
         </motion.div>
-      </motion.div>
+      </div>
+      <div className="fixed bottom-8 right-8 z-50">
+        <MagneticButton onClick={onClose}>
+            <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center">
+              <X size={24} />
+            </div>
+        </MagneticButton>
+      </div>
     </motion.div>
   );
 }; 

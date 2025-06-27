@@ -12,26 +12,22 @@ interface MenuButtonProps {
 
 export const FloatingMenuButton = ({ onClick }: MenuButtonProps) => {
   const isMobile = useIsMobile();
-  const [isVisible, setIsVisible] = useState(!isMobile);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (!isMobile) {
-      setIsVisible(true);
-      return;
-    }
-
     const handleScroll = () => {
-      // Show button only after scrolling past the first screen height
-      if (window.scrollY > window.innerHeight) {
-        setIsVisible(true);
+      const showOnMobile = window.scrollY > window.innerHeight;
+      const showOnDesktop = window.scrollY > 100;
+
+      if (isMobile) {
+        setIsVisible(showOnMobile);
       } else {
-        setIsVisible(false);
+        setIsVisible(showOnDesktop);
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // Initial check
-    handleScroll();
+    handleScroll(); // Initial check
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
@@ -48,7 +44,7 @@ export const FloatingMenuButton = ({ onClick }: MenuButtonProps) => {
         >
           <MagneticButton 
             onClick={onClick}
-            className="p-0 rounded-full"
+            className="p-0 rounded-full aspect-square"
           >
             <div className="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center">
               <Menu size={32} />

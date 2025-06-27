@@ -44,11 +44,9 @@ export const FloatingMenuButton = ({ onClick }: MenuButtonProps) => {
         >
           <MagneticButton 
             onClick={onClick}
-            className="p-0 rounded-full aspect-square"
+            className="p-0 rounded-full aspect-square w-24 h-24 bg-blue-600 text-white flex items-center justify-center"
           >
-            <div className="w-40 h-40 bg-blue-600 text-white rounded-full flex items-center justify-center">
-              <Menu size={64} />
-            </div>
+            <Menu size={40} />
           </MagneticButton>
         </motion.div>
       )}

@@ -12,10 +12,13 @@ import { ContactFormModal } from "@/components/contact-form-modal";
 import { useAuth } from "@/components/auth-provider";
 import { MainNav } from "@/components/main-nav";
 import { services } from "@/lib/services";
-import { TextAndImage, TextAndImageProps } from "@/components/TextAndImage";
+import { VideoHero } from '@/components/video-hero';
+import { ServiceCards } from '@/components/serviceCards';
+import { TextAndImage, TextAndImageProps } from '@/components/TextAndImage';
+import { BigTextGrid } from '@/components/BigTextGrid';
+import AnimatedSection from '@/components/SimpleAnimation';
 import { Preloader } from "@/components/preloader";
 import InteractiveCtaSection from "@/components/InteractiveCtaSection";
-import { ServiceCards } from "@/components/serviceCards";
 
 function AnimatedSection({ children, className = "", forwardedRef }: { children: React.ReactNode, className?: string, forwardedRef?: React.RefObject<HTMLElement> }) {
   const internalRef = useRef<HTMLElement>(null);
@@ -216,7 +219,7 @@ export default function Home() {
             </div>
           </AnimatedSection>
           
-          <AnimatedSection className="py-24 relative z-10 h-screen">
+          <AnimatedSection className="py-24 sticky top-0 z-10">
               <div className="container mx-auto px-4">
                   <div className="text-center">
                       <h2 className="text-4xl font-bold tracking-tight">
@@ -232,8 +235,8 @@ export default function Home() {
               </div>
           </AnimatedSection>
 
-          <div className="bg-white relative z-20 -mt-96">
-            <AnimatedSection forwardedRef={whiteSection1Ref} className="text-black py-32 min-h-screen pt-96">
+          <div className="bg-white relative z-20">
+            <AnimatedSection forwardedRef={whiteSection1Ref} className="text-black py-24">
               <TextAndImage {...section1Data} imagePosition="left" />
             </AnimatedSection>
 

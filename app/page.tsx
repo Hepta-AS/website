@@ -20,24 +20,6 @@ import AnimatedSection from '@/components/SimpleAnimation';
 import { Preloader } from "@/components/preloader";
 import InteractiveCtaSection from "@/components/InteractiveCtaSection";
 
-function AnimatedSection({ children, className = "", forwardedRef }: { children: React.ReactNode, className?: string, forwardedRef?: React.RefObject<HTMLElement> }) {
-  const internalRef = useRef<HTMLElement>(null);
-  const sectionRef = forwardedRef || internalRef;
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
-
-  return (
-    <motion.section
-      ref={sectionRef}
-      className={className}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-    >
-      {children}
-    </motion.section>
-  );
-}
-
 export default function Home() {
   const auth = useAuth();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -48,6 +30,7 @@ export default function Home() {
   const previousPath = useRef(pathname);
   const videoRef = useRef<HTMLVideoElement>(null);
   const whiteSection1Ref = useRef<HTMLDivElement>(null);
+  const whiteSection2Ref = useRef<HTMLDivElement>(null);
   const isInWhiteSection = useInView(whiteSection1Ref, { amount: 0.5 });
 
   // Handle hydration

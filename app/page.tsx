@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from 'react';
-import { useInView } from "framer-motion";
+import { useInView, useScroll, useTransform, motion } from "framer-motion";
 import { services } from '@/lib/services';
 import { VideoHero } from '@/components/video-hero';
 import { ServiceCards } from '@/components/serviceCards';
@@ -15,9 +15,27 @@ import { Preloader } from '@/components/preloader';
 
 export default function Home() {
     const whiteSection1Ref = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const isInWhiteSection = useInView(whiteSection1Ref, { amount: 0.2 });
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
+
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start end", "end start"]
+    });
+
+    const backgroundColor = useTransform(
+        scrollYProgress,
+        [0, 0.1, 0.9, 1],
+        ["#000000", "#FFFFFF", "#FFFFFF", "#000000"]
+    );
+
+    const color = useTransform(
+        scrollYProgress,
+        [0, 0.1, 0.9, 1],
+        ["#FFFFFF", "#000000", "#000000", "#FFFFFF"]
+    );
 
     const handleServiceNavigation = () => router.push("/tjenester");
 
@@ -54,7 +72,7 @@ export default function Home() {
     }
 
     return (
-        <main className="flex-grow">
+        <main className="flex-grow bg-black text-white">
             <section
                 className="relative flex flex-col justify-center overflow-hidden h-screen"
             >
@@ -113,11 +131,18 @@ export default function Home() {
                 </div>
             </AnimatedSection>
 
-            <div className="bg-white relative z-20">
-                <AnimatedSection forwardedRef={whiteSection1Ref} className="text-black py-24">
-                    <TextAndImage {...section1Data} />
+            <motion.div ref={containerRef} style={{ backgroundColor }} className="relative z-20">
+                <AnimatedSection forwardedRef={whiteSection1Ref} className="py-24">
+                    <motion.div style={{ color }}>
+                        <TextAndImage {...section1Data} />
+                    </motion.div>
                 </AnimatedSection>
-            </div>
+                <AnimatedSection className="py-24">
+                    <motion.div style={{ color }}>
+                        <TextAndImage {...section2Data} />
+                    </motion.div>
+                </AnimatedSection>
+            </motion.div>
 
             <AnimatedSection>
                 <InteractiveCtaSection />

@@ -75,6 +75,7 @@ export default function Home() {
         <main className="flex-grow bg-black text-white">
             <section
                 className="relative flex flex-col justify-center overflow-hidden h-screen"
+                style={{ touchAction: 'auto' }}
             >
                 <div className="absolute inset-0 z-0 bg-black" />
                 <video
@@ -98,28 +99,16 @@ export default function Home() {
                 </div>
             </section>
 
-            <AnimatedSection className="relative py-32 sm:py-48 min-h-[80vh] flex items-center justify-center text-center">
-                <div className="absolute inset-0 z-0">
-                    <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover opacity-20"
-                    >
-                        <source src="/videos/network_compressed.mp4#t=0.1" type="video/mp4" />
-                    </video>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
-                </div>
-                <div className="relative z-10 container mx-auto px-4">
+            <AnimatedSection className="py-20 sm:py-32 text-center">
+                <div className="container mx-auto px-4">
                     <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white">
                         Teknologi i kjernen av alt vi gjør
                     </h2>
                     <p className="mt-6 max-w-3xl mx-auto text-lg sm:text-xl text-gray-300">
                         Vi bygger ikke bare nettsider, vi skaper digitale økosystemer. Fra avanserte webapplikasjoner til AI-drevne automatiseringsløsninger, bruker vi den nyeste teknologien for å gi deg et konkurransefortrinn.
                     </p>
-                    <div className="mt-12">
-                        <Button onClick={handleServiceNavigation} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-10 rounded-full text-lg transition-transform transform hover:scale-105 shadow-lg shadow-blue-500/20">
+                    <div className="mt-10">
+                        <Button onClick={handleServiceNavigation} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105">
                             Utforsk våre tjenester
                             <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>

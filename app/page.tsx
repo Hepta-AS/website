@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from 'react';
-import { useInView, useScroll, useTransform, motion } from "framer-motion";
+import { useInView } from "framer-motion";
 import { services } from '@/lib/services';
 import { VideoHero } from '@/components/video-hero';
 import { ServiceCards } from '@/components/serviceCards';
@@ -15,21 +15,9 @@ import { Preloader } from '@/components/preloader';
 
 export default function Home() {
     const whiteSection1Ref = useRef<HTMLDivElement>(null);
-    const whiteContainerRef = useRef<HTMLDivElement>(null);
     const isInWhiteSection = useInView(whiteSection1Ref, { amount: 0.2 });
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
-
-    const { scrollYProgress } = useScroll({
-        target: whiteContainerRef,
-        offset: ["start end", "end start"] 
-    });
-
-    const backgroundColor = useTransform(
-        scrollYProgress,
-        [0, 0.15, 0.85, 1],
-        ["#000000", "#FFFFFF", "#FFFFFF", "#000000"]
-    );
 
     const handleServiceNavigation = () => router.push("/tjenester");
 
@@ -41,7 +29,7 @@ export default function Home() {
           "Vi er mer enn bare leverandører - vi blir din forlengede arm innen digital utvikling. Med dype fagkunnskap og forståelse for moderne forretningsutfordringer hjelper vi deg å realisere digitale ambisjoner.",
           "Gjennom transparent kommunikasjon og brukerorientert design sikrer vi at hver løsning bidrar til din langsiktige konkurransekraft og vekst.",
         ],
-        imagePosition: 'right' as const
+        imagePosition: 'left' as const
     };
     
     const section2Data = {
@@ -66,10 +54,9 @@ export default function Home() {
     }
 
     return (
-        <motion.main style={{ backgroundColor }} className="flex-grow">
+        <main className="flex-grow">
             <section
                 className="relative flex flex-col justify-center overflow-hidden h-screen"
-                style={{ touchAction: 'auto' }}
             >
                 <div className="absolute inset-0 z-0 bg-black" />
                 <video
@@ -126,18 +113,15 @@ export default function Home() {
                 </div>
             </AnimatedSection>
 
-            <div ref={whiteContainerRef} className="bg-white relative z-20">
+            <div className="bg-white relative z-20">
                 <AnimatedSection forwardedRef={whiteSection1Ref} className="text-black py-24">
                     <TextAndImage {...section1Data} />
-                </AnimatedSection>
-                <AnimatedSection className="text-black py-24">
-                    <TextAndImage {...section2Data} />
                 </AnimatedSection>
             </div>
 
             <AnimatedSection>
                 <InteractiveCtaSection />
             </AnimatedSection>
-        </motion.main>
+        </main>
     );
 }

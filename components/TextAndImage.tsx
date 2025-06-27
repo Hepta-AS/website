@@ -43,7 +43,7 @@ export const TextAndImage: React.FC<TextAndImageProps> = ({
   );
 
   const imageContent = (
-      <div className={`relative w-full ${imageContainerCustomClass || imageContainerClassName} overflow-hidden rounded-lg shadow-lg`}>
+      <div className={`relative w-full max-h-[600px] ${imageContainerCustomClass || imageContainerClassName} overflow-hidden rounded-lg shadow-lg`}>
         <Image
             src={imageSrc}
             alt={altText}

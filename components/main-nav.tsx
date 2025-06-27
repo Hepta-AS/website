@@ -20,9 +20,10 @@ const navItems = [
 
 interface MainNavProps {
   shouldPageBeWhite?: boolean;
+  onLoginClick: () => void;
 }
 
-export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
+export function MainNav({ shouldPageBeWhite = false, onLoginClick }: MainNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isNavHidden, setIsNavHidden] = useState(false);
@@ -239,6 +240,7 @@ export function MainNav({ shouldPageBeWhite = false }: MainNavProps) {
             onClose={() => setIsMenuVisible(false)}
             navItems={navItems}
             shouldPageBeWhite={shouldPageBeWhite}
+            onLoginClick={onLoginClick}
           />
         )}
       </AnimatePresence>

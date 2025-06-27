@@ -13,12 +13,14 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { MainNav } from '@/components/main-nav';
+import { LoginModal } from "@/components/login-modal";
+import { useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Hepta",
-    description: "Hepta - Din partner for digitalisering",
+    description: "Hepta - Fremtidens digitale løsninger",
     icons: {
         icon: "/A_white_hepta.png",
         apple: "/A_white_hepta.png",
@@ -26,6 +28,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
     return (
         <html lang="no" suppressHydrationWarning className="overflow-x-hidden">
             <body className={`${inter.className} bg-background text-foreground overflow-x-hidden`}>
@@ -34,12 +38,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Providers>
                     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
                         <AuthProvider>
-                            <MainNav />
+                            <MainNav onLoginClick={() => setIsLoginModalOpen(true)} />
                             <main className="pt-20">
                                 {children}
                             </main>
                             <Footer />
                             <Toaster />
+                            <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
                         </AuthProvider>
                     </ThemeProvider>
                 </Providers>

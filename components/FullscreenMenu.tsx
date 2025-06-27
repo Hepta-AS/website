@@ -9,11 +9,12 @@ import { MagneticButton } from "./MagneticButton";
 
 interface FullscreenMenuProps {
   onClose: () => void;
+  onLoginClick: () => void;
   navItems: { name: string; href: string }[];
   shouldPageBeWhite?: boolean;
 }
 
-export const FullscreenMenu = ({ onClose, navItems, shouldPageBeWhite = false }: FullscreenMenuProps) => {
+export const FullscreenMenu = ({ onClose, onLoginClick, navItems, shouldPageBeWhite = false }: FullscreenMenuProps) => {
   const router = useRouter();
 
   const textColor = shouldPageBeWhite ? "text-black" : "text-white";
@@ -46,11 +47,21 @@ export const FullscreenMenu = ({ onClose, navItems, shouldPageBeWhite = false }:
           </motion.div>
         ))}
         <motion.div
-          className="pt-8"
+          className="pt-8 flex space-x-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 * navItems.length }}
         >
+          <Button
+            onClick={() => {
+              onLoginClick();
+              onClose();
+            }}
+            variant="outline"
+            className={`border-blue-600 hover:bg-blue-600/10 ${textColor} text-xl py-3 px-8 rounded-full`}
+          >
+            Logg inn
+          </Button>
           <Button
             onClick={() => {
               router.push('/contact');
@@ -65,11 +76,9 @@ export const FullscreenMenu = ({ onClose, navItems, shouldPageBeWhite = false }:
       <div className="fixed bottom-8 right-8 z-50">
         <MagneticButton 
           onClick={onClose}
-          className="p-0 rounded-full"
+          className="p-0 rounded-full aspect-square w-24 h-24 bg-blue-600 text-white flex items-center justify-center"
         >
-            <div className="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center">
-              <X size={32} />
-            </div>
+          <X size={40} />
         </MagneticButton>
       </div>
     </motion.div>

@@ -72,7 +72,7 @@ export default function Home() {
     }
 
     return (
-        <main className="flex-grow bg-black text-white">
+        <>
             <section
                 className="relative flex flex-col justify-center overflow-hidden h-screen"
                 style={{ touchAction: 'auto' }}
@@ -116,7 +116,7 @@ export default function Home() {
                 </div>
             </AnimatedSection>
             
-            <AnimatedSection className="py-24 sticky top-0 z-10">
+            <AnimatedSection className="py-24 sticky top-20 z-10">
                 <div className="container mx-auto px-4">
                     <div className="text-center">
                         <h2 className="text-4xl font-bold tracking-tight">
@@ -148,6 +148,6 @@ export default function Home() {
             <AnimatedSection>
                 <InteractiveCtaSection />
             </AnimatedSection>
-        </main>
+        </>
     );
 }

@@ -116,34 +116,36 @@ export default function Home() {
                 </div>
             </AnimatedSection>
             
-            <AnimatedSection className="py-24 sticky top-20 z-10">
-                <div className="container mx-auto px-4">
-                    <div className="text-center">
-                        <h2 className="text-4xl font-bold tracking-tight">
-                            Ekspertise som gir resultater
-                        </h2>
-                        <p className="mt-4 text-xl text-gray-300">
-                            Fra AI-automatisering til visuelt innhold - vi leverer skreddersydde digitale løsninger som transformerer måten du driver forretning på
-                        </p>
+            <div className="relative">
+                <AnimatedSection className="h-screen py-24 sticky top-20 z-10 flex flex-col items-center justify-center">
+                    <div className="container mx-auto px-4">
+                        <div className="text-center">
+                            <h2 className="text-4xl font-bold tracking-tight">
+                                Ekspertise som gir resultater
+                            </h2>
+                            <p className="mt-4 text-xl text-gray-300">
+                                Fra AI-automatisering til visuelt innhold - vi leverer skreddersydde digitale løsninger som transformerer måten du driver forretning på
+                            </p>
+                        </div>
+                        <div className="mt-16">
+                            <ServiceCards services={services} shouldPageBeWhite={isInWhiteSection} />
+                        </div>
                     </div>
-                    <div className="mt-16">
-                        <ServiceCards services={services} shouldPageBeWhite={isInWhiteSection} />
-                    </div>
-                </div>
-            </AnimatedSection>
+                </AnimatedSection>
 
-            <motion.div ref={containerRef} style={{ backgroundColor }} className="relative z-20">
-                <AnimatedSection forwardedRef={whiteSection1Ref} className="py-24">
-                    <motion.div style={{ color }}>
-                        <TextAndImage {...section1Data} />
-                    </motion.div>
-                </AnimatedSection>
-                <AnimatedSection className="py-24">
-                    <motion.div style={{ color }}>
-                        <TextAndImage {...section2Data} />
-                    </motion.div>
-                </AnimatedSection>
-            </motion.div>
+                <motion.div ref={containerRef} style={{ backgroundColor }} className="relative z-20">
+                    <AnimatedSection forwardedRef={whiteSection1Ref} className="py-24">
+                        <motion.div style={{ color }}>
+                            <TextAndImage {...section1Data} />
+                        </motion.div>
+                    </AnimatedSection>
+                    <AnimatedSection className="py-24">
+                        <motion.div style={{ color }}>
+                            <TextAndImage {...section2Data} />
+                        </motion.div>
+                    </AnimatedSection>
+                </motion.div>
+            </div>
 
             <AnimatedSection>
                 <InteractiveCtaSection />

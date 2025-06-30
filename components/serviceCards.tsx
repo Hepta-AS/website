@@ -59,7 +59,7 @@ export const ServiceCards = ({ services, shouldPageBeWhite = false }: ServiceCar
   const focusRing = shouldPageBeWhite ? 'focus-visible:ring-offset-white focus-visible:ring-gray-500' : 'focus-visible:ring-offset-black focus-visible:ring-white';
 
   return (
-      <div className={`relative py-12 md:py-16 lg:py-20 mt-16 ${bgColor} transition-colors duration-1000`}>
+      <div className={`relative py-12 md:py-16 lg:py-20 ${bgColor} transition-colors duration-1000`}>
         <div
             ref={containerRef}
             id="service-cards-container"

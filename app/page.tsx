@@ -22,7 +22,7 @@ export default function Home() {
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ["start end", "end start"]
+        offset: ["start end", "end end"]
     });
 
     const backgroundColor = useTransform(
@@ -133,7 +133,7 @@ export default function Home() {
                     </div>
                 </AnimatedSection>
 
-                <motion.div ref={containerRef} style={{ backgroundColor }} className="relative z-20 mt-[100vh]">
+                <motion.div ref={containerRef} style={{ backgroundColor }} className="relative z-20">
                     <AnimatedSection forwardedRef={whiteSection1Ref} className="py-24">
                         <motion.div style={{ color }}>
                             <TextAndImage {...section1Data} />

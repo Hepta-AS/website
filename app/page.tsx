@@ -133,7 +133,7 @@ export default function Home() {
                     </div>
                 </AnimatedSection>
 
-                <motion.div ref={containerRef} style={{ backgroundColor }} className="relative z-20">
+                <motion.div ref={containerRef} style={{ backgroundColor }} className="relative z-20 mt-[50vh]">
                     <AnimatedSection forwardedRef={whiteSection1Ref} className="py-24">
                         <motion.div style={{ color }}>
                             <TextAndImage {...section1Data} />

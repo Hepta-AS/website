@@ -117,7 +117,7 @@ export default function Home() {
             </AnimatedSection>
             
             <div className="relative">
-                <AnimatedSection className="h-screen py-24 sticky top-20 z-10 flex flex-col items-center justify-center">
+                <AnimatedSection className="py-24 sticky top-1/2 -translate-y-1/2 z-10 flex flex-col items-center justify-center">
                     <div className="container mx-auto px-4">
                         <div className="text-center">
                             <h2 className="text-4xl font-bold tracking-tight">

@@ -59,7 +59,7 @@ export const ServiceCards = ({ services, shouldPageBeWhite = false }: ServiceCar
   const focusRing = shouldPageBeWhite ? 'focus-visible:ring-offset-white focus-visible:ring-gray-500' : 'focus-visible:ring-offset-black focus-visible:ring-white';
 
   return (
-      <div className={`relative py-12 md:py-16 lg:py-20 ${bgColor} transition-colors duration-1000`}>
+      <div className={`relative py-12 md:py-16 lg:py-20 mt-16 ${bgColor} transition-colors duration-1000`}>
         <div
             ref={containerRef}
             id="service-cards-container"
@@ -116,7 +116,28 @@ export const ServiceCards = ({ services, shouldPageBeWhite = false }: ServiceCar
           ))}
         </div>
 
-        <div className="flex justify-center gap-x-3 sm:gap-x-4 w-full mx-auto mt-8 md:mt-10">
+        {/* Arrow Buttons - Repositioned for desktop */}
+        <div className="absolute top-1/2 left-0 w-full -translate-y-1/2 hidden md:flex justify-between px-4 z-20">
+          <button
+              onClick={() => scroll('left')}
+              className={`${buttonBg} ${buttonText} rounded-full w-20 h-12 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${focusRing} transition-all hover:scale-105 disabled:opacity-50`}
+              aria-label="Forrige"
+              disabled={isScrolling}
+          >
+            <ArrowLeft size={24} strokeWidth={2.5} />
+          </button>
+          <button
+              onClick={() => scroll('right')}
+              className={`${buttonBg} ${buttonText} rounded-full w-20 h-12 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${focusRing} transition-all hover:scale-105 disabled:opacity-50`}
+              aria-label="Neste"
+              disabled={isScrolling}
+          >
+            <ArrowRight size={24} strokeWidth={2.5} />
+          </button>
+        </div>
+
+        {/* Arrow Buttons - Centered for mobile */}
+        <div className="flex md:hidden justify-center gap-x-3 sm:gap-x-4 w-full mx-auto mt-8 md:mt-10">
           <button
               onClick={() => scroll('left')}
               className={`${buttonBg} ${buttonText} rounded-full p-2.5 sm:p-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${focusRing} transition-all hover:scale-105 disabled:opacity-50`}

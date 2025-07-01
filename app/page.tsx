@@ -116,8 +116,8 @@ export default function Home() {
                 </div>
             </AnimatedSection>
             
-            <div className="relative min-h-[200vh]">
-                <AnimatedSection className="h-screen py-24 sticky top-1 z-10 flex flex-col items-center justify-center">
+            <div className="relative">
+                <AnimatedSection className="h-screen py-24 sticky top-20 z-10 flex flex-col items-center justify-center">
                     <div className="container mx-auto px-4">
                         <div className="text-center">
                             <h2 className="text-4xl font-bold tracking-tight">
@@ -132,6 +132,9 @@ export default function Home() {
                         </div>
                     </div>
                 </AnimatedSection>
+
+                {/* Spacer for mobile to delay the white section */}
+                <div className="h-[50vh] md:h-0" />
 
                 <motion.div ref={containerRef} style={{ backgroundColor }} className="relative z-20">
                     <AnimatedSection forwardedRef={whiteSection1Ref} className="py-24">

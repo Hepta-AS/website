@@ -116,7 +116,7 @@ export default function Home() {
                 </div>
             </AnimatedSection>
             
-            <div className="relative min-h-[350vh] md:min-h-[200vh]">
+            <div className="relative min-h-[450vh] md:min-h-[200vh]">
                 <AnimatedSection className="h-screen py-24 sticky top-[-20vh] md:top-0 z-10 flex flex-col items-center justify-center">
                     <div className="container mx-auto px-4">
                         <div className="text-center">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from 'react';
-import { useInView, useScroll, useTransform, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { services } from '@/lib/services';
 import { VideoHero } from '@/components/video-hero';
 import { ServiceCards } from '@/components/serviceCards';
@@ -14,28 +14,8 @@ import { useRouter } from 'next/navigation';
 import { Preloader } from '@/components/preloader';
 
 export default function Home() {
-    const whiteSection1Ref = useRef<HTMLDivElement>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const isInWhiteSection = useInView(whiteSection1Ref, { amount: 0.2 });
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
-
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "end end"]
-    });
-
-    const backgroundColor = useTransform(
-        scrollYProgress,
-        [0, 0.1, 0.9, 1],
-        ["#000000", "#FFFFFF", "#FFFFFF", "#000000"]
-    );
-
-    const color = useTransform(
-        scrollYProgress,
-        [0, 0.1, 0.9, 1],
-        ["#FFFFFF", "#000000", "#000000", "#FFFFFF"]
-    );
 
     const handleServiceNavigation = () => router.push("/tjenester");
 
@@ -116,35 +96,28 @@ export default function Home() {
                 </div>
             </AnimatedSection>
             
-            <div className="relative min-h-[450vh] md:min-h-[200vh]">
-                <AnimatedSection className="h-screen py-24 sticky top-[-20vh] md:top-0 z-10 flex flex-col items-center justify-center">
-                    <div className="container mx-auto px-4">
-                        <div className="text-center">
-                            <h2 className="text-4xl font-bold tracking-tight">
-                                Ekspertise som gir resultater
-                            </h2>
-                            <p className="mt-4 text-xl text-gray-300">
-                                Fra AI-automatisering til visuelt innhold - vi leverer skreddersydde digitale løsninger som transformerer måten du driver forretning på
-                            </p>
-                        </div>
-                        <div className="mt-16">
-                            <ServiceCards services={services} shouldPageBeWhite={isInWhiteSection} />
-                        </div>
+            <AnimatedSection className="py-24 flex flex-col items-center justify-center">
+                <div className="container mx-auto px-4">
+                    <div className="text-center">
+                        <h2 className="text-4xl font-bold tracking-tight text-white">
+                            Ekspertise som gir resultater
+                        </h2>
+                        <p className="mt-4 text-xl text-gray-300">
+                            Fra AI-automatisering til visuelt innhold - vi leverer skreddersydde digitale løsninger som transformerer måten du driver forretning på
+                        </p>
                     </div>
+                    <div className="mt-16">
+                        <ServiceCards services={services} shouldPageBeWhite={false} />
+                    </div>
+                </div>
+            </AnimatedSection>
+            <div className="text-white">
+                <AnimatedSection className="py-24">
+                    <TextAndImage {...section1Data} />
                 </AnimatedSection>
-
-                <motion.div ref={containerRef} style={{ backgroundColor }} className="relative z-20 mt-[50vh] md:mt-0">
-                    <AnimatedSection forwardedRef={whiteSection1Ref} className="py-24">
-                        <motion.div style={{ color }}>
-                            <TextAndImage {...section1Data} />
-                        </motion.div>
-                    </AnimatedSection>
-                    <AnimatedSection className="py-24">
-                        <motion.div style={{ color }}>
-                            <TextAndImage {...section2Data} />
-                        </motion.div>
-                    </AnimatedSection>
-                </motion.div>
+                <AnimatedSection className="py-24">
+                    <TextAndImage {...section2Data} />
+                </AnimatedSection>
             </div>
 
             <AnimatedSection>
